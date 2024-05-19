@@ -2,16 +2,16 @@
 export default async function group_update(sock, update, config) {
    try {
       for (const action of update) {
-         const metadata = await sock.groupMetadata(action.id)
-         let admins = (metadata.participants.reduce((memberAdmin, memberNow) => (memberNow.admin ? memberAdmin.push({ id: memberNow.id, admin: memberNow.admin }) : [...memberAdmin]) && memberAdmin, []))
-         let isBotAdmin = !!admins.find((member) => member.id === sock.user.jid)
-         if (!isBotAdmin && action.announce) return
+         const metadata = await sock.groupMetadata(action.id);
+         let admins = (metadata.participants.reduce((memberAdmin, memberNow) => (memberNow.admin ? memberAdmin.push({ id: memberNow.id, admin: memberNow.admin }) : [...memberAdmin]) && memberAdmin, []));
+         let isBotAdmin = !!admins.find((member) => member.id === sock.user.jid);
+         if (!isBotAdmin && action.announce) return;
          // Get profile picture group
-         let profile
+         let profile;
          try {
-            profile = await sock.profilePictureUrl(action.id, "image")
+            profile = await sock.profilePictureUrl(action.id, "image");
          } catch {
-            profile = "https://telegra.ph/file/ed3144572e1b6a0dc2b64.png"
+            profile = "https://telegra.ph/file/ed3144572e1b6a0dc2b64.png";
          }
 
          // Action true = close
@@ -41,9 +41,9 @@ export default async function group_update(sock, update, config) {
                   }
                }
             })
-         } break
-      } return
+         } break;
+      } return;
    } catch (e) {
-      console.log("Error Group Update: ", e)
-   } return
+      console.log("Error Group Update: ", e);
+   } return;
 }

@@ -41,13 +41,13 @@ let commands = await fullCommands(commandsFolder).catch(e => console.error(`Fail
 
 // <===== Config DATABASE =====>
 async function loadDatabase() {
-global.db = {
-    users: {},
-    groups: {},
-    stats: {},
-    settings: {},
-    ...((await database.fetch()) || {}),
-  };
+	global.db = {
+		users: {},
+		groups: {},
+		stats: {},
+		settings: {},
+		...((await database.fetch()) || {}),
+	};
 }
 
 // <===== Connect to Whatsapp =====>
@@ -158,7 +158,10 @@ async function connectToWhatsApp() {
 			for (const update of updates) {
 				const id = update.id;
 				if (store.groupMetadata[id]) {
-					store.groupMetadata[id] = { ...(store.groupMetadata[id] || {}), ...(update || {}) };
+					store.groupMetadata[id] = {
+						...(store.groupMetadata[id] || {}),
+						...(update || {})
+					};
 				}
 			}
 			config = await (await import(`./config.js?update=${Date.now()}`)).default

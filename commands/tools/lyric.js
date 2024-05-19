@@ -2,10 +2,10 @@ export default {
     name: "lyric",
     command: ["lyric"],
     tags: "tools",
-    desc: "Searching lyric song....",
+    desc: "Looking for song lyrics...",
     customPrefix: "",
     example: "%prefix%command menghapus jejakmu",
-    limit: false,
+    limit: 1,
     isOwner: false,
     isPremium: false,
     isBotAdmin: false,
@@ -38,6 +38,7 @@ export default {
         axios,
         cheerio
     }) => {
+    // Scrape lyric.
     async function searchLyric(query, page = "1") {
     const data = await functions.fetchJson(`https://genius.com/api/search/song?q=${query}&page=${page}`)
                 const results = data.response.sections[0].hits.map((x) => x.result)
@@ -52,6 +53,7 @@ export default {
                     })
                 return res
     }
+    // Execution:
     try {
         if (text.startsWith("https://genius.com/")) {
             const data = await functions.fetchJson(`https://dikaardnt.com/api/search/lyrics/genius?url=${text}`)
@@ -65,7 +67,7 @@ export default {
 > ${config.name.bot}`.trim(), m, {thumb: data.image})
         } else {
         const result = await searchLyric(text)
-        sock.sendButton(m.from, "LIST of LYRICS", config.name.bot, result[0].image,
+        sock.sendButton(m.from, "*List of found lyrics:*", config.name.bot, result[0].image,
             [['Menu List', `${usedPrefix}menu`]],
             [[config.name.bot, "https://tinyurl.com/berkahesport"]], // Link
             [["Result Here", [{
@@ -94,19 +96,6 @@ export default {
             }
         ]]], // List
             m);
-//         m.reply(`*<==== [ Hasil Lirik ] ====>*
-
-// Silahkan ketik ${prefix+command} [url]
-// Contoh: _${prefix+command} https://genius.com/Peterpan-semua-tentang-kita-lyrics_
-
-
-// ` + result.map((v, i) => `
-// *[${i+1}]* *${v.title}*
-
-// - *Judul:* ${v.fullTitle}
-// - *Artis:* ${v.artist}
-// - *URL:* _${v.url}_
-// `.trim()).filter( v => v).join("\n\n> *<==== 「"+config.name.bot+"」 ====>*\n\n"), {thumb: result[0].image})
         }
         } catch(e) { 
         await m.report(e)

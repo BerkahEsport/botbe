@@ -4,9 +4,9 @@ export default async function message_upsert(sock, m, store, commands, config, f
 	// Setup for DB
 	await (await import("../lib/database.js")).default(sock, m, config, functions);
 	m.limit = false;
-	let user = global.db.users[m.sender]
-  	let settings = global.db.settings[sock.user.jid || config.number.bot+"@s.whatsapp.net"]
-	let stats = global.db.stats
+	let user = global.db.users[m.sender];
+  	let settings = global.db.settings[sock.user.jid || config.number.bot+"@s.whatsapp.net"];
+	let stats = global.db.stats;
 	let isPrefix, isCommand, commandResult = undefined;
 try {
 	// Calling COMMANDS
@@ -16,8 +16,8 @@ try {
 
 	// Starting
 	const str2Regex = (str) => str.replace(/[|\\{}()[\]^$+*?.]/g, "\\$&");
-	let prefix = !!cmd.customPrefix ? cmd.customPrefix : config.settings.prefix
-	let noPrefix = m?.body.replace(prefix, "")
+	let prefix = !!cmd.customPrefix ? cmd.customPrefix : config.settings.prefix;
+	let noPrefix = m?.body.replace(prefix, "");
 	let arg = noPrefix.trim().split` `.slice(1);
 	let text = arg.join` `;
 	let [command, ...args] = noPrefix.trim().split` `.filter((v) => v);
@@ -78,70 +78,76 @@ try {
     if (!isCommand) continue;
 	if (isPrefix = (match[0] || "")[0]) {
 		if (!user.registered && !(name == "register.js") && !(m.body.startsWith(prefix+"register") || m.body.startsWith(prefix+"reg"))) {
-			m.react("🚫")
+			m.react("🚫");
 			m.reply(`Please register first to be able to access the bot!!
 Command: ${prefix}register name.age
-Example: ${prefix}register ${m.pushName || "userBE"}.18`);
-			break
+Example: ${prefix}register ${m.pushName || "userBE"}.18`, {font: true});
+			break;
 		}
 		if (cmd.isQuoted && !m.isQuoted) {
-			m.react("🚫")
-			m.reply(`Please reply / quote the message!!`);
-			continue
+			m.react("🚫");
+			m.reply(`Please reply / quote the message!!`, {font: true});
+			continue;
 		}
 		if (cmd.isOwner && !m.isOwner) {
-			m.react("🚫")
-			m.reply("This feature is only for owners!!");
-			continue
+			m.react("🚫");
+			m.reply("This feature is only for owners!!", {font: true});
+			continue;
 		}
 		if (cmd.isPremium && !m.isPremium) {
 			await m.react("🌟");
-			m.reply("This feature is only for premium user!!");
-			continue
+			m.reply("This feature is only for premium user!!", {font: true});
+			continue;
 		}
 		if (cmd.isGroup && !m.isGroup) {
-			m.react("🚫")
-			m.reply("This feature is for groups only!!");
-			continue
+			m.react("🚫");
+			m.reply("This feature is for groups only!!", {font: true});
+			continue;
 		}
 		if (cmd.isPrivate && m.isGroup) {
-			m.react("🚫")
-			m.reply("This feature can only be used in private chat!!");
-			continue
+			m.react("🚫");
+			m.reply("This feature can only be used in private chat!!", {font: true});
+			continue;
 		}
 		if (cmd.isBotAdmin && !m.isBotAdmin) {
-			m.react("🚫")
-			m.reply("So that this feature can work. bot must be admin!!");
-			continue
+			m.react("🚫");
+			m.reply("So that this feature can work. bot must be admin!!", {font: true});
+			continue;
 		}
 		if (cmd.isAdmin && !m.isAdmin) {
-			m.react("🚫")
-			m.reply("This feature can only be used by group admins!!");
-			continue
+			m.react("🚫");
+			m.reply("This feature can only be used by group admins!!", {font: true});
+			continue;
 		}
 		if (cmd.isBot && m.fromMe) {
-			m.react("🚫")
-			m.reply("This feature is only for bot!!");
-			continue
+			m.react("🚫");
+			m.reply("This feature is only for bot!!", {font: true});
+			continue;
 		}
 		if (!m.isPremium && cmd.limit && user.limit < +cmd.limit) {
-			m.react("🚫")
-			m.reply(`Feature access denied, ${+cmd.limit} limits required for feature to be accessed!!`)
-			continue
+			m.react("🚫");
+			m.reply(`Feature access denied, ${+cmd.limit} limits required for feature to be accessed!!`, {font: true});
+			continue;
 		}
 		if (!!cmd.example && !text) {
-			m.reply(cmd.example.replace(/%prefix/gi, prefix).replace(/%command/gi, command).replace(/%text/gi, text))
-			continue
+			m.react("❓");
+			m.reply(`*⭓─❖『 USAGE INFO 』❖─⭓*
+
+*Command*: ${prefix+command} [${text.startsWith("https://") ? " url " : " text "}]
+*Example*: ${cmd.example.replace(/%prefix/gi, prefix).replace(/%command/gi, command).replace(/%args\[0\]/gi, args[0]).replace(/%text/gi, text)}
+
+`, {font: true});
+			continue;
 		}
 
 		try {
-			await m.react("⏳")
+			await m.react("⏳");
 			await cmd.run(m, _arguments);
-			if (!m.isPrems) m.limit = m.limit || cmd.limit || false;
+			if (!m.isPremium) m.limit = m.limit || cmd.limit || false;
 			commandResult = true
 		} catch(e) {
 			m.limit = false;
-			commandResult = false
+			commandResult = false;
               if (typeof e == "string") {
                     m.reply(e, {font: true})
                 } else {
@@ -175,11 +181,11 @@ _Problematic features please report the owner!_
 			};
 		if (user) { 
 			if (m.isUser) {
-				if (m.limit) {
+				if (m.limit && !m.isPremium) {
 					user.limit -= +m.limit
 					m.reply(+m.limit == 1 ? `${+m.limit} limit are used.` : `${+m.limit} limits are used.`, {font: true});
-				}
-		  	}
+				};
+		  	};
 		if (isCommand) {
 				stats.today += 1
 				stats.total += 1
@@ -187,13 +193,13 @@ _Problematic features please report the owner!_
 			  	stats.success += 1
 			} else {
 			  	stats.failed += 1
-			}
-		}
-		}
+			};
+		};
+		};
 	};
 	if (isCommand && commandResult) {
 		m.react("✅");
 	} else if (isCommand && commandResult == false) {
 		m.react("❌");
-	}
+	};
 };

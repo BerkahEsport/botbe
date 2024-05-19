@@ -4,6 +4,15 @@ export default {
     command: ["ytmp3"],
     tags: "download",
     desc: "Download file mp3 with link youtube...",
+    customPrefix: "",
+    example: "%prefix%command https://youtu.be/jySbH-dLrYA",
+    limit: 8,
+    isOwner: false,
+    isPremium: false,
+    isBotAdmin: false,
+    isAdmin: false,
+    isGroup: false,
+    isPrivate: false,
     run: async(m, {sock, args, text, command, prefix, functions, config, isPremium, isOwner}) => {
         const { thumbnail, audio: _audio, title } = await youtubedl(functions.isUrl(text)[0]).catch(async _ => await youtubedlv2(functions.isUrl(text)[0]))
         const limitedSize = (isPremium || isOwner ? 200 : 80) * 1024
@@ -17,14 +26,5 @@ export default {
 *✣ Type:* mp3
 *✣ URL:* ${text || "-"}
 `.trim(), m, { asDocument: true, thumb: thumbnail, font: true})
-    },
-    customPrefix: "",
-    example: "%prefix%command https://youtu.be/jySbH-dLrYA",
-    limit: 2,
-    isOwner: false,
-    isPremium: false,
-    isBotAdmin: false,
-    isAdmin: false,
-    isGroup: false,
-    isPrivate: false
+    }
 }

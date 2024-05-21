@@ -53,6 +53,7 @@ async function loadDatabase() {
 // <===== Connect to Whatsapp =====>
 async function connectToWhatsApp() {
 	let sock = makeWASocket({
+		version: [2, 2413, 1],
 		printQRInTerminal: !config.number.bot,
 		logger,
 		auth: {

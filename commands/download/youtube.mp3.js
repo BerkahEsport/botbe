@@ -14,11 +14,12 @@ export default {
     isGroup: false,
     isPrivate: false,
     run: async(m, {sock, args, text, command, prefix, functions, config, isPremium, isOwner}) => {
+        if (!functions.isUrl(query, "youtu")) throw ("Enter the YouTube URL correctly!")
         const { thumbnail, audio: _audio, title } = await youtubedl(functions.isUrl(text)[0]).catch(async _ => await youtubedlv2(functions.isUrl(text)[0]))
         const limitedSize = (isPremium || isOwner ? 200 : 80) * 1024
         let isLimit = limitedSize < _audio.fileSize
         let dl_url = await _audio["128kbps"].download()
-        if (isLimit) throw ("File yang anda unduh melebihi batas maksimal. Jika ingin maksimal silahkan menjadi member Premium.")
+        if (isLimit) throw ("The file you downloaded exceeds the maximum limit. If you want the maximum, please become a Premium member.")
         if (!isLimit) sock.sendFile(m.from, dl_url,  title, `
 *⭓─❖『 YOUTUBE 』❖─⭓*
 

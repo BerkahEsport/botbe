@@ -50,7 +50,7 @@ Object.entries(list).forEach(([type, commandArray]) => {
     teks += `┌──⭓ *${type.toUpperCase()} Menu*\n`;
     teks += `│\n`;
     teks += `│➣ ${commandArray.map((command) => {
-        const commandName = command.customPrefix ? `${command.customPrefix}${command.name}` : `${prefix}${command.name}`;
+        const commandName = command.customPrefix ? `${command.customPrefix+command.name}` : `${prefix+command.name}`;
         const limitText = command.limit ? `[ ${command.limit === true ? "" : +command.limit}Ⓛ ]` : "";
         return `${commandName} ${limitText}`;
     }).join("\n│➣ ")}\n`;

@@ -1,7 +1,7 @@
 import ytSearch from "yt-search";
 export default {
-    name: "play",
-    command: ["play"],
+    name: "ytsearch",
+    command: ["ytsearch", "yts"],
     tags: "tools",
     desc: "Looking for a list of YouTube videos...",
     run: async(m, {sock, args, text, prefix: usedPrefix, functions, config}) => {
@@ -10,7 +10,7 @@ export default {
         const { all: [bestItem, ...moreItems] } = await ytSearch(text);
         const videoItems = moreItems.filter(item => item.type === 'video');
         const formattedData = {
-            title: "                *[ Youtube Play mp3 ]*\n>                 BEST MATCH\n\n",
+            title: "                *[ Youtube Search mp4 ]*\n>                 BEST MATCH\n\n",
             rows: [{
                     title: "Best",
                     highlight_label: "Best match",
@@ -29,7 +29,7 @@ export default {
                         description
                     }) => ({
                         header: title,
-                        id: `${usedPrefix}ytmp3 ${url}`,
+                        id: `${usedPrefix}ytmp4 ${url}`,
                         title: description,
                         description: ""
                     }))

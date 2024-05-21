@@ -9,7 +9,7 @@ export default {
         settings: {
             prefix: ".",
             session: "auth_session",
-            store: true // using store
+            store: false // using store
         },
         name: {
             owner: "@moexti",

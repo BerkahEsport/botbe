@@ -1,6 +1,7 @@
 import axios from "axios";
 import cheerio from "cheerio";
 export default async function message_upsert(sock, m, store, commands, config, functions) {
+	
 	// Setup for DB
 	await (await import("../lib/database.js")).default(sock, m, config, functions);
 	m.limit = false;
@@ -71,9 +72,10 @@ try {
 		cheerio
 	}
 
-	if (cmd.before && typeof cmd.before === "function" ) {
-		await cmd.before(m, _arguments);
+	if (cmd.before && typeof cmd.before === "function") {
+		if (await cmd.before(m, _arguments)) continue;
 	}
+
 	// Execution code
     if (!isCommand) continue;
 	if (isPrefix = (match[0] || "")[0]) {
@@ -139,7 +141,6 @@ Example: ${prefix}register ${m.pushName || "userBE"}.18`, {font: true});
 `, {font: true});
 			continue;
 		}
-
 		try {
 			await m.react("⏳");
 			await cmd.run(m, _arguments);

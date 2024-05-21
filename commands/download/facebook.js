@@ -39,13 +39,15 @@ export default {
         axios,
         cheerio
     }) => {
+    if (!functions.isUrl(query, "facebook")) throw ("Enter the Facebook URL correctly!")
     try {
     let data = await (await functions.getFile(`https://aemt.me/download/fbdl?url=${text}`)).data
     sock.sendFile(m.from, data.result.HD, `FB`, config.name.bot, m)
    } catch(e) {
     m.report(e)
     let data =  await facebookdl(text).catch(async _ => await facebookdlv2(text))
-    await sock.sendFile(m.from, data.result[0].url, `FB`, config.name.bot, m)
+    console.log(data.result)
+    // await sock.sendFile(m.from, data.result[0].url, `FB`, config.name.bot, m)
   }
 }
 }

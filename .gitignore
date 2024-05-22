@@ -3,4 +3,3 @@ auth_session
 tmp/
 *.json
 *.bak
-lib/simplification.js

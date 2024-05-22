@@ -18,7 +18,7 @@ export default {
     }
 },
 customPrefix: "",
-example: "%prefix%command one piece",
+example: "one piece",
 limit: 2,
 isOwner: false,
 isPremium: false,

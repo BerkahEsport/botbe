@@ -5,6 +5,15 @@ export default {
 	command: ["sticker", "s"],
     tags: "tools",
     desc: "Converting media to sticker...",
+    customPrefix: "",
+    example: "",
+    limit: true,
+    isOwner: false,
+    isPremium: false,
+    isBotAdmin: false,
+    isAdmin: false,
+    isGroup: false,
+    isPrivate: false,
 	run: async(m, { sock, config, functions, text}) => {
         let hasQuoted = m.isQuoted ? m.quoted : m
         if (hasQuoted.isMedia) {
@@ -24,14 +33,5 @@ export default {
         } else if (/(https?:\/\/.*\.(?:png|jpg|jpeg|webp|mov|mp4|webm))/i.test(text)) {
             m.reply(functions.isUrl(text)[0], { quoted: m, asSticker: true})
         } else throw (`Reply media or send command with url media / tags !`)
-        },
-customPrefix: "",
-example: "",
-limit: true,
-isOwner: false,
-isPremium: false,
-isBotAdmin: false,
-isAdmin: false,
-isGroup: false,
-isPrivate: false
+    }
 }

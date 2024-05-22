@@ -4,7 +4,7 @@ export default {
     tags: "tools",
     desc: "Looking for song lyrics...",
     customPrefix: "",
-    example: "%prefix%command menghapus jejakmu",
+    example: "menghapus jejakmu",
     limit: 1,
     isOwner: false,
     isPremium: false,

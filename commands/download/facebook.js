@@ -5,7 +5,7 @@ export default {
     tags: "download",
     desc: "Download facebook with link...",
     customPrefix: "",
-    example: "%prefix%command https://www.facebook.com/DramaFacbook21/videos/1775049149358700/?app=fbl",
+    example: "https://www.facebook.com/DramaFacbook21/videos/1775049149358700/?app=fbl",
     limit: 3,
     isOwner: false,
     isPremium: false,

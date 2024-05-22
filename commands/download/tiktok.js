@@ -5,7 +5,7 @@ export default {
     tags: "download",
     desc: "",
     customPrefix: "",
-    example: "%prefix%command ",
+    example: "r",
     limit: false,
     isOwner: false,
     isPremium: false,

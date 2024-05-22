@@ -199,7 +199,7 @@ async function connectToWhatsApp() {
 // For loading database
 loadDatabase()
 // Start to connect whatsapp
-await connectToWhatsApp()
+connectToWhatsApp()
 // Save Database every 30 second
 setInterval(async () => {
 	// write database bot

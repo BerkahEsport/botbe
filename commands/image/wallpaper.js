@@ -4,7 +4,7 @@ export default {
     tags: "image",
     desc: "Looking for images from the wallaperflare site...",
     customPrefix: "",
-    example: "%prefix%command naruto",
+    example: "naruto",
     limit: 3,
     isOwner: false,
     isPremium: false,

@@ -1,7 +1,6 @@
 import axios from "axios";
 import cheerio from "cheerio";
 export default async function message_upsert(sock, m, store, commands, config, functions) {
-	
 	// Setup for DB
 	await (await import("../lib/database.js")).default(sock, m, config, functions);
 	m.limit = false;
@@ -72,7 +71,7 @@ try {
 		cheerio
 	}
 
-	if (cmd.before && typeof cmd.before === "function") {
+	if (cmd.before && typeof cmd.before === "function" && m.sender in global.db.users) {
 		if (await cmd.before(m, _arguments)) continue;
 	}
 
@@ -135,8 +134,8 @@ Example: ${prefix}register ${m.pushName || "userBE"}.18`, {font: true});
 			m.react("❓");
 			m.reply(`*⭓─❖『 USAGE INFO 』❖─⭓*
 
-*Command*: ${prefix+command} [${text.startsWith("https://") ? " url " : " text "}]
-*Example*: ${cmd.example.replace(/%prefix/gi, prefix).replace(/%command/gi, command).replace(/%args\[0\]/gi, args[0]).replace(/%text/gi, text)}
+*Command*: ${prefix+cmd.command[0]} ${cmd.example.startsWith("https://") ? "[url]" : cmd.example.includes(".") ? cmd.example.replace(prefix+command, "").trim().split('.').map((part, index) => `args[${index}]`).join('.') : "[text]"}
+*Example*: ${prefix+cmd.command[0]} ${cmd.example}
 
 `, {font: true});
 			continue;

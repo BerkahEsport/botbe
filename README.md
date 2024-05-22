@@ -32,7 +32,7 @@ name: "this name", //✅ name command for your menu
 command: ["cmd1", "cmd2"], //✅ set a command here
 tags: "main", //✅ tags for this name for your menu
 desc: "this description", //✅ description this command for your menu
-// example: "%prefix%command text", // If it doesn't follow the instructions, you can tell me how to do it here
+// example: "text", // If it doesn't follow the instructions, you can tell me how to do it here
 
 run: async(m, {sock, functions, args, text}) => {
     m.reply("Hello i am bot!") // response command

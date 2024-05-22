@@ -5,7 +5,7 @@ export default {
     desc: "",
     customPrefix: "",
     example: "%prefix%commamd naruto",
-    limit: false,
+    limit: true,
     isOwner: false,
     isPremium: false,
     isBotAdmin: false,

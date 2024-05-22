@@ -5,7 +5,7 @@ export default {
     tags: "download",
     desc: "Download file mp4 with link youtube...",
     customPrefix: "",
-    example: "%prefix%command https://youtu.be/jySbH-dLrYA",
+    example: "https://youtu.be/jySbH-dLrYA",
     limit: 10,
     isOwner: false,
     isPremium: false,

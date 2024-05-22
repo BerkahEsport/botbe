@@ -3,7 +3,7 @@ name: "",
 command: [""],
 tags: "",
 desc: "",
-customPrefix: "",
+customPrefix: ".",
 example: "",
 limit: false,
 isOwner: false,
@@ -38,6 +38,6 @@ run: async(m, {
     axios,
     cheerio
 }) => {
-
+m.reply("Yo")
 }
 }

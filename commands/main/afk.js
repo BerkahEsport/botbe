@@ -4,7 +4,7 @@ export default {
     tags: "main",
     desc: "",
     customPrefix: "",
-    example: "%prefix%command sleep!",
+    example: "sleep!",
     limit: false,
     isOwner: false,
     isPremium: false,

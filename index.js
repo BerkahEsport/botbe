@@ -180,6 +180,8 @@ async function connectToWhatsApp() {
 		if (store.groupMetadata && Object.keys(store.groupMetadata).length === 0) store.groupMetadata = await sock.groupFetchAllParticipating();
 		if (type === "notify") {
 			let msg = messages[0];
+			let type = sock.getContentType(msg.message)
+			if (type === "protocolMessage") return;
 			if (msg.key.remoteJid === "status@broadcast") return;
 			if (msg.message) {
 				msg.message = msg.message?.ephemeralMessage ? msg.message.ephemeralMessage.message : msg.message;

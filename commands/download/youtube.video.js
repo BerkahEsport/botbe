@@ -1,9 +1,9 @@
 import { youtubedl, youtubedlv2 } from "@bochilteam/scraper";
 export default {
-    name: "ytmp4",
-    command: ["ytmp4"],
+    name: "ytv",
+    command: ["ytv"],
     tags: "download",
-    desc: "Download file mp4 with link youtube...",
+    desc: "Download video file with link youtube...",
     customPrefix: "",
     example: "https://youtu.be/jySbH-dLrYA",
     limit: 10,
@@ -53,6 +53,6 @@ export default {
 *✣ Title:* ${title}
 *✣ Type:* mp4
 *✣ URL:* ${text || "-"}
-`.trim(), m, { asDocument: true, thumb: thumbnail, font: true}) 
+`.trim(), m, { thumb: thumbnail, font: true}) 
         }
     }

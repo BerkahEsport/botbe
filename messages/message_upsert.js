@@ -7,7 +7,7 @@ export default async function message_upsert(sock, m, store, commands, config, f
 	let user = global.db.users[m.sender];
   	let settings = global.db.settings[sock.user.jid || config.number.bot+"@s.whatsapp.net"];
 	let stats = global.db.stats;
-	let isPrefix, isCommand, commandResult = undefined;
+	let isCommand, commandResult = undefined;
 try {
 	// Calling COMMANDS
 	for (let name in commands) {
@@ -23,7 +23,7 @@ try {
 	let [command, ...args] = noPrefix.trim().split` `.filter((v) => v);
 	command = (command || "").toLowerCase();
 	args = args || [];
-	let match = (prefix instanceof RegExp ? [[prefix.exec(m.body), prefix]]
+	let isPrefix = (prefix instanceof RegExp ? [[prefix.exec(m.body), prefix]]
           : Array.isArray(prefix) ? prefix.map((p) => {
               let re = p instanceof RegExp ? p
                 : new RegExp(str2Regex(p));
@@ -72,12 +72,12 @@ try {
 	}
 
 	if (cmd.before && typeof cmd.before === "function" && m.sender in global.db.users) {
-		if (await cmd.before(m, _arguments)) continue;
+		await cmd.before(m, _arguments);
 	}
 
 	// Execution code
     if (!isCommand) continue;
-	if (isPrefix = (match[0] || "")[0]) {
+	if ((isPrefix[0] || "")[0]) {
 		if (!user.registered && !(name == "register.js") && !(m.body.startsWith(prefix+"register") || m.body.startsWith(prefix+"reg"))) {
 			m.react("🚫");
 			m.reply(`Please register first to be able to access the bot!!
@@ -120,7 +120,7 @@ Example: ${prefix}register ${m.pushName || "userBE"}.18`, {font: true});
 			m.reply("This feature can only be used by group admins!!", {font: true});
 			continue;
 		}
-		if (cmd.isBot && m.fromMe) {
+		if (cmd.isBot && !m.fromMe) {
 			m.react("🚫");
 			m.reply("This feature is only for bot!!", {font: true});
 			continue;
@@ -135,13 +135,11 @@ Example: ${prefix}register ${m.pushName || "userBE"}.18`, {font: true});
 			m.reply(`*⭓─❖『 USAGE INFO 』❖─⭓*
 
 *Command*: ${prefix+cmd.command[0]} ${cmd.example.startsWith("https://") ? "[url]" : cmd.example.includes(".") ? cmd.example.replace(prefix+command, "").trim().split('.').map((part, index) => `args[${index}]`).join('.') : "[text]"}
-*Example*: ${prefix+cmd.command[0]} ${cmd.example}
-
-`, {font: true});
+*Example*: ${prefix+cmd.command[0]} ${cmd.example}`, {font: true});
 			continue;
 		}
 		try {
-			await m.react("⏳");
+			m.react("⏳");
 			await cmd.run(m, _arguments);
 			if (!m.isPremium) m.limit = m.limit || cmd.limit || false;
 			commandResult = true
@@ -149,22 +147,22 @@ Example: ${prefix}register ${m.pushName || "userBE"}.18`, {font: true});
 			m.limit = false;
 			commandResult = false;
               if (typeof e == "string") {
-                    m.reply(e, {font: true})
+                    m.reply(e, {font: true});
                 } else {
-				  let text = functions.format(e)
-                  if (e?.name) {
+				  let err = functions.format(e)
+                //   if (e?.name) {
                   m.report(`*🗂️ Name:* ${name}
 👤 *Sender:* ${m.sender}
 💬 *Chat:* https://wa.me/${m.sender.replace("@s.whatsapp.net","")}
-💻 *Command:* ${config.settings.prefix+command} ${m.text}
+💻 *Command:* ${prefix+command} ${text}
 📄 *Error Logs:*
-\`\`\`${text}\`\`\``.trim())
-    };
+\`\`\`${err}\`\`\``.trim());
+    // };
 m.reply(`> *<==== 404 ᴇʀʀᴏʀ ====>*
 
 _Problematic features please report the owner!_
 *Chat:* _https://wa.me/${config.number.owner}_
-\n> Or repeat a few more times!`)
+\n> Or repeat a few more times!`);
             	};
         console.log("Reply a command: ", e);
 			} break;
@@ -189,17 +187,19 @@ _Problematic features please report the owner!_
 		if (isCommand) {
 				stats.today += 1
 				stats.total += 1
-			if (commandResult == true) {
+			if (commandResult) {
 			  	stats.success += 1
 			} else {
 			  	stats.failed += 1
 			};
 		};
-		};
 	};
-	if (isCommand && commandResult) {
-		m.react("✅");
-	} else if (isCommand && commandResult == false) {
-		m.react("❌");
+};
+	if (isCommand) {
+		if (commandResult) {
+			m.react("✅");
+		} else {
+			m.react("❌");
+		};
 	};
 };

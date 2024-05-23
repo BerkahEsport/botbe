@@ -207,9 +207,15 @@ setInterval(async () => {
 	// write database bot
 	if (global.db) await database.save(global.db);
 	// write contacts and metadata
-	if (store.groupMetadata) fs.writeFileSync(pathMetadata, stable(store.groupMetadata, {space: 4}));
-	if (store.contacts) fs.writeFileSync(pathContacts, stable(store.contacts, {space: 4}));
+	if (store.groupMetadata) {
+		fs.writeFileSync(pathMetadata, stable(store.groupMetadata, {space: 4}));
+	}
+	if (store.contacts) {
+		fs.writeFileSync(pathContacts, stable(store.contacts, {space: 4}));
+	}
 	// write store
-	if (config.settings.store) store.writeToFile(pathStore);
+	if (config.settings.store) {
+		store.writeToFile(pathStore);
+	}
 
-}, 15 * 1000)
+}, 60 * 1000)

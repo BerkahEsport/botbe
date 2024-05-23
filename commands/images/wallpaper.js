@@ -1,7 +1,7 @@
 export default {
     name: "wallpaper",
     command: ["wallpaper", "wall"],
-    tags: "image",
+    tags: "images",
     desc: "Looking for images from the wallaperflare site...",
     customPrefix: "",
     example: "naruto",

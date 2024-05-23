@@ -1,7 +1,7 @@
 import { youtubedl, youtubedlv2 } from "@bochilteam/scraper";
 export default {
-    name: "ytmp3",
-    command: ["ytmp3"],
+    name: "yta",
+    command: ["yta"],
     tags: "download",
     desc: "Download file mp3 with link youtube...",
     customPrefix: "",
@@ -26,6 +26,6 @@ export default {
 *✣ Title:* ${title}
 *✣ Type:* mp3
 *✣ URL:* ${text || "-"}
-`.trim(), m, { asDocument: true, thumb: thumbnail, font: true})
+`.trim(), m, { thumb: thumbnail, font: true})
     }
 }

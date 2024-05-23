@@ -25,7 +25,6 @@ export default {
         axios,
         cheerio
     }) => {
-    let userBE = global.db.users[m.sender]
     let afkmode = functions.random([" ✿.｡.:* 𝒜𝐹𝒦 𝑀𝒪𝒟𝐸 *.:｡.✿", "╰☆☆ ₐFK MₒDₑ ☆☆╮", "░▒▓█ 【A】【F】【K】 【M】【O】【D】【E】 █▓▒░", "▁ ▂ ▄ ▅ ▆ ▇ █ 〜A∿F∿K∿ ∿M∿O∿D∿E〜 █ ▇ ▆ ▅ ▄ ▂ ▁", "【☆】★【☆】★【𝒜𝐹𝒦 𝑀𝒪𝒟𝐸】★【☆】★【☆】" , ".•♫•♬• Å⫶F̊⫶K̊⫶ M̊⫶O̊⫶D̊⫶E̊⫶ •♬•♫•.", "꧁༒☬ A̴F̴K̴ ̴M̴O̴D̴E̴ ☬༒꧂", "§.•¨°÷•..× AFK MODE ×,.•¨°÷•..§", "░▒▓█►─═  ᴀꜰᴋ ᴍᴏᴅᴇ ═─◄█▓▒░", " ✴  🎀  𝒜𝐹𝒦 𝑀❁𝒟𝐸  🎀  ✴", "꧁𓊈𒆜 ƎᗡOW ⋊Ⅎ∀ 𒆜𓊉꧂", "•´¯`•. A͎͍͐￫F͎͍͐￫K͎͍͐￫ M͎͍͐￫O͎͍͐￫D͎͍͐￫E͎͍͐￫ .•´¯`•"])
 let jids = [...new Set([...(m.mentions || []), ...(m.quoted ? [m.quoted.sender] : [])])]
 for (let jid of jids) {
@@ -42,15 +41,15 @@ for (let jid of jids) {
   ╰┅────★`.trim(), {font: true})
 }
 
-if (userBE.afk > -1 ) {
+if (user.afk > -1 ) {
     m.reply(`${ afkmode}
   
   ╭[ *★彡[YOU STOP AFK]彡★* ]✧
-  ┆ *Reasons* : ${userBE.afkReason ? userBE.afkReason : ""}
-  ┆ *During* : ${functions.runtime(+new Date() - userBE.afk)}
+  ┆ *Reasons* : ${user.afkReason ? user.afkReason : ""}
+  ┆ *During* : ${functions.runtime(+new Date() - user.afk)}
   ╰┅────★`.trim(), {font: true})
-    userBE.afk = -1
-    userBE.afkReason = ""
+    user.afk = -1
+    user.afkReason = ""
       }
   }
 }

@@ -23,6 +23,9 @@ export default {
         group: {
             ofc: "https://chat.whatsapp.com/JKdIWr5fj990Ux2oqTjTo5"
         },
+        text: {
+            ty: "Hopefully this is useful, don't forget to support and subscribe to the BERKAHESPORT.ID YouTube channel at _https://youtube.com/@berkahesportid_. Thank you 😊."
+        },
         Exif: { // For sticker
             packId: "https://moexti.jw.lt/",
             packName: `ʙᴇʀᴋᴀʜᴇꜱᴘᴏʀᴛ.ɪᴅ\nChatBOT: 6289649672623`,

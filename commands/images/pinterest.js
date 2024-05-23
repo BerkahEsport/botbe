@@ -2,8 +2,8 @@ import { pinterest } from "../../lib/js/pinterest.js";
 export default {
 	name: "pinterest",
 	command: ["pinterest", "pint"],
-    tags: "images",
-    desc: "Looking for 10 random images from Pinterest...",
+  tags: "images",
+  desc: "Looking for 10 random images from Pinterest...",
 	run: async(m, { sock, config, functions, text}) => {
     const data = await pinterest(text);
     let images = data.slice(0, 10);

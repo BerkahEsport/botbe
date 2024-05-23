@@ -5,7 +5,7 @@ tags: "main", //✅ tags for this name for your menu
 desc: "this description", //✅ description this command for your menu
 // this bottom config may not be filled in
 customPrefix: "", // using certain prefixes
-example: "", // example if using args/text (%prefix, %args, %command), %text
+example: "", // example if using args/text
 limit: false, // if you use a limit, it can be true or a number
 isOwner: false, // owner bot
 isPremium: true, // premium user

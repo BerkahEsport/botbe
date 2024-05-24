@@ -3,7 +3,7 @@ name: "",
 command: [""],
 tags: "",
 desc: "",
-customPrefix: ".",
+customPrefix: "",
 example: "",
 limit: false,
 isOwner: false,
@@ -26,6 +26,7 @@ run: async(m, {
     user,
     settings,
     stats,
+    isQuoted,
     isGroup,
     isAdmin,
     isBotAdmin,
@@ -38,6 +39,5 @@ run: async(m, {
     axios,
     cheerio
 }) => {
-m.reply("Yo")
 }
 }

@@ -10,7 +10,7 @@ export default {
     isPremium: false,
     isBotAdmin: false,
     isAdmin: false,
-    isGroup: false,
+    isGroup: true,
     isPrivate: false,
     run: async(m, {
         prefix,

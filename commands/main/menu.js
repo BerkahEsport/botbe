@@ -9,12 +9,26 @@ if (args.length >= 1) {
             function findCommand(text) {
                 const nama = text.toLowerCase();
                 const commandArray = Object.values(commands);
-                let cmd = commandArray.find(cmd => cmd.name.toLowerCase() === nama || (cmd.tags && cmd.tags.toLowerCase() === nama));
+                let cmd = commandArray.find(cmd => {
+                    if (Array.isArray(cmd.name)) {
+                        if (cmd.name.some(name => name.toLowerCase() === nama)) {
+                            return true;
+                        }
+                    } else {
+                        if (cmd.name.toLowerCase() === nama) {
+                            return true;
+                        }
+                    }
+                    if (cmd.tags && cmd.tags.toLowerCase() === nama) {
+                        return true;
+                    }
+                    return false;
+                });
                 return cmd;
-              }
+            }
               const cmd = findCommand(text);
             if (!cmd) throw ("Command Not Found!")
-            if (cmd.name) data.push(`*- Command :* ${cmd.name}`)
+            if (cmd.name) data.push(`*- Command :* ${Array.isArray(cmd.name) ? cmd.name.map((part, index) => `${part}`).join(', ') : cmd.name}`)
             if (cmd.tags) data.push(`*- Tags :* ${cmd.tags}`)
             if (cmd.desc) data.push(`*- Desc :* ${cmd.desc.replace(/%prefix/g, prefix).replace(/%command/g, cmd.name)}`)
             if (cmd.example) data.push(`*- Exm :* ${cmd.example.replace(/%prefix/g, prefix).replace(/%command/g, command)}`)

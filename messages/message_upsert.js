@@ -134,8 +134,8 @@ Example: ${prefix}register ${m.pushName || "userBE"}.18`, {font: true});
 			m.react("❓");
 			m.reply(`*⭓─❖『 USAGE INFO 』❖─⭓*
 
-*Command*: ${prefix+cmd.command[0]} ${cmd.example.startsWith("https://") ? "[url]" : cmd.example.includes(".") ? cmd.example.replace(prefix+command, "").trim().split('.').map((part, index) => `args[${index}]`).join('.') : "[text]"}
-*Example*: ${prefix+cmd.command[0]} ${cmd.example}`, {font: true});
+*Command*: ${prefix+cmd.command[0]} ${cmd.example.startsWith("https://") ? "[url]" : cmd.example.includes(".") || cmd.example.includes("args") ? cmd.example.replace(prefix+command, "").trim().split('.').map((part, index) => `args[${index}]`).join('.') : "[text]"}
+*Example*: ${prefix+cmd.command[0]} ${cmd.example.includes("args") ? cmd.example.replace("args", "") : cmd.example}`, {font: true});
 			continue;
 		}
 		try {

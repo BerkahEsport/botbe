@@ -2,7 +2,7 @@ import axios from "axios";
 import cheerio from "cheerio";
 export default async function message_upsert(sock, m, store, commands, config, functions) {
 	// Setup for DB
-	await (await import("../lib/database.js")).default(sock, m, config, functions);
+	await (await import(`../lib/database.js?update=${Date.now()}`)).default(sock, m, config, functions);
 	m.limit = false;
 	let user = global.db.users[m.sender];
   	let settings = global.db.settings[sock.user.jid || config.number.bot+"@s.whatsapp.net"];

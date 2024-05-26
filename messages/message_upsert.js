@@ -150,33 +150,34 @@ Example: ${prefix}register ${m.pushName || "userBE"}.18`, {font: true});
               if (typeof e == "string") {
                     m.reply(e, {font: true});
                 } else {
-				  let err = functions.format(e)
-                //   if (e?.name) {
-                  m.report(`*🗂️ Name:* ${name}
+                  	if (e.name) {
+let err = functions.format(e)
+m.report(`*🗂️ Name:* ${name}
 👤 *Sender:* ${m.sender}
 💬 *Chat:* https://wa.me/${m.sender.replace("@s.whatsapp.net","")}
 💻 *Command:* ${prefix+command} ${text}
 📄 *Error Logs:*
 \`\`\`${err}\`\`\``.trim());
-    // };
+    };
+
 m.reply(`> *<==== 404 ᴇʀʀᴏʀ ====>*
 
 _Problematic features please report the owner!_
 *Chat:* _https://wa.me/${config.number.owner}_
 \n> Or repeat a few more times!`);
             	};
-        console.log("Reply a command: ", e);
+        		m.log("Reply a command: ", e);
 			} break;
 		} continue;
 	};
 } catch(e) {
 		m.report(e);
-		console.log("Error a messages.upsert: ", e);
+		m.log("Error a messages.upsert: ", e);
 } finally {
 		try {
 			await (await import(`../lib/print.js?v=${Date.now()}`)).default(sock, m, config, functions);
 			} catch (e) {
-				console.log("Error a print: ", e);
+				m.log("Error a print: ", e);
 			};
 		if (user) { 
 			if (m.isUser) {

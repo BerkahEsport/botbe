@@ -146,27 +146,28 @@ Example: ${prefix}register ${m.pushName || "userBE"}.18`, {font: true});
 			commandResult = true
 		} catch(e) {
 			m.limit = false;
-			commandResult = false;
+			if (e) {
+			m.log(e)
               if (typeof e == "string") {
                     m.reply(e, {font: true});
                 } else {
-                  	if (e.name) {
-let err = functions.format(e)
-m.report(`*🗂️ Name:* ${name}
+					commandResult = false;
+                  if (e.name) {
+					let err = functions.format(e)
+                  	m.report(`*🗂️ Name:* ${fileName}
 👤 *Sender:* ${m.sender}
 💬 *Chat:* https://wa.me/${m.sender.replace("@s.whatsapp.net","")}
 💻 *Command:* ${prefix+command} ${text}
 📄 *Error Logs:*
 \`\`\`${err}\`\`\``.trim());
     };
-
 m.reply(`> *<==== 404 ᴇʀʀᴏʀ ====>*
 
 _Problematic features please report the owner!_
 *Chat:* _https://wa.me/${config.number.owner}_
 \n> Or repeat a few more times!`);
-            	};
-        		m.log("Reply a command: ", e);
+            		};
+				};
 			} break;
 		} continue;
 	};

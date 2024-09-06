@@ -8,7 +8,7 @@ I hope it's useful for you and help give this script a star. Thank you.
 Continued progress on creating button and message list features!
 
 # <===== CREDITS =====>
-Author: @moexti
+Author: @berkahesport.id
 
 Github: @berkahesport
 

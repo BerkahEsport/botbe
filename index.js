@@ -65,59 +65,59 @@ async function loadDatabase() {
 	};
 }
 
-// <===== Connect to Whatsapp =====>
-async function connectToWhatsApp() {
-	const DeviceLink = async() => {
-		const choice = await question("Please type the number for the type of device link you want:\n[1] Scan QR in Terminal\n[2] Send code to Pairing\nYour choice: ");
-		if (choice == 1) {
-			rl.close();
-			return true;
-		} else if (choice == 2) {
-			return false;
-		} else {
-			console.log("Invalid choice, please try again!\n\n");
-			return await DeviceLink();
+const DeviceLink = async() => {
+	const choice = await question("Please type the number for the type of device link you want:\n[1] Scan QR in Terminal\n[2] Send code to Pairing\nYour choice: ");
+	if (choice == 1) {
+		rl.close();
+		return true;
+	} else if (choice == 2) {
+		return false;
+	} else {
+		console.log("Invalid choice, please try again!\n\n");
+		return await DeviceLink();
+	}
+}
+if (!state.creds.registered) {
+	useQR = await DeviceLink();
+} else {
+	console.log("Loading device link...");
+	rl.close();
+};
+
+const handlePhoneNumberPairing = async (sock, functions, PHONENUMBER_MCC) => {
+	let phoneNumber;
+	if (!!config.PAIRING_NUMBER && !sock.authState.creds.registered) {
+		phoneNumber = config.PAIRING_NUMBER.replace(/[^0-9]/g, '');
+		if (!Object.keys(PHONENUMBER_MCC).some(v => phoneNumber.startsWith(v))) {
+		console.log("Start with your country's WhatsApp code, Example: 62xxx");
+		phoneNumber = await question("Please type your WhatsApp number: ");
+		phoneNumber = phoneNumber.replace(/[^0-9]/g, "");
+		}
+	} else {
+		phoneNumber = await question("Please type your WhatsApp number: ");
+		phoneNumber = phoneNumber.replace(/[^0-9]/g, "");
+		if (!Object.keys(PHONENUMBER_MCC).some(v => phoneNumber.startsWith(v))) {
+		console.log("Start with your country's WhatsApp code, Example: 62xxx");
+		phoneNumber = await question("Please type your WhatsApp number: ");
+		phoneNumber = phoneNumber.replace(/[^0-9]/g, "");
 		}
 	}
-	if (!state.creds.registered) {
-        useQR = await DeviceLink();
-    } else {
-        console.log("Loading device link...");
-		rl.close();
-    };
+	await functions.delay(3000);
+	let code;
+	try {
+		code = await sock.requestPairingCode(phoneNumber);
+	} catch (error) {
+		console.error("Error requesting pairing code: ", error);
+		return;
+	}
+	console.log("Pairing Code: " + `\x1b[32m${code?.match(/.{1,4}/g)?.join("-") || code}\x1b[39m`);
+	rl.close();
+};
 
-	const handlePhoneNumberPairing = async (sock, functions, PHONENUMBER_MCC) => {
-		let phoneNumber;
-		if (!!config.PAIRING_NUMBER && !sock.authState.creds.registered) {
-			phoneNumber = config.PAIRING_NUMBER.replace(/[^0-9]/g, '');
-			if (!Object.keys(PHONENUMBER_MCC).some(v => phoneNumber.startsWith(v))) {
-			console.log("Start with your country's WhatsApp code, Example: 62xxx");
-			phoneNumber = await question("Please type your WhatsApp number: ");
-			phoneNumber = phoneNumber.replace(/[^0-9]/g, "");
-			}
-		} else {
-			phoneNumber = await question("Please type your WhatsApp number: ");
-			phoneNumber = phoneNumber.replace(/[^0-9]/g, "");
-			if (!Object.keys(PHONENUMBER_MCC).some(v => phoneNumber.startsWith(v))) {
-			console.log("Start with your country's WhatsApp code, Example: 62xxx");
-			phoneNumber = await question("Please type your WhatsApp number: ");
-			phoneNumber = phoneNumber.replace(/[^0-9]/g, "");
-			}
-		}
-		await functions.delay(3000);
-		let code;
-		try {
-			code = await sock.requestPairingCode(phoneNumber);
-		} catch (error) {
-			console.error("Error requesting pairing code: ", error);
-			return;
-		}
-		console.log("Pairing Code: " + `\x1b[32m${code?.match(/.{1,4}/g)?.join("-") || code}\x1b[39m`);
-		rl.close();
-	};
-
+// <===== Connect to Whatsapp =====>
+async function connectToWhatsApp() {
 	let sock = makeWASocket({
-		version,
+		version: [2, 3000, 1015901307],
 		printQRInTerminal: useQR,
 		logger,
 		auth: {

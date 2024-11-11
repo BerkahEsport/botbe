@@ -14,36 +14,41 @@
 <============== CREDITS ==============>*/
 process.on("uncaughtException", console.error);
 process.on("unhandledRejection", console.error);
-import Pino from "pino";
 import path from "path";
 import fs from "node:fs";
 import chalk from "chalk";
-import stable from "json-stable-stringify";
-import { Localdb } from "./lib/database.js";
+
+// <===== Config COMMANDS =====>
 import { fullCommands } from "./lib/commands.js";
-import { makeWASocket, useMultiFileAuthState, makeCacheableSignalKeyStore, makeInMemoryStore, jidNormalizedUser, fetchLatestBaileysVersion, PHONENUMBER_MCC } from "baileys";
+let commandsFolder = path.join(functions._dirname(import.meta.url, true), "commands");
+let commands = await fullCommands(commandsFolder).catch(e => console.error(`Failed to watch commands: ${e}`));
+
+// <===== Config Choice =====>
 import readline from "readline";
 const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
 const question = (text) => new Promise((resolve) => rl.question(text, resolve));
+
+// <===== Config Setup =====>
 const config = (await import("./config.js")).default;
 const functions = (await import("./lib/functions.js")).default;
+
+// <===== Config Whatsapp =====>
+import Pino from "pino";
+import { makeWASocket, useMultiFileAuthState, makeCacheableSignalKeyStore, makeInMemoryStore, jidNormalizedUser, fetchLatestBaileysVersion, PHONENUMBER_MCC } from "baileys";
 const logger = Pino({ level: "silent" }).child({ level: "silent" });
 const { state, saveCreds } = await useMultiFileAuthState(config.settings.session);
 const { version } = await fetchLatestBaileysVersion();
 let store = makeInMemoryStore({logger});
 let useQR = true;
 
-
 // <===== Config STORE =====>
+import stable from "json-stable-stringify";
+import { Localdb } from "./lib/database.js";
 const database = new Localdb(global.database);
 const pathStore = "./lib/json/store.json"
 const pathContacts = "./lib/json/contacts.json";
 const pathMetadata = "./lib/json/groupMetadata.json";
 store.readFromFile(pathStore);
-
-// <===== Config COMMANDS =====>
-let commandsFolder = path.join(functions._dirname(import.meta.url, true), "commands");
-let commands = await fullCommands(commandsFolder).catch(e => console.error(`Failed to watch commands: ${e}`));
 
 // <===== Config DATABASE =====>
 async function loadDatabase() {

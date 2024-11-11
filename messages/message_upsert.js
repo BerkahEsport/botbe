@@ -7,7 +7,7 @@ export default async function message_upsert(sock, m, store, commands, config, f
 	await (await import(`../lib/database.js?update=${Date.now()}`)).default(sock, m, config, functions);
 	m.limit = false;
 	let user = global.db.users[m.sender];
-  	let settings = global.db.settings[sock.user.jid || config.number.bot+"@s.whatsapp.net"];
+	let settings = global.db.settings[sock.user.jid || config.number.bot+"@s.whatsapp.net"];
 	let stats = global.db.stats;
 	let isCommand, commandResult = undefined;
 try {
@@ -26,13 +26,13 @@ try {
 	command = (command || "").toLowerCase();
 	args = args || [];
 	let isPrefix = (prefix instanceof RegExp ? [[prefix.exec(m.body), prefix]]
-          : Array.isArray(prefix) ? prefix.map((p) => {
-              let re = p instanceof RegExp ? p
-                : new RegExp(str2Regex(p));
-              	return [re.exec(m.body), re];
-            })
-            : typeof prefix === "string" ? [[new RegExp(str2Regex(prefix)).exec(m.body), new RegExp(str2Regex(prefix)),],]
-            : [[[], new RegExp()]]).find((p) => p[1]);
+		: Array.isArray(prefix) ? prefix.map((p) => {
+			let re = p instanceof RegExp ? p
+				: new RegExp(str2Regex(p));
+				return [re.exec(m.body), re];
+			})
+			: typeof prefix === "string" ? [[new RegExp(str2Regex(prefix)).exec(m.body), new RegExp(str2Regex(prefix)),],]
+			: [[[], new RegExp()]]).find((p) => p[1]);
 
 	if (cmd.customPrefix === "" || !cmd.customPrefix) {
 		isCommand = cmd.command instanceof RegExp ? cmd.command.test(command)
@@ -79,7 +79,7 @@ try {
 	}
 
 	// Execution code
-    if (!isCommand) continue;
+	if (!isCommand) continue;
 	if ((isPrefix[0] || "")[0]) {
 		if (!user.registered && !(name == "register.js") && !(m.body.startsWith(prefix+"register") || m.body.startsWith(prefix+"reg"))) {
 			m.react("🚫");
@@ -150,25 +150,25 @@ Example: ${prefix}register ${m.pushName || "userBE"}.18`, {font: true});
 			m.limit = false;
 			if (e) {
 			m.log(e)
-              if (typeof e == "string") {
-                    m.reply(e, {font: true});
-                } else {
+			if (typeof e == "string") {
+					m.reply(e, {font: true});
+				} else {
 					commandResult = false;
-                  if (e.name) {
+				if (e.name) {
 					let err = functions.format(e)
-                  	m.report(`*🗂️ Name:* ${fileName}
+					m.report(`*🗂️ Name:* ${fileName}
 👤 *Sender:* ${m.sender}
 💬 *Chat:* https://wa.me/${m.sender.replace("@s.whatsapp.net","")}
 💻 *Command:* ${prefix+command} ${text}
 📄 *Error Logs:*
 \`\`\`${err}\`\`\``.trim());
-    };
+	};
 m.reply(`> *<==== 404 ᴇʀʀᴏʀ ====>*
 
 _Problematic features please report the owner!_
 *Chat:* _https://wa.me/${config.number.owner}_
 \n> Or repeat a few more times!`);
-            		};
+					};
 				};
 			} break;
 		} continue;
@@ -188,14 +188,14 @@ _Problematic features please report the owner!_
 					user.limit -= +m.limit
 					m.reply(+m.limit == 1 ? `${+m.limit} limit are used.` : `${+m.limit} limits are used.`, {font: true});
 				};
-		  	};
+			};
 		if (isCommand) {
 				stats.today += 1
 				stats.total += 1
 			if (commandResult) {
-			  	stats.success += 1
+				stats.success += 1
 			} else {
-			  	stats.failed += 1
+				stats.failed += 1
 			};
 		};
 	};

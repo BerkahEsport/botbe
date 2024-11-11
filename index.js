@@ -167,7 +167,7 @@ async function connectToWhatsApp() {
 			if (!fs.existsSync("./tmp")) fs.mkdirSync("./tmp")
 			sock.sendMessage(config.number.owner + "@s.whatsapp.net", {
 				text: `${sock?.user?.name || "Bot"} has Connected...`,
-			 }, { ephemeralExpiration: 86400})
+			}, { ephemeralExpiration: 86400})
 		}
 	})
 	// contacts load
@@ -221,21 +221,18 @@ async function connectToWhatsApp() {
 					store.groupMetadata[id] = {
 						...(store.groupMetadata[id] || {}),
 						...(update || {})
-					};
+						};
+					}
 				}
-			}
-			// config = await (await import(`./config.js?update=${Date.now()}`)).default
-			// functions = await (await import(`./lib/functions.js?update=${Date.now()}`)).default;
-			// await (await import(`./messages/group_update.js?v=${Date.now()}`)).default(sock, updates, config, functions);
-		} catch (e) {
+			} catch (e) {
 			console.log(chalk.bgRed(chalk.yellow(`Error groups update: ${e}`)))
 		}
 	});
 	// messages response
 	sock.ev.on("messages.upsert", async ({ type, messages }) => {
 		await (await import(`./lib/simplification.js?update=${Date.now()}`)).default(sock, store, config, functions)
-		config = await (await import(`./config.js?update=${Date.now()}`)).default;
-		functions = await (await import(`./lib/functions.js?update=${Date.now()}`)).default;// nambah semua metadata ke store
+		const config = await (await import(`./config.js?update=${Date.now()}`)).default;
+		const functions = await (await import(`./lib/functions.js?update=${Date.now()}`)).default;// nambah semua metadata ke store
 		if (store.groupMetadata && Object.keys(store.groupMetadata).length === 0) store.groupMetadata = await sock.groupFetchAllParticipating();
 		if (type === "notify") {
 			let msg = messages[0];
@@ -251,11 +248,11 @@ async function connectToWhatsApp() {
 	})
 
 	// group participants update
-	// sock.ev.on("group-participants.update", async (message) => {
-	// 	config = await (await import(`./config.js?update=${Date.now()}`)).default
-	// 	functions = await (await import(`./lib/functions.js?update=${Date.now()}`)).default;
-	// 	await (await import(`./messages/group_participants.js?v=${Date.now()}`)).default(sock, message, config, functions)
-	//  })
+	sock.ev.on("group-participants.update", async (message) => {
+		const config = await (await import(`./config.js?update=${Date.now()}`)).default
+		const functions = await (await import(`./lib/functions.js?update=${Date.now()}`)).default;
+		await (await import(`./messages/group_participants.js?v=${Date.now()}`)).default(sock, message, config, functions)
+	 })
 }
 // For loading database
 loadDatabase()

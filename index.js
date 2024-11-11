@@ -14,9 +14,16 @@
 <============== CREDITS ==============>*/
 process.on("uncaughtException", console.error);
 process.on("unhandledRejection", console.error);
+
+// <===== Config Build =====>
 import path from "path";
 import fs from "node:fs";
 import chalk from "chalk";
+
+// <===== Config Setup =====>
+const config = (await import("./config.js")).default;
+const functions = (await import("./lib/functions.js")).default;
+
 
 // <===== Config COMMANDS =====>
 import { fullCommands } from "./lib/commands.js";
@@ -27,10 +34,6 @@ let commands = await fullCommands(commandsFolder).catch(e => console.error(`Fail
 import readline from "readline";
 const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
 const question = (text) => new Promise((resolve) => rl.question(text, resolve));
-
-// <===== Config Setup =====>
-const config = (await import("./config.js")).default;
-const functions = (await import("./lib/functions.js")).default;
 
 // <===== Config Whatsapp =====>
 import Pino from "pino";

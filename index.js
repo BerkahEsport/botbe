@@ -21,12 +21,18 @@ import chalk from "chalk";
 import stable from "json-stable-stringify";
 import { Localdb } from "./lib/database.js";
 import { fullCommands } from "./lib/commands.js";
-import { makeWASocket, useMultiFileAuthState, makeCacheableSignalKeyStore, makeInMemoryStore, jidNormalizedUser, PHONENUMBER_MCC } from "baileys";
-let config = (await import("./config.js")).default;
-let functions = (await import("./lib/functions.js")).default;
+import { makeWASocket, useMultiFileAuthState, makeCacheableSignalKeyStore, makeInMemoryStore, jidNormalizedUser, fetchLatestBaileysVersion, PHONENUMBER_MCC } from "baileys";
+import readline from "readline";
+const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+const question = (text) => new Promise((resolve) => rl.question(text, resolve));
+const config = (await import("./config.js")).default;
+const functions = (await import("./lib/functions.js")).default;
 const logger = Pino({ level: "silent" }).child({ level: "silent" });
 const { state, saveCreds } = await useMultiFileAuthState(config.settings.session);
-let store = makeInMemoryStore({logger})
+const { version } = await fetchLatestBaileysVersion();
+let store = makeInMemoryStore({logger});
+let useQR = true;
+
 
 // <===== Config STORE =====>
 const database = new Localdb(global.database);
@@ -52,9 +58,57 @@ async function loadDatabase() {
 
 // <===== Connect to Whatsapp =====>
 async function connectToWhatsApp() {
+	const DeviceLink = async() => {
+		const choice = await question("Please type the number for the type of device link you want:\n[1] Scan QR in Terminal\n[2] Send code to Pairing\nYour choice: ");
+		if (choice == 1) {
+			rl.close();
+			return true;
+		} else if (choice == 2) {
+			return false;
+		} else {
+			console.log("Invalid choice, please try again!\n\n");
+			return await DeviceLink();
+		}
+	}
+	if (!state.creds.registered) {
+        useQR = await DeviceLink();
+    } else {
+        console.log("Loading device link...");
+    };
+
+	const handlePhoneNumberPairing = async (sock, functions, PHONENUMBER_MCC) => {
+		let phoneNumber;
+		if (!!config.PAIRING_NUMBER && !sock.authState.creds.registered) {
+			phoneNumber = config.PAIRING_NUMBER.replace(/[^0-9]/g, '');
+			if (!Object.keys(PHONENUMBER_MCC).some(v => phoneNumber.startsWith(v))) {
+			console.log("Start with your country's WhatsApp code, Example: 62xxx");
+			phoneNumber = await question("Please type your WhatsApp number: ");
+			phoneNumber = phoneNumber.replace(/[^0-9]/g, "");
+			}
+		} else {
+			phoneNumber = await question("Please type your WhatsApp number: ");
+			phoneNumber = phoneNumber.replace(/[^0-9]/g, "");
+			if (!Object.keys(PHONENUMBER_MCC).some(v => phoneNumber.startsWith(v))) {
+			console.log("Start with your country's WhatsApp code, Example: 62xxx");
+			phoneNumber = await question("Please type your WhatsApp number: ");
+			phoneNumber = phoneNumber.replace(/[^0-9]/g, "");
+			}
+		}
+		await functions.delay(3000);
+		let code;
+		try {
+			code = await sock.requestPairingCode(phoneNumber);
+		} catch (error) {
+			console.error("Error requesting pairing code: ", error);
+			return;
+		}
+		console.log("Pairing Code: " + `\x1b[32m${code?.match(/.{1,4}/g)?.join("-") || code}\x1b[39m`);
+		rl.close();
+	};
+
 	let sock = makeWASocket({
-		version: [2, 2413, 1],
-		printQRInTerminal: !config.number.bot,
+		version,
+		printQRInTerminal: useQR,
 		logger,
 		auth: {
 			creds: state.creds,
@@ -84,6 +138,10 @@ async function connectToWhatsApp() {
 			return !!msg.syncType;
 		}
 	})
+    if (!useQR) {
+        await handlePhoneNumberPairing(sock, functions, PHONENUMBER_MCC);
+    } else rl.close();
+
 
 	store.bind(sock.ev)
 	if (config.number.bot && !sock.authState.creds.registered) {
@@ -165,9 +223,9 @@ async function connectToWhatsApp() {
 					};
 				}
 			}
-			config = await (await import(`./config.js?update=${Date.now()}`)).default
-			functions = await (await import(`./lib/functions.js?update=${Date.now()}`)).default;
-			await (await import(`./messages/group_update.js?v=${Date.now()}`)).default(sock, updates, config, functions);
+			// config = await (await import(`./config.js?update=${Date.now()}`)).default
+			// functions = await (await import(`./lib/functions.js?update=${Date.now()}`)).default;
+			// await (await import(`./messages/group_update.js?v=${Date.now()}`)).default(sock, updates, config, functions);
 		} catch (e) {
 			console.log(chalk.bgRed(chalk.yellow(`Error groups update: ${e}`)))
 		}
@@ -180,10 +238,10 @@ async function connectToWhatsApp() {
 		if (store.groupMetadata && Object.keys(store.groupMetadata).length === 0) store.groupMetadata = await sock.groupFetchAllParticipating();
 		if (type === "notify") {
 			let msg = messages[0];
-			let type = Object.keys(msg.message)[0];
-			if (type === "protocolMessage") return;
-			if (msg.key.remoteJid === "status@broadcast") return;
 			if (msg.message) {
+				let type = Object.keys(msg.message)[0];
+				if (type === "protocolMessage") return;
+				if (msg.key.remoteJid === "status@broadcast") return;
 				msg.message = msg.message?.ephemeralMessage ? msg.message.ephemeralMessage.message : msg.message;
 				let m = await (await import(`./lib/serialize.js?v=${Date.now()}`)).default(sock, msg, store, config, functions);
 				await (await import(`./messages/message_upsert.js?v=${Date.now()}`)).default(sock, m, store, commands, config, functions);
@@ -192,11 +250,11 @@ async function connectToWhatsApp() {
 	})
 
 	// group participants update
-	sock.ev.on("group-participants.update", async (message) => {
-		config = await (await import(`./config.js?update=${Date.now()}`)).default
-		functions = await (await import(`./lib/functions.js?update=${Date.now()}`)).default;
-		await (await import(`./messages/group_participants.js?v=${Date.now()}`)).default(sock, message, config, functions)
-	 })
+	// sock.ev.on("group-participants.update", async (message) => {
+	// 	config = await (await import(`./config.js?update=${Date.now()}`)).default
+	// 	functions = await (await import(`./lib/functions.js?update=${Date.now()}`)).default;
+	// 	await (await import(`./messages/group_participants.js?v=${Date.now()}`)).default(sock, message, config, functions)
+	//  })
 }
 // For loading database
 loadDatabase()

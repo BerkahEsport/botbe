@@ -17,8 +17,7 @@ export default {
         },
         number: {
             owner: "62895375950107",
-            bot: "", // 628 If you want to link via pairing, please fill in your bot number here, if it doesn't exist then use the QR Code
-            mods: ["62895375950107", "6289654279897"]
+            mods: ["62895375950107"]
         },
         group: {
             ofc: "https://chat.whatsapp.com/JKdIWr5fj990Ux2oqTjTo5"

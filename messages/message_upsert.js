@@ -1,6 +1,8 @@
 import axios from "axios";
 import cheerio from "cheerio";
 export default async function message_upsert(sock, m, store, commands, config, functions) {
+	// Self mode on if you want.
+	// if (m.sender.split("@")[0] === config.number.owner) return;
 	// Setup for DB
 	await (await import(`../lib/database.js?update=${Date.now()}`)).default(sock, m, config, functions);
 	m.limit = false;

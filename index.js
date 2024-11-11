@@ -29,6 +29,7 @@ const functions = (await import("./lib/functions.js")).default;
 import { fullCommands } from "./lib/commands.js";
 let commandsFolder = path.join(functions._dirname(import.meta.url, true), "commands");
 let commands = await fullCommands(commandsFolder).catch(e => console.error(`Failed to watch commands: ${e}`));
+await delay(5000);
 
 // <===== Config Choice =====>
 import readline from "readline";
@@ -37,7 +38,7 @@ const question = (text) => new Promise((resolve) => rl.question(text, resolve));
 
 // <===== Config Whatsapp =====>
 import Pino from "pino";
-import { makeWASocket, useMultiFileAuthState, makeCacheableSignalKeyStore, makeInMemoryStore, jidNormalizedUser, fetchLatestBaileysVersion, PHONENUMBER_MCC } from "baileys";
+import { makeWASocket, useMultiFileAuthState, makeCacheableSignalKeyStore, makeInMemoryStore, jidNormalizedUser, fetchLatestBaileysVersion, PHONENUMBER_MCC, delay } from "baileys";
 const logger = Pino({ level: "silent" }).child({ level: "silent" });
 const { state, saveCreds } = await useMultiFileAuthState(config.settings.session);
 const { version } = await fetchLatestBaileysVersion();

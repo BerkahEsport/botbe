@@ -29,7 +29,7 @@ const functions = (await import("./lib/functions.js")).default;
 import { fullCommands } from "./lib/commands.js";
 let commandsFolder = path.join(functions._dirname(import.meta.url, true), "commands");
 let commands = await fullCommands(commandsFolder).catch(e => console.error(`Failed to watch commands: ${e}`));
-await delay(5000);
+await functions.delay(3000);
 
 // <===== Config Choice =====>
 import readline from "readline";
@@ -38,7 +38,7 @@ const question = (text) => new Promise((resolve) => rl.question(text, resolve));
 
 // <===== Config Whatsapp =====>
 import Pino from "pino";
-import { makeWASocket, useMultiFileAuthState, makeCacheableSignalKeyStore, makeInMemoryStore, jidNormalizedUser, fetchLatestBaileysVersion, PHONENUMBER_MCC, delay } from "baileys";
+import { makeWASocket, useMultiFileAuthState, makeCacheableSignalKeyStore, makeInMemoryStore, jidNormalizedUser, fetchLatestBaileysVersion, PHONENUMBER_MCC} from "baileys";
 const logger = Pino({ level: "silent" }).child({ level: "silent" });
 const { state, saveCreds } = await useMultiFileAuthState(config.settings.session);
 const { version } = await fetchLatestBaileysVersion();
@@ -83,6 +83,7 @@ async function connectToWhatsApp() {
         useQR = await DeviceLink();
     } else {
         console.log("Loading device link...");
+		rl.close();
     };
 
 	const handlePhoneNumberPairing = async (sock, functions, PHONENUMBER_MCC) => {
@@ -151,25 +152,16 @@ async function connectToWhatsApp() {
         await handlePhoneNumberPairing(sock, functions, PHONENUMBER_MCC);
     } else rl.close();
 
-
-	store.bind(sock.ev)
-	if (config.number.bot && !sock.authState.creds.registered) {
-        let phoneNumber = config.number.bot.replace(/[^0-9]/g, '')
-        if (!Object.keys(PHONENUMBER_MCC).some(v => phoneNumber.startsWith(v))) throw "Start with your country's WhatsApp code, Example : 62xxx";
-        await functions.delay(5000);
-        let code = await sock.requestPairingCode(phoneNumber);
-        console.log("Pairing Code : " + `\x1b[32m${code?.match(/.{1,4}/g)?.join("-") || code}\x1b[39m`);
-    }
+	store.bind(sock.ev);
 	sock.ev.on("creds.update", saveCreds);
-	sock.ev.on("connection.update", async ({ qr, connection, lastDisconnect }) => {
-		if (qr) console.log("Scan this QR Code!");
+	sock.ev.on("connection.update", async ({ connection, lastDisconnect }) => {
 		if (connection === "close") {
 			if (lastDisconnect?.error?.output?.statusCode !== 401) {
-				connectToWhatsApp();
+				await connectToWhatsApp();
 			} else {
 				console.log("Session is corrupted! Write a new session...");
 				fs.rmSync(config.settings.session, { recursive: true });
-				connectToWhatsApp();
+				await connectToWhatsApp();
 			}
 		} else if (connection === "open") {
 			if (!fs.existsSync("./tmp")) fs.mkdirSync("./tmp")

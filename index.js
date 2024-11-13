@@ -73,10 +73,6 @@ const handlePhoneNumberPairing = async (sock, functions) => {
 		console.log(chalk.yellow("Waiting for generate QR Code..."));
 		return true
 	} else if (choice == 2) {
-	if (sock == false) {
-		rl.close();
-		return false;
-	}
 	let phoneNumber;
 	if (!sock.authState.creds.registered) {
 			phoneNumber = await question("Please type your WhatsApp number: ");
@@ -148,43 +144,40 @@ async function connectToWhatsApp() {
 			let reason = lastDisconnect?.error?.output?.statusCode;
 			switch (reason) {
                 case 408:
-                    console.log(chalk.red("[+] Connection timed out. restarting..."))
+                    console.log(chalk.red("[+] Connection timed out. restarting..."));
                     await connectToWhatsApp();
-                    break
+                    break;
                 case 503:
-                    console.log(chalk.red("[+] Unavailable service. restarting..."))
+                    console.log(chalk.red("[+] Unavailable service. restarting..."));
                     await connectToWhatsApp();
-                    break
+                    break;
                 case 428:
-                    console.log(chalk.cyan("[+] Connection closed, restarting..."))
+                    console.log(chalk.cyan("[+] Connection closed, restarting..."));
                     await connectToWhatsApp();
-                    break
+                    break;
                 case 515:
-                    console.log(chalk.cyan("[+] Need to restart, restarting..."))
+                    console.log(chalk.cyan("[+] Need to restart, restarting..."));
                     await connectToWhatsApp();
-                    break
+                    break;
                 case 401:
                     try {
-                        console.log(chalk.cyan("[+] Session Logged Out.. Recreate session..."))
-                        if (setting.typedb === "mongo") {
-                            await clearAll()
-                        } else {
-                            fs.rmSync(".session", { recursive: true, force: true })
-                        }
-                        console.log(chalk.green("[+] Session removed!!"))
-                        process.send("reset")
+                        console.log(chalk.cyan("[+] Session Logged Out.. Recreate session..."));
+                        fs.rmSync(config.settings.session, { recursive: true });
+						if (!fs.existsSync(config.settings.session)) fs.mkdirSync(config.settings.session);
+						await connectToWhatsApp();
+                        console.log(chalk.green("[+] Session removed!!"));
                     } catch {
-                        console.log(chalk.cyan("[+] Session not found!!"))
+                        console.log(chalk.cyan("[+] Session not found!!"));
+						await connectToWhatsApp();
                     }
                     break
 
                 case 403:
-						console.log(chalk.red(`[+] Your WhatsApp Has Been Baned :D`))
+						console.log(chalk.red(`[+] Your WhatsApp Has Been Baned :D`));
 						fs.rmSync(config.settings.session, { recursive: true });
 						if (!fs.existsSync(config.settings.session)) fs.mkdirSync(config.settings.session);
 						await connectToWhatsApp();
-                    break
-
+                    break;
                 case 405:
                     try {
                         console.log("[+] Session Not Logged In.. Recreate session...");
@@ -192,14 +185,14 @@ async function connectToWhatsApp() {
 						if (!fs.existsSync(config.settings.session)) fs.mkdirSync(config.settings.session);
 						await connectToWhatsApp();
                     } catch {
-                        console.log(chalk.cyan("[+] Session not found!!"))
+                        console.log(chalk.cyan("[+] Session not found!!"));
                     }
                     break
                 default:
 
             }
 		} else if (connection === "open") {
-			if (!fs.existsSync("./tmp")) fs.mkdirSync("./tmp")
+			if (!fs.existsSync("./tmp")) fs.mkdirSync("./tmp");
 			sock.sendMessage(config.number.owner + "@s.whatsapp.net", {
 				text: `${sock?.user?.name || "Bot"} has Connected...`,
 			}, { ephemeralExpiration: 86400})
@@ -291,7 +284,7 @@ async function connectToWhatsApp() {
 		const config = await (await import(`./config.js?update=${Date.now()}`)).default
 		const functions = await (await import(`./lib/functions.js?update=${Date.now()}`)).default;
 		await (await import(`./messages/group_participants.js?v=${Date.now()}`)).default(sock, message, config, functions)
-	 })
+	})
 }
 // For loading database
 loadDatabase()

@@ -1,4 +1,4 @@
-import { facebookdl, facebookdlv2 } from "@bochilteam/scraper"
+import { facebookdl} from "@bochilteam/scraper"
 export default {
     name: "facebook",
     command: ["facebook", "fb"],
@@ -39,7 +39,7 @@ export default {
         axios,
         cheerio
     }) => {
-    let data =  await facebookdl(text).catch(async _ => await facebookdlv2(text))
+    let data =  await facebookdl(text);
     sock.sendFile(m.from, data.result[0].url, `FB`, config.name.bot, m)
   }
 }

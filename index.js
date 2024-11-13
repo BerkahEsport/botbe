@@ -99,7 +99,7 @@ const handlePhoneNumberPairing = async (sock, functions) => {
 	console.log("Pairing Code: " + `\x1b[32m${code?.match(/.{1,4}/g)?.join("-") || code}\x1b[39m`);
 	} else {
 		console.log("Invalid choice, please try again!\n\n");
-		return await handlePhoneNumberPairing();
+		return await handlePhoneNumberPairing(sock, functions);
 	}
 	
 };
@@ -108,7 +108,7 @@ const handlePhoneNumberPairing = async (sock, functions) => {
 async function connectToWhatsApp() {
 	let sock = makeWASocket({
 		version,
-		printQRInTerminal: state.creds?.me?.id ? true : await handlePhoneNumberPairing(false, functions),
+		printQRInTerminal: false,
 		logger,
 		auth: {
 			creds: state.creds,
@@ -204,10 +204,10 @@ async function connectToWhatsApp() {
 				text: `${sock?.user?.name || "Bot"} has Connected...`,
 			}, { ephemeralExpiration: 86400})
 		}
-		// if (qr) {
-		// 	console.log("Scan this QR Code!\n");
-		// 	qrcode.generate(qr, {small: true});
-		// };
+		if (qr) {
+			console.log("Scan this QR Code!\n");
+			qrcode.generate(qr, {small: true});
+		};
 	})
 	// contacts load
 	if (fs.existsSync(pathContacts)) {

@@ -71,7 +71,6 @@ const handlePhoneNumberPairing = async (sock, functions) => {
 	if (choice == 1) {
 		rl.close();
 		console.log(chalk.yellow("Waiting for generate QR Code..."));
-		return true
 	} else if (choice == 2) {
 	let phoneNumber;
 	if (!sock.authState.creds.registered) {
@@ -134,9 +133,12 @@ async function connectToWhatsApp() {
 			return !!msg.syncType;
 		}
 	});
-	if (!sock.authState.creds.registered) {
+
+	if (!state.creds.registered) {
+		if (sock.authState.creds?.me?.id) return;
 		await handlePhoneNumberPairing(sock, functions);
 	}
+	
 	store.bind(sock.ev);
 	sock.ev.on("creds.update", saveCreds);
 	sock.ev.on("connection.update", async ({ qr, connection, lastDisconnect }) => {
@@ -196,8 +198,7 @@ async function connectToWhatsApp() {
 			sock.sendMessage(config.number.owner + "@s.whatsapp.net", {
 				text: `${sock?.user?.name || "Bot"} has Connected...`,
 			}, { ephemeralExpiration: 86400})
-		}
-		if (qr) {
+		} else if (qr) {
 			console.log("Scan this QR Code!\n");
 			qrcode.generate(qr, {small: true});
 		};

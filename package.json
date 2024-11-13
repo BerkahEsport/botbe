@@ -14,8 +14,8 @@
   "license": "MIT",
   "description": "Base Bot for WhatsApp",
   "dependencies": {
-    "@bochilteam/scraper": "^4.2.4",
-    "@whiskeysockets/baileys": "npm:@whiskeysockets/baileys@latest",
+    "@bochilteam/scraper": "^5.0.1",
+    "@whiskeysockets/baileys": "^6.7.9",
     "axios": "^1.6.8",
     "chalk": "^5.3.0",
     "cheerio": "^1.0.0",

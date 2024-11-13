@@ -18,7 +18,7 @@
     "@whiskeysockets/baileys": "npm:@whiskeysockets/baileys@latest",
     "axios": "^1.6.8",
     "chalk": "^5.3.0",
-    "cheerio": "^1.0.0-rc.12",
+    "cheerio": "^1.0.0",
     "file-type": "^19.0.0",
     "fluent-ffmpeg": "^2.1.2",
     "json-stable-stringify": "^1.1.1",

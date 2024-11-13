@@ -1,5 +1,5 @@
 import axios from "axios";
-import cheerio from "cheerio";
+import * as cheerio from "cheerio";
 export default async function message_upsert(sock, m, store, commands, config, functions) {
 	// Self mode on if you want.
 	// if (m.sender.split("@")[0] === config.number.owner) return;

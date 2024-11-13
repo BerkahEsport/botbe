@@ -12,12 +12,13 @@ export default {
             store: false // using store
         },
         name: {
-            owner: "@moexti",
-            bot: "ʙᴇʀᴋᴀʜᴇꜱᴘᴏʀᴛ.ɪᴅ"
+            bot: "ʙᴇʀᴋᴀʜᴇꜱᴘᴏʀᴛ.ɪᴅ",
+            owner: "@moexti"
         },
         number: {
-            owner: "62895375950107",
-            mods: ["62895375950107"]
+            bot: "", //62882006194598 If you want to link via pairing, please fill in your bot number here, if it doesn't exist then use the QR Code
+            mods: ["62895375950107"],
+            owner: "62895375950107"
         },
         group: {
             ofc: "https://chat.whatsapp.com/JKdIWr5fj990Ux2oqTjTo5"

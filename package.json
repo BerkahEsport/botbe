@@ -15,8 +15,8 @@
   "description": "Base Bot for WhatsApp",
   "dependencies": {
     "@bochilteam/scraper": "^4.2.4",
+    "@whiskeysockets/baileys": "npm:@whiskeysockets/baileys@latest",
     "axios": "^1.6.8",
-    "baileys": "npm:@whiskeysockets/baileys@latest",
     "chalk": "^5.3.0",
     "cheerio": "^1.0.0-rc.12",
     "file-type": "^19.0.0",

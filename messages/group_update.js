@@ -1,5 +1,5 @@
 // import config from "../config.js";
-export default async function group_update(sock, update, config) {
+export default async function group_update(sock, update, store, config, functions) {
    try {
       for (const action of update) {
          const metadata = await sock.groupMetadata(action.id);

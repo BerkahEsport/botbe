@@ -19,6 +19,7 @@ process.on("unhandledRejection", console.error);
 import path from "path";
 import fs from "node:fs";
 import chalk from "chalk";
+import qrcode from "qrcode-terminal";
 
 // <===== Config Setup =====>
 const config = (await import("./config.js")).default;
@@ -29,21 +30,18 @@ const functions = (await import("./lib/functions.js")).default;
 import { fullCommands } from "./lib/commands.js";
 let commandsFolder = path.join(functions._dirname(import.meta.url, true), "commands");
 let commands = await fullCommands(commandsFolder).catch(e => console.error(`Failed to watch commands: ${e}`));
-await functions.delay(3000);
 
 // <===== Config Choice =====>
 import readline from "readline";
-const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
-const question = (text) => new Promise((resolve) => rl.question(text, resolve));
 
 // <===== Config Whatsapp =====>
 import Pino from "pino";
-import { makeWASocket, useMultiFileAuthState, makeCacheableSignalKeyStore, makeInMemoryStore, jidNormalizedUser, fetchLatestBaileysVersion, PHONENUMBER_MCC} from "baileys";
+import baileys  from "@whiskeysockets/baileys";
+const { makeWASocket, useMultiFileAuthState, makeCacheableSignalKeyStore, makeInMemoryStore, jidNormalizedUser, fetchLatestBaileysVersion} = baileys;
 const logger = Pino({ level: "silent" }).child({ level: "silent" });
 const { state, saveCreds } = await useMultiFileAuthState(config.settings.session);
 const { version } = await fetchLatestBaileysVersion();
 let store = makeInMemoryStore({logger});
-let useQR = true;
 
 // <===== Config STORE =====>
 import stable from "json-stable-stringify";
@@ -65,42 +63,30 @@ async function loadDatabase() {
 	};
 }
 
-const DeviceLink = async() => {
+
+const handlePhoneNumberPairing = async (sock, functions) => {
+	const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+	const question = (text) => new Promise((resolve) => rl.question(text, resolve));
 	const choice = await question("Please type the number for the type of device link you want:\n[1] Scan QR in Terminal\n[2] Send code to Pairing\nYour choice: ");
 	if (choice == 1) {
 		rl.close();
-		return true;
+		console.log(chalk.yellow("Waiting for generate QR Code..."));
+		return true
 	} else if (choice == 2) {
+	if (sock == false) {
+		rl.close();
 		return false;
-	} else {
-		console.log("Invalid choice, please try again!\n\n");
-		return await DeviceLink();
 	}
-}
-if (!state.creds.registered) {
-	useQR = await DeviceLink();
-} else {
-	console.log("Loading device link...");
-	rl.close();
-};
-
-const handlePhoneNumberPairing = async (sock, functions, PHONENUMBER_MCC) => {
 	let phoneNumber;
-	if (!!config.PAIRING_NUMBER && !sock.authState.creds.registered) {
-		phoneNumber = config.PAIRING_NUMBER.replace(/[^0-9]/g, '');
-		if (!Object.keys(PHONENUMBER_MCC).some(v => phoneNumber.startsWith(v))) {
-		console.log("Start with your country's WhatsApp code, Example: 62xxx");
-		phoneNumber = await question("Please type your WhatsApp number: ");
-		phoneNumber = phoneNumber.replace(/[^0-9]/g, "");
+	if (!sock.authState.creds.registered) {
+			phoneNumber = await question("Please type your WhatsApp number: ");
+			phoneNumber = phoneNumber.replace(/[^0-9]/g, "");
+		if (!functions.PHONENUMBER_MCC(phoneNumber)) {
+			console.log("Start with your country's WhatsApp code, Example: 62xxx");
+			phoneNumber = await question("Please type your WhatsApp number: ");
+			phoneNumber = phoneNumber.replace(/[^0-9]/g, "");
 		}
-	} else {
-		phoneNumber = await question("Please type your WhatsApp number: ");
-		phoneNumber = phoneNumber.replace(/[^0-9]/g, "");
-		if (!Object.keys(PHONENUMBER_MCC).some(v => phoneNumber.startsWith(v))) {
-		console.log("Start with your country's WhatsApp code, Example: 62xxx");
-		phoneNumber = await question("Please type your WhatsApp number: ");
-		phoneNumber = phoneNumber.replace(/[^0-9]/g, "");
-		}
+		rl.close();
 	}
 	await functions.delay(3000);
 	let code;
@@ -111,14 +97,18 @@ const handlePhoneNumberPairing = async (sock, functions, PHONENUMBER_MCC) => {
 		return;
 	}
 	console.log("Pairing Code: " + `\x1b[32m${code?.match(/.{1,4}/g)?.join("-") || code}\x1b[39m`);
-	rl.close();
+	} else {
+		console.log("Invalid choice, please try again!\n\n");
+		return await handlePhoneNumberPairing();
+	}
+	
 };
 
 // <===== Connect to Whatsapp =====>
 async function connectToWhatsApp() {
 	let sock = makeWASocket({
-		version: [2, 3000, 1015901307],
-		printQRInTerminal: useQR,
+		version,
+		printQRInTerminal: state.creds?.me?.id ? true : await handlePhoneNumberPairing(false, functions),
 		logger,
 		auth: {
 			creds: state.creds,
@@ -141,44 +131,93 @@ async function connectToWhatsApp() {
 			const jid = jidNormalizedUser(key.remoteJid);
 			const msg = await store.loadMessage(jid, key.id);
 
-			return msg?.message || '';
+			return msg?.message || "";
 		},
 		shouldSyncHistoryMessage: msg => {
 			console.log(`\x1b[32mLoading Chat [${msg.progress}%]\x1b[39m`);
 			return !!msg.syncType;
 		}
-	})
-    if (!useQR) {
-        await handlePhoneNumberPairing(sock, functions, PHONENUMBER_MCC);
-    } else rl.close();
-
+	});
+	if (!sock.authState.creds.registered) {
+		await handlePhoneNumberPairing(sock, functions);
+	}
 	store.bind(sock.ev);
 	sock.ev.on("creds.update", saveCreds);
-	sock.ev.on("connection.update", async ({ connection, lastDisconnect }) => {
+	sock.ev.on("connection.update", async ({ qr, connection, lastDisconnect }) => {
 		if (connection === "close") {
-			if (lastDisconnect?.error?.output?.statusCode !== 401) {
-				await connectToWhatsApp();
-			} else {
-				console.log("Session is corrupted! Write a new session...");
-				fs.rmSync(config.settings.session, { recursive: true });
-				await connectToWhatsApp();
-			}
+			let reason = lastDisconnect?.error?.output?.statusCode;
+			switch (reason) {
+                case 408:
+                    console.log(chalk.red("[+] Connection timed out. restarting..."))
+                    await connectToWhatsApp();
+                    break
+                case 503:
+                    console.log(chalk.red("[+] Unavailable service. restarting..."))
+                    await connectToWhatsApp();
+                    break
+                case 428:
+                    console.log(chalk.cyan("[+] Connection closed, restarting..."))
+                    await connectToWhatsApp();
+                    break
+                case 515:
+                    console.log(chalk.cyan("[+] Need to restart, restarting..."))
+                    await connectToWhatsApp();
+                    break
+                case 401:
+                    try {
+                        console.log(chalk.cyan("[+] Session Logged Out.. Recreate session..."))
+                        if (setting.typedb === "mongo") {
+                            await clearAll()
+                        } else {
+                            fs.rmSync(".session", { recursive: true, force: true })
+                        }
+                        console.log(chalk.green("[+] Session removed!!"))
+                        process.send("reset")
+                    } catch {
+                        console.log(chalk.cyan("[+] Session not found!!"))
+                    }
+                    break
+
+                case 403:
+						console.log(chalk.red(`[+] Your WhatsApp Has Been Baned :D`))
+						fs.rmSync(config.settings.session, { recursive: true });
+						if (!fs.existsSync(config.settings.session)) fs.mkdirSync(config.settings.session);
+						await connectToWhatsApp();
+                    break
+
+                case 405:
+                    try {
+                        console.log("[+] Session Not Logged In.. Recreate session...");
+						fs.rmSync(config.settings.session, { recursive: true });
+						if (!fs.existsSync(config.settings.session)) fs.mkdirSync(config.settings.session);
+						await connectToWhatsApp();
+                    } catch {
+                        console.log(chalk.cyan("[+] Session not found!!"))
+                    }
+                    break
+                default:
+
+            }
 		} else if (connection === "open") {
 			if (!fs.existsSync("./tmp")) fs.mkdirSync("./tmp")
 			sock.sendMessage(config.number.owner + "@s.whatsapp.net", {
 				text: `${sock?.user?.name || "Bot"} has Connected...`,
 			}, { ephemeralExpiration: 86400})
 		}
+		// if (qr) {
+		// 	console.log("Scan this QR Code!\n");
+		// 	qrcode.generate(qr, {small: true});
+		// };
 	})
 	// contacts load
 	if (fs.existsSync(pathContacts)) {
-		store.contacts = JSON.parse(fs.readFileSync(pathContacts, 'utf-8'));
+		store.contacts = JSON.parse(fs.readFileSync(pathContacts, "utf-8"));
 	} else {
 		fs.writeFileSync(pathContacts, JSON.stringify({}));
 	}
 	// group metadata load
 	if (fs.existsSync(pathMetadata)) {
-		store.groupMetadata = JSON.parse(fs.readFileSync(pathMetadata, 'utf-8'));
+		store.groupMetadata = JSON.parse(fs.readFileSync(pathMetadata, "utf-8"));
 	} else {
 		fs.writeFileSync(pathMetadata, JSON.stringify({}));
 	}
@@ -198,7 +237,7 @@ async function connectToWhatsApp() {
 	});
 
 	// add contacts upsert to store
-	sock.ev.on('contacts.upsert', (upsert) => {
+	sock.ev.on("contacts.upsert", (upsert) => {
 		try {
 			for (let contact of upsert) {
 				let id = jidNormalizedUser(contact.id);
@@ -213,7 +252,7 @@ async function connectToWhatsApp() {
 	});
 
 	// add group changes to the store
-	sock.ev.on('groups.update', async (updates) => {
+	sock.ev.on("groups.update", async (updates) => {
 		try {
 			for (const update of updates) {
 				const id = update.id;
@@ -230,11 +269,11 @@ async function connectToWhatsApp() {
 	});
 	// messages response
 	sock.ev.on("messages.upsert", async ({ type, messages }) => {
-		await (await import(`./lib/simplification.js?update=${Date.now()}`)).default(sock, store, config, functions)
 		const config = await (await import(`./config.js?update=${Date.now()}`)).default;
 		const functions = await (await import(`./lib/functions.js?update=${Date.now()}`)).default;// nambah semua metadata ke store
+		await (await import(`./lib/simplification.js?update=${Date.now()}`)).default(sock, store, config, functions)
 		if (store.groupMetadata && Object.keys(store.groupMetadata).length === 0) store.groupMetadata = await sock.groupFetchAllParticipating();
-		if (type === "notify") {
+		if (type === "notify" || type === "append") {
 			let msg = messages[0];
 			if (msg.message) {
 				let type = Object.keys(msg.message)[0];

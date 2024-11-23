@@ -1,6 +1,6 @@
 import axios from "axios";
 export default {
-    before: async (m, {sock, args, text, prefix, isOwner, isPrems, isQuoted, user, functions, config}) => {
+    before: async (m, {sock, args, text, prefix, isOwner, isPremium, isQuoted, user, functions, config}) => {
         sock.yts = sock.yts ? sock.yts : {}
         if (m.from in sock.yts) {
             if (isQuoted) {
@@ -25,9 +25,10 @@ ${config.text.ty}`.trim(), m);
             const response = await axios.post('https://api-cdn.saveservall.xyz/ajax-v2.php', data, {
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
             });
+            m.log(response.data);
             const dl = response.data.url;
             await sock.sendFile(m.from, dl, choice.title, "", m, {thumbnail: choice.thumbnail});
-                        if (!(isOwner || isPrems)) {
+                        if (!(isOwner || isPremium)) {
                             m.react("📥")
                             user.limit -= 8
                             m.reply(`8 𝐿𝒾𝓂𝒾𝓉 𝓉𝑒𝓇𝓅𝒶𝓀𝒶𝒾 ✔️ \n _ꜱɪꜱᴀ ʟɪᴍɪᴛ ᴀɴᴅᴀ:_ ${user.limit}`);

@@ -1,10 +1,15 @@
 import axios from "axios";
 import * as cheerio from "cheerio";
 export default async function message_upsert(sock, m, store, commands, config, functions) {
+	if (m.fromMe) return;
+	
 	// Self mode on if you want.
 	// if (m.sender.split("@")[0] === config.number.owner) return;
+
 	// Setup for DB
 	await (await import(`../lib/database.js?update=${Date.now()}`)).default(sock, m, config, functions);
+
+	// Variabel setup
 	m.limit = false;
 	let user = global.db.users[m.sender];
 	let settings = global.db.settings[sock.user.jid || config.number.bot+"@s.whatsapp.net"];
@@ -81,7 +86,7 @@ try {
 	// Execution code
 	if (!isCommand) continue;
 	if ((isPrefix[0] || "")[0]) {
-		if (!user.registered && !(name == "register.js") && !(m.body.startsWith(prefix+"register") || m.body.startsWith(prefix+"reg"))) {
+		if (!user?.registered && !(name == "register.js") && !(m.body.startsWith(prefix+"register") || m.body.startsWith(prefix+"reg"))) {
 			m.react("🚫");
 			m.reply(`Please register first to be able to access the bot!!
 Command: ${prefix}register name.age
@@ -156,8 +161,8 @@ Example: ${prefix}register ${m.pushName || "userBE"}.18`, {font: true});
 					commandResult = false;
 				if (e.name) {
 					let err = functions.format(e)
-					m.report(`*🗂️ Name:* ${fileName}
-👤 *Sender:* ${m.sender}
+					m.report(`*🗂️ Name:* ${name} ${m.isGroup ? "\n🔗 *" + m.metadata.subject + "*" : ""}
+👤 *Sender:* ${m.pushName}
 💬 *Chat:* https://wa.me/${m.sender.replace("@s.whatsapp.net","")}
 💻 *Command:* ${prefix+command} ${text}
 📄 *Error Logs:*
@@ -178,7 +183,7 @@ _Problematic features please report the owner!_
 		m.log("Error a messages.upsert: ", e);
 } finally {
 		try {
-			await (await import(`../lib/print.js?v=${Date.now()}`)).default(sock, m, config, functions);
+			await (await import(`../lib/print.js?v=${Date.now()}`)).default(sock, m, user, config, functions);
 			} catch (e) {
 				m.log("Error a print: ", e);
 			};

@@ -13,7 +13,7 @@ export default {
         },
         name: {
             bot: "ʙᴇʀᴋᴀʜᴇꜱᴘᴏʀᴛ.ɪᴅ",
-            owner: "@moexti"
+            owner: "@berkahesport.id"
         },
         number: {
             bot: "", // If you want
@@ -21,10 +21,22 @@ export default {
             owner: "62895375950107"
         },
         group: {
-            ofc: "https://chat.whatsapp.com/JKdIWr5fj990Ux2oqTjTo5"
+            ofc: "https://chat.whatsapp.com/JKdIWr5fj990Ux2oqTjTo5",
+            chid: "120363312128345279@newsletter"
         },
         text: {
-            ty: "Hopefully this is useful, don't forget to support and subscribe to the BERKAHESPORT.ID YouTube channel at _https://youtube.com/@berkahesportid_. Thank you 😊."
+            create: "² October 2021",
+            wait: "```「▰▰▰▰▱▱▱▱▱▱」Loading...```",
+            waits: [
+                "```「▰▱▱▱▱▱▱▱▱▱」Loading...```",
+                "```「▰▰▱▱▱▱▱▱▱▱」Loading...```",
+                "```「▰▰▰▱▱▱▱▱▱▱」Loading...```",
+                "```「▰▰▰▰▱▱▱▱▱▱」Loading...```",
+                "```「▰▰▰▰▰▱▱▱▱▱」Loading...```"
+            ],
+            eror: "```404 error```",
+            ty: "\n> 💭 ʜᴇʀᴇ ɪꜱ ᴛʜᴇ ʀᴇꜱᴜʟᴛ... \n> ᴅᴏɴ'ᴛ ꜰᴏʀɢᴇᴛ ᴛᴏ ꜱᴜᴘᴘᴏʀᴛ ɪɢ @ʙᴇʀᴋᴀʜᴇꜱᴘᴏʀᴛ.ɪᴅ! \n> 👍 ᴛʜᴀɴᴋ ʏᴏᴜ!",
+            subs: "Don't just look, make sure to subscribe too! \n https://m.youtube.com/channel/UCG_Xj6eHBMaW9HTHTya9q6w"
         },
         Exif: { // For sticker
             packId: "https://moexti.jw.lt/",

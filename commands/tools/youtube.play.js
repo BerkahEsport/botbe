@@ -1,4 +1,5 @@
 import ytSearch from "yt-search";
+import {youtube} from "../../lib/js/ytdl.js";
 export default {
     name: "play",
     command: ["play"],
@@ -9,62 +10,22 @@ export default {
         if (!text) throw "✳️ What do you want me to search for on YouTube?";
         const { all: [bestItem, ...moreItems] } = await ytSearch(text);
         const videoItems = moreItems.filter(item => item.type === 'video');
-        const formattedData = {
-            title: "                *[ Youtube Play mp3 ]*\n>                 BEST MATCH\n\n",
-            rows: [{
-                    title: "Best",
-                    highlight_label: "Best match",
-                    rows: [{
-                        header: bestItem.title,
-                        id: `${usedPrefix}ytmp3 ${bestItem.url}`,
-                        title: bestItem.description,
-                        description: ""
-                    }]
-                },
-                {
-                    title: "More",
-                    rows: videoItems.map(({
-                        title,
-                        url,
-                        description
-                    }) => ({
-                        header: title,
-                        id: `${usedPrefix}ytmp3 ${url}`,
-                        title: description,
-                        description: ""
-                    }))
-                }
-            ]
-        };
-
-        const emojiMap = {
-            type: "🎥",
-            videoId: "🆔",
-            url: "🔗",
-            title: "📺",
-            description: "📝",
-            image: "🖼️",
-            thumbnail: "🖼️",
-            seconds: "⏱️",
-            timestamp: "⏰",
-            ago: "⌚",
-            views: "👀",
-            author: "👤"
-        };
-
-        const caption = Object.entries(bestItem)
-            .map(([key, value]) => {
-                const formattedKey = key.charAt(0).toUpperCase() + key.slice(1);
-                const valueToDisplay = key === 'views' ? new Intl.NumberFormat('en', {
-                    notation: 'compact'
-                }).format(value) : key === 'author' ? `Name: ${value.name || 'Unknown'}\nURL: ${value.url || 'Unknown'}` : value || 'Unknown';
-                return ` ${emojiMap[key] || '🔹'} *${formattedKey}:* ${valueToDisplay}`;
-            })
-            .join('\n');
-            await sock.sendButton(m.from, formattedData.title + caption, config.name.bot, bestItem.image || bestItem.thumbnail,
-            [['Menu List', `${usedPrefix}menu`]], // Button
-            [[config.name.bot, "https://tinyurl.com/berkahesport"]], // Link
-            [["Result Here", formattedData.rows]], // List
-            m);
-}
+        const populerItem = bestItem.type === 'video' ? bestItem : videoItems[0];
+        const dl = await youtube.download(populerItem.url);
+        let caption = `
+👤 Pemilik: _${populerItem.author.name}_
+🎥 Tipe: _${populerItem.type}_
+🆔 ID: _${populerItem.videoId}_
+📺 Judul: _${populerItem.title}_
+⏱️ Durasi: _${populerItem.duration.seconds} detik_
+⏰ Waktu: _${populerItem.timestamp} menit_
+⌚ Tahun: _${populerItem.ago}_
+👀 Dilihat: _${populerItem.views}x_
+📝 Deskripsi: _${populerItem.description}_
+🖼️ Gambar: _${populerItem.image}_
+🖼️ Icon: _${populerItem.thumbnail}_
+🔗 URL: _${populerItem.url}_`.trim()
+        sock.sendFile(m.from, populerItem.thumbnail, "", caption, m)
+        await sock.sendFile(m.from, dl.audio.dlurl, populerItem.title, "", m, {mime: "audio/mpeg"})
+    }
 }

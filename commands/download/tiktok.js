@@ -1,4 +1,3 @@
-import axios from "axios";
 export default {
     name: "tiktok",
     command: ["tt"],
@@ -40,7 +39,7 @@ export default {
         cheerio
     }) => {
         async function tiktok(query) {
-            if (!functions.isUrl(query, "tiktok")) throw ("Enter the TikTok URL correctly!")
+            if (!functions.isUrl(query, "tiktok")) throw ("Enter the TikTok URL correctly!");
             let response = await axios("https://lovetik.com/api/ajax/search", {
               method: "POST",
               data: new URLSearchParams(Object.entries({ query })),

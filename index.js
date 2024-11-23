@@ -27,9 +27,9 @@ const functions = (await import("./lib/functions.js")).default;
 
 
 // <===== Config COMMANDS =====>
-import { fullCommands } from "./lib/commands.js";
+import { loadAllCommands } from "./lib/commands.js";
 let commandsFolder = path.join(functions._dirname(import.meta.url, true), "commands");
-let commands = await fullCommands(commandsFolder).catch(e => console.error(`Failed to watch commands: ${e}`));
+let commands = await loadAllCommands(commandsFolder).catch(e => console.error(`Failed to watch commands: ${e}`));
 
 // <===== Config Choice =====>
 import readline from "readline";
@@ -46,7 +46,7 @@ let store = makeInMemoryStore({logger});
 // <===== Config STORE =====>
 import stable from "json-stable-stringify";
 import { Localdb } from "./lib/database.js";
-const database = new Localdb(global.database);
+const database = new Localdb(global.db);
 const pathStore = "./lib/json/store.json"
 const pathContacts = "./lib/json/contacts.json";
 const pathMetadata = "./lib/json/groupMetadata.json";
@@ -59,7 +59,7 @@ async function loadDatabase() {
 		groups: {},
 		stats: {},
 		settings: {},
-		...((await database.fetch()) || {}),
+		...((await database.fetch()) || {})
 	};
 }
 

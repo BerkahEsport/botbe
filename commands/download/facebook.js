@@ -1,4 +1,3 @@
-import { facebookdl} from "@bochilteam/scraper"
 export default {
     name: "facebook",
     command: ["facebook", "fb"],

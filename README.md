@@ -66,6 +66,7 @@ List Arguments that can be used:
         name,
         user,
         settings,
+        isOwner,
         isGroup,
         isAdmin,
         isBotAdmin,
@@ -107,7 +108,7 @@ filename [string] // name of the media file to be sent
 => options.font: true // change the form of writing to make it more interesting
 => options.asSticker: true // convert media to stickers in the sock.sendFile code
 => options.asDocument: true // convert media into document files
-=> options.thumb: "url image / buffer" // displays a thumbnail image
+=> options.thumbnail: "url image / buffer" // displays a thumbnail image
 => options.mentions: ["jid number"] // array select the number you want to mention
 => options.isForwarded: true // displays messages sent multiple times
 ```

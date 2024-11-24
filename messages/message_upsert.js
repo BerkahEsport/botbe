@@ -1,7 +1,6 @@
 import axios from "axios";
 import * as cheerio from "cheerio";
 export default async function message_upsert(sock, m, store, commands, config, functions) {
-	if (m.fromMe) return;
 	
 	// Self mode on if you want.
 	// if (m.sender.split("@")[0] === config.number.owner) return;
@@ -16,41 +15,69 @@ export default async function message_upsert(sock, m, store, commands, config, f
 	let stats = global.db.stats;
 	let isCommand, commandResult = undefined;
 try {
+	if (m.fromMe) return;
+	let isPrefix, isCommand, noPrefix, arg, args, command, text;
 	// Calling COMMANDS
 	for (let name in commands) {
 		let cmd = commands[name];
 		if (!cmd) continue;
+	let prefix = cmd.customPrefix || config.settings.prefix;
+    if (Array.isArray(prefix)) {
+        for (let p of prefix) {
+            if (typeof p === "string" && m.body.startsWith(p)) {
+                noPrefix = m.body.replace(p, "").trim(); // replace string prefix
+                isPrefix = true;
+                break;
+            } else if (p instanceof RegExp && p.test(m.body.split(" ")[0])) {
+                noPrefix = m.body.replace(p, "").trim(); // replace RegExp prefix
+                isPrefix = true;
+                break;
+            }
+        }
+    } else if (prefix instanceof RegExp) {
+        isPrefix = prefix.test(m.body.split(" ")[0]);
+        if (isPrefix) {
+            noPrefix = m.body.replace(prefix, "").trim(); // replace RegExp prefix
+        }
+    } else if (typeof prefix === "string" && m.body.startsWith(prefix)) {
+        isPrefix = true;
+        noPrefix = m.body.replace(prefix, "").trim(); // replace string prefix
+    }
 
-	// Starting
-	const str2Regex = (str) => str.replace(/[|\\{}()[\]^$+*?.]/g, "\\$&");
-	let prefix = !!cmd.customPrefix ? cmd.customPrefix : config.settings.prefix;
-	let noPrefix = m?.body.replace(prefix, "");
-	let arg = noPrefix.trim().split` `.slice(1);
-	let text = arg.join` `;
-	let [command, ...args] = noPrefix.trim().split` `.filter((v) => v);
-	command = (command || "").toLowerCase();
-	args = args || [];
-	let isPrefix = (prefix instanceof RegExp ? [[prefix.exec(m.body), prefix]]
-		: Array.isArray(prefix) ? prefix.map((p) => {
-			let re = p instanceof RegExp ? p
-				: new RegExp(str2Regex(p));
-				return [re.exec(m.body), re];
-			})
-			: typeof prefix === "string" ? [[new RegExp(str2Regex(prefix)).exec(m.body), new RegExp(str2Regex(prefix)),],]
-			: [[[], new RegExp()]]).find((p) => p[1]);
+    if (isPrefix) {
+        let [firstWord, ...words] = noPrefix.split(" ").filter((v) => v);
+        command = (firstWord || "").toLowerCase();
+		arg = noPrefix.trim().split` `.slice(1);
+        args = words || [];
+		text = arg.join` `;isPrefix = true;
+        if (!cmd.customPrefix) {
+            isCommand = cmd.command instanceof RegExp ? cmd.command.test(command)
+                        : Array.isArray(cmd.command) ? cmd.command.some(cmd => cmd === command)
+                        : typeof cmd.command === "string" ? cmd.command === command
+                        : false;
+        } else {
+            if (Array.isArray(cmd.customPrefix)) {
+                for (let p of cmd.customPrefix) {
+                    if (typeof p === "string" && m.body.startsWith(p)) {
+                        noPrefix = m.body.replace(p, "").trim();
+						isCommand = true;
+                        break;
+                    } else if (p instanceof RegExp && p.test(m.body.split(" ")[0])) {
+                        noPrefix = m.body.replace(p, "").trim();
+						isCommand = true;
+                        break;
+                    }
+                }
+            } else if (typeof cmd.customPrefix === "string" && m.body.startsWith(cmd.customPrefix)) {
+                noPrefix = m.body.replace(cmd.customPrefix, "").trim();
+				isCommand = true;
+            } else if (cmd.customPrefix instanceof RegExp && cmd.customPrefix.test(m.body.split(" ")[0])) {
+                noPrefix = m.body.replace(cmd.customPrefix, "").trim();
+				isCommand = true;
+            }
+        }
+    }
 
-	if (cmd.customPrefix === "" || !cmd.customPrefix) {
-		isCommand = cmd.command instanceof RegExp ? cmd.command.test(command)
-					: Array.isArray(cmd.command) ? cmd.command.some(cmd => cmd instanceof RegExp ? cmd.test(command) : cmd === command)
-					: typeof cmd.command === "string" ? cmd.command === command
-					: false;
-	} else {
-		isCommand = cmd.customPrefix instanceof RegExp ? cmd.customPrefix.test(m.body.split(" ")[0])
-					: Array.isArray(cmd.customPrefix) ? cmd.customPrefix.some(cmd => cmd instanceof RegExp ? cmd.test(m.body.split(" ")[0]) : cmd === m.body.split(" ")[0])
-					: typeof cmd.customPrefix === "string" ? cmd.customPrefix === m.body.split(" ")[0]
-					: false;
-	}
-			
 	let _arguments = {
 		prefix,
 		noPrefix,
@@ -86,10 +113,9 @@ try {
 	if (cmd.before && typeof cmd.before === "function" && m.sender in global.db.users) {
 		await cmd.before(m, _arguments);
 	}
-
 	// Execution code
 	if (!isCommand) continue;
-	if ((isPrefix[0] || "")[0]) {
+	if (isCommand) {
 		if (!user?.registered && !(name == "register.js") && !(m.body.startsWith(prefix+"register") || m.body.startsWith(prefix+"reg"))) {
 			m.react("🚫");
 			m.reply(`Please register first to be able to access the bot!!

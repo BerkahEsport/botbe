@@ -1,7 +1,7 @@
 export default {
   name: ">",
   command: [""],
-  customPrefix: [">"],
+  customPrefix: ["*", ">"],
   tags: "owner",
   desc: "Eval checker!",
   run: async (m, argument) => {
@@ -31,9 +31,9 @@ export default {
     } = argument
     let evalCmd;
     try {
-      evalCmd = /await/i.test(noPrefix)
+      evalCmd = prefix.includes("*")
         ? eval("(async() => { " + noPrefix + " })()")
-        : eval(noPrefix);
+        : await eval(noPrefix);
     } catch (e) {
       m.reply(functions.format(e));
     }

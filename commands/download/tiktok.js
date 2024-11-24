@@ -1,10 +1,10 @@
 export default {
     name: "tiktok",
-    command: ["tt"],
+    command: ["tt", "tiktok"],
     tags: "download",
     desc: "",
     customPrefix: "",
-    example: "r",
+    example: "https://www.tiktok.com/@kittyandkakai/video/7283513155697904901",
     limit: false,
     isOwner: false,
     isPremium: false,
@@ -60,15 +60,14 @@ export default {
             return data.replace(regex, "");
           }
 
-          let data = await tiktok(args[0])
-          sock.sendButton(m.from, `*⭓─❖『 TIKTOK 』❖─⭓*
+          let data = await tiktok(args[0]);
+          await sock.sendFile(m.from, data.nowm, "tiktok", `*⭓─❖『 TIKTOK 』❖─⭓*
 
-Title: ${data.title}
-Author: ${data.author}
-WM: ${data.wm}`, config.name.bot, data.nowm,
-            [["Audio Only", `${usedPrefix}get ${data.audio}`]],
-            [[config.name.bot, "https://tinyurl.com/berkahesport"]],
-            [],
-            m, {font: true});
+Title: ¿${data.title}¿
+
+Author: ¿${data.author}¿
+
+WM: ¿${data.wm}¿`, m, {font: true});
+          await sock.sendFile(m.from, data.audio, "tiktok", "", m);
     }
     }

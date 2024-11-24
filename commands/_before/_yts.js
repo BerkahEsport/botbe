@@ -9,7 +9,7 @@ export default {
                     if (parseInt(m.arg[0]) > sock.yts[m.from][1].length) return m.reply("Pilihan angka tidak ada!")
                     let choice = sock.yts[m.from][1][parseInt(m.arg[0])-1]
                     if (user.limit <= 8) {
-                        m.reply(`[❗] ʟɪᴍɪᴛ ᴀɴᴅᴀ ʜᴀʙɪꜱ, ꜱɪʟᴀʜᴋᴀɴ ʙᴇʟɪ ᴍᴇʟᴀʟᴜɪ *.buy limit*.`)
+                        m.reply(`[❗] Your limit has been exhausted.\nPlease upgrade to a premium user to enjoy unlimited access without any limits.`)
                     } else {
                     m.react("⏳");
 await sock.sendFile(m.from, choice.thumbnail, choice.title, `

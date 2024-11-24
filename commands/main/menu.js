@@ -26,7 +26,7 @@ if (args.length >= 1) {
                 });
                 return cmd;
             }
-              const cmd = findCommand(text);
+            const cmd = findCommand(text);
             if (!cmd) throw ("Command Not Found!")
             if (cmd.name) data.push(`*- Command :* ${Array.isArray(cmd.name) ? cmd.name.map((part, index) => `${part}`).join(', ') : cmd.name}`)
             if (cmd.tags) data.push(`*- Tags :* ${cmd.tags}`)
@@ -63,16 +63,19 @@ tagList.forEach((command) => {
 Object.entries(list).forEach(([type, commandArray]) => {
     teks += `┌──⭓ *${type.toUpperCase()} Menu*\n`;
     teks += `│\n`;
-    teks += `│➣ ${commandArray.map((command) => {
-        const commandName = command.customPrefix ? `${command.customPrefix+command.name}` : `${prefix+command.name}`;
+    teks += `${commandArray.map((command, index) => {
+        if (!command.name || (Array.isArray(command.name) && command.name.every(name => name === ""))) return "";
+        const commandNames = Array.isArray(command.name) ? command.name : [command.name];
+        const prefixedNames = commandNames.filter(name => name !== "").map(name => command.customPrefix ? `${command.customPrefix}_¿${name}¿_` : `${prefix}_¿${name}¿_`);
+        if (prefixedNames.length === 0) return "";
         const limitText = command.limit ? `[ ${command.limit === true ? "" : +command.limit}Ⓛ ]` : "";
-        return `${commandName} ${limitText}`;
-    }).join("\n│➣ ")}\n`;
+        return `${index === 0 ? "│" : "│"}➣ ${prefixedNames.map(name => `${name} ${limitText}`).join('\n│➣ ')}`;
+    }).filter(Boolean).join("\n")}\n`;
     teks += `│\n`;
     teks += `└───────⭓\n\n`;
 });
 
-            sock.reply(m.from, teks, m, {font: true}) //, {thumb: "https://telegra.ph/file/47b3652155f158b931bda.jpg"})
+            sock.reply(m.from, teks, m, {font: true, thumbnail: "https://telegra.ph/file/47b3652155f158b931bda.jpg"})
         }
 	},
 customPrefix: "",

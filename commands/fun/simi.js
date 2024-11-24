@@ -1,4 +1,3 @@
-import axios from "axios";
 export default {
 	name: "simi",
 	command: ["simi"],
@@ -13,7 +12,7 @@ export default {
     isAdmin: false,
     isGroup: false,
     isPrivate: false,
-	run: async(m, {text}) => {
+	run: async(m, {text, axios}) => {
 async function simtalk(text) {
     const params = new URLSearchParams();
     params.append("text", text);

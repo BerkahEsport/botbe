@@ -197,7 +197,7 @@ async function connectToWhatsApp() {
 			if (!fs.existsSync("./tmp")) fs.mkdirSync("./tmp");
 			sock.sendMessage(config.number.owner + "@s.whatsapp.net", {
 				text: `${sock?.user?.name || "Bot"} has Connected...`,
-			}, { ephemeralExpiration: 86400})
+			}, { ephemeralExpiration: undefined})
 		} else if (qr) {
 			console.log("Scan this QR Code!\n");
 			qrcode.generate(qr, {small: true});

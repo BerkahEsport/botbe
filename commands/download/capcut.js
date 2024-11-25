@@ -13,45 +13,12 @@ export default {
     isGroup: false,
     isPrivate: false,
     run: async(m, {
-        prefix,
-        noPrefix,
-        command,
-        arg,
-        args,
         text,
         sock,
-        commands,
-        cmd,
-        name,
-        user,
-        settings,
-        stats,
-        isGroup,
-        isAdmin,
-        isBotAdmin,
-        admin,
-        metadata,
-        participants,
-        store,
-        config,
-        functions,
         axios,
         cheerio
     }) => {
-async function capcut(url) {
-  const response = await fetch(url);
-  const data = await response.text();
-  const $ = cheerio.load(data);
 
-  return {
-    nama: $("img").attr("alt"),
-    used: $("b").text().replace($("img").attr("alt"), ""),
-    thumbnail: $("img").attr("src"),
-    video: $("video").attr("src"),
-  };
-}
-
-//capcut new
 function capcutdl(Url) {
 	return new Promise((resolve, reject) => {
 		let token = Url.match(/\d+/)[0];
@@ -72,10 +39,10 @@ function capcutdl(Url) {
 			}
 		}).then(({ data }) => {
 			console.log(data);
-			resolve(data); // Menyelesaikan janji dengan mengembalikan data
+			resolve(data);
 		}).catch((err) => {
 			console.log(err);
-			reject(err); // Menyelesaikan janji dengan melempar kesalahan
+			reject(err);
 		});
 	});
     }

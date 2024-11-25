@@ -143,7 +143,7 @@ async function connectToWhatsApp() {
 	sock.ev.on("creds.update", saveCreds);
 	sock.ev.on("connection.update", async ({ qr, connection, lastDisconnect }) => {
 		if (connection === "close") {
-			let reason = lastDisconnect?.error?.output?.statusCode;
+			const reason = lastDisconnect?.error?.output?.statusCode;
 			switch (reason) {
                 case 408:
                     console.log(chalk.red("[+] Connection timed out. restarting..."));

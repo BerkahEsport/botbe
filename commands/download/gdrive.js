@@ -1,10 +1,10 @@
 export default {
 name: "gdrive",
-command: ["gdrive"],
+command: ["gdrive", "gddl"],
 tags: "download",
 desc: "",
 customPrefix: "",
-example: "",
+example: "https://drive.google.com/file/d/1uHMRQUplsB-aGgfzzicrnR9a3sG-l30R/view?usp=sharing",
 limit: false,
 isOwner: false,
 isPremium: false,

@@ -34,7 +34,7 @@ export default {
                 "```「▰▰▰▰▱▱▱▱▱▱」Loading...```",
                 "```「▰▰▰▰▰▱▱▱▱▱」Loading...```"
             ],
-            eror: "( ⚈̥̥̥̥̥́⌢⚈̥̥̥̥̥̀) *𝔼ℝℝ𝕆ℝ* ( ⚈̥̥̥̥̥́⌢⚈̥̥̥̥̥̀)\n\n• The feature encountered an error. Please report it to the owner!\n> *Chat the owner*: _https://wa.me/62895375950107_ \n> _Or try the command again after a while!_",
+            error: "( ⚈̥̥̥̥̥́⌢⚈̥̥̥̥̥̀) *𝔼ℝℝ𝕆ℝ* ( ⚈̥̥̥̥̥́⌢⚈̥̥̥̥̥̀)\n\n• The feature encountered an error. Please report it to the owner!\n> *Chat the owner*: _https://wa.me/62895375950107_ \n> _Or try the command again after a while!_",
             ty: "\n> 💭 ʜᴇʀᴇ ɪꜱ ᴛʜᴇ ʀᴇꜱᴜʟᴛ... \n> ᴅᴏɴ'ᴛ ꜰᴏʀɢᴇᴛ ᴛᴏ ꜱᴜᴘᴘᴏʀᴛ ɪɢ @ʙᴇʀᴋᴀʜᴇꜱᴘᴏʀᴛ.ɪᴅ! \n> 👍 ᴛʜᴀɴᴋ ʏᴏᴜ!",
             subs: "Don't just look, make sure to subscribe too! \n https://m.youtube.com/channel/UCG_Xj6eHBMaW9HTHTya9q6w"
         },

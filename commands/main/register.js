@@ -6,13 +6,13 @@ export default {
         desc: "Register your number in the bot database.",
 	run: async(m, { sock, prefix, command, text, user, config, functions}) => {
         const regTime = +new Date()
-        let [ name, age ] = text.split(".")
-        if ( user.registered === true ) throw (`You are already registered in the bot database!`)
-        if ( !text) throw (`Please enter the command correctly. \nExample: ${prefix+command} ${m.pushName || "userBE"}.18`)
-        if ( !name ) throw ("Name cannot be empty (Alphanumeric)!")
-        if ( !age ) throw ("Age cannot be empty (Number)!")
-        if ( parseInt( age ) > 30 ) throw ("Age must not be more than 30!")
-        if ( parseInt( age ) < 7 ) throw ("Age must not be less than 7!")
+        let [ name, age ] = text.split(".");
+        if ( user?.registered === true ) throw (`You are already registered in the bot database!`);
+        if ( !text) throw (`Please enter the command correctly. \nExample: ${prefix+command} ${m.pushName || "userBE"}.18`);
+        if ( !name ) throw ("Name cannot be empty (Alphanumeric)!");
+        if ( !age ) throw ("Age cannot be empty (Number)!");
+        if ( parseInt( age ) > 30 ) throw ("Age must not be more than 30!");
+        if ( parseInt( age ) < 7 ) throw ("Age must not be less than 7!");
                 //  Add if you are
                 user.registered = true;
                 user.registeredTime = +regTime;

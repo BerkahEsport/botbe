@@ -26,10 +26,12 @@ export default async function message_upsert(sock, m, store, commands, config, f
 			if (Array.isArray(prefix)) {
 				for (let p of prefix) {
 					if (typeof p === "string" && m.body.startsWith(p)) {
+						prefix = p;
 						noPrefix = m.body.replace(p, "").trim(); // replace string prefix
 						isPrefix = true;
 						break;
 					} else if (p instanceof RegExp && p.test(m.body.split(" ")[0])) {
+						prefix = p;
 						noPrefix = m.body.replace(p, "").trim(); // replace RegExp prefix
 						isPrefix = true;
 						break;
@@ -38,6 +40,7 @@ export default async function message_upsert(sock, m, store, commands, config, f
 			} else if (prefix instanceof RegExp) {
 				isPrefix = prefix.test(m.body.split(" ")[0]);
 				if (isPrefix) {
+					prefix = m.body.split(" ")[0];
 					noPrefix = m.body.replace(prefix, "").trim(); // replace RegExp prefix
 				}
 			} else if (typeof prefix === "string" && m.body.startsWith(prefix)) {

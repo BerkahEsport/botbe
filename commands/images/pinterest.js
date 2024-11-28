@@ -4,9 +4,13 @@ export default {
 	command: ["pinterest", "pint"],
   tags: "images",
   desc: "Looking for 10 random images from Pinterest...",
-	run: async(m, { sock, config, functions, text}) => {
+	run: async(m, {
+    sock,
+    text
+  }) => {
     const data = await pinterest(text);
     let images = data.slice(0, 10);
+
     for (let i = images.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [images[i], images[j]] = [images[j], images[i]];

@@ -2,7 +2,7 @@ export default {
     name: "civitai",
     command: ["civitai"],
     tags: "ai",
-    desc: "Mencari gambar dengan ai.",
+    desc: "Search for images with civit ai.",
     customPrefix: "",
     example: "",
     limit: 5,

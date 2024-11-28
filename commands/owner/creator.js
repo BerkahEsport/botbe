@@ -13,36 +13,13 @@ export default {
     isGroup: false,
     isPrivate: false,
     run: async(m, {
-        prefix,
-        noPrefix,
-        command,
-        arg,
-        args,
-        text,
-        sock,
-        commands,
-        cmd,
-        name,
-        user,
-        settings,
-        stats,
-        isGroup,
-        isAdmin,
-        isBotAdmin,
-        admin,
-        metadata,
-        participants,
-        store,
-        config,
-        functions,
-        axios,
-        cheerio
+        functions
     }) => { 
         m.reply(functions.list({
             name: "berkahesport",
             address: "Boyolali",
             ig: "@berkahesport.id",
             github: "https://github.com/BerkahEsport"
-        }, "Info Owner"), {font: true})
-     }
+        }, "Info Owner"), {font: true});
     }
+}

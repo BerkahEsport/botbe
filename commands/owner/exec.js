@@ -5,6 +5,13 @@ export default {
   customPrefix: "$",
   tags: "owner",
   desc: "Executing system...",
+  example: "",
+  isOwner: true,
+  isBotAdmin: false,
+  isAdmin: false,
+  isGroup: false,
+  isPrivate: false,
+  isPremium: false,
   run: async (m, {functions}) => {
     try {
       exec(m.text, async (err, stdout) => {
@@ -14,12 +21,5 @@ export default {
     } catch (e) {
       m.reply(functions.format(e));
     }
-  },
-example: "",
-isOwner: true,
-isBotAdmin: false,
-isAdmin: false,
-isGroup: false,
-isPrivate: false,
-isPremium: false,
+  }
 }

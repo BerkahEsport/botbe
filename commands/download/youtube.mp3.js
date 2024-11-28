@@ -13,7 +13,11 @@ export default {
     isAdmin: false,
     isGroup: false,
     isPrivate: false,
-    run: async(m, {sock, args, text, command, prefix, functions, config, isPremium, isOwner}) => {
+    run: async(m, {
+        sock,
+        text,
+        functions
+    }) => {
         if (!functions.isUrl(text, "youtu")) throw ("Enter the YouTube URL correctly!");
         const data = await youtube.download(text);
         await sock.sendFile(m.from, data.audio.dlurl, data.title, "", m, { asDocument: true});

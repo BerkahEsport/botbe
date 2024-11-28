@@ -13,32 +13,10 @@ export default {
     isGroup: false,
     isPrivate: false,
     run: async(m, {
-        prefix,
-        noPrefix,
-        command,
-        arg,
-        args,
         text,
         sock,
-        commands,
-        cmd,
-        name,
-        user,
-        settings,
-        stats,
-        isOwner,
-        isPremium,
-        isGroup,
-        isAdmin,
-        isBotAdmin,
-        admin,
-        metadata,
-        participants,
-        store,
-        config,
         functions,
-        axios,
-        cheerio
+        axios
     }) => {
         if (!functions.isUrl(text, "youtu")) throw ("Enter the YouTube URL correctly!");
         const regex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/]+\/\S+\/|(?:v|e(?:mbed)?)\/|(?:.*?[?&]v=))|youtu\.be\/)([a-zA-Z0-9_-]{11})/;

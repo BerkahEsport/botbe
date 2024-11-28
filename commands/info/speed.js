@@ -6,6 +6,15 @@ export default {
     command: ["speed"],
     tags: "main",
     desc: "Check speed internet...",
+    customPrefix: "",
+    example: "",
+    limit: 3,
+    isOwner: false,
+    isPremium: false,
+    isBotAdmin: false,
+    isAdmin: false,
+    isGroup: false,
+    isPrivate: false,
     run: async(m) => {
         let exec = promisify(cp.exec).bind(cp)
         await m.reply("Test Speed...")
@@ -19,14 +28,5 @@ export default {
             if (stdout) return m.reply(stdout)
             if (stderr) return m.reply(stderr)
         }
-    },
-customPrefix: "",
-example: "",
-limit: 3,
-isOwner: false,
-isPremium: false,
-isBotAdmin: false,
-isAdmin: false,
-isGroup: false,
-isPrivate: false
+    }
 }

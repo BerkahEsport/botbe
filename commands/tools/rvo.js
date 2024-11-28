@@ -42,6 +42,8 @@ run: async(m, {
     axios,
     cheerio
 }) => {
+    // If error please update on terminal: $ npm install @whiskeysockets/baileys@WhiskeySockets/Baileys#fix/missing-messages
+    // Source: https://github.com/WhiskeySockets/Baileys/pull/732#issuecomment-2058128554
         if (isQuoted) {
             let msg = m.quoted.message.viewOnceMessageV2.message;
             let type = Object.keys(msg)[0];

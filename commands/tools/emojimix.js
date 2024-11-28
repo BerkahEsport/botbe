@@ -13,33 +13,12 @@ export default {
     isGroup: false,
     isPrivate: false,
     run: async(m, {
-        prefix,
-        noPrefix,
-        command,
-        arg,
-        args,
         text,
-        sock,
-        commands,
-        cmd,
-        name,
-        user,
-        settings,
-        stats,
-        isGroup,
-        isAdmin,
-        isBotAdmin,
-        admin,
-        metadata,
-        participants,
-        store,
         config,
-        functions,
-        axios,
-        cheerio
+        functions
     }) => {
-      let [emo1, emo2] = text.split(".")
-      let emoji = await functions.fetchJson(`https://tenor.googleapis.com/v2/featured?key=AIzaSyAyimkuYQYF_FXVALexPuGQctUWRURdCYQ&contentfilter=high&media_filter=png_transparent&component=proactive&collection=emoji_kitchen_v5&q=${encodeURIComponent(emo1)}_${encodeURIComponent(emo2)}`)
-m.reply(emoji.results[0].url, {asSticker: true, caption: config.text.ty})
-}
+        let [emo1, emo2] = text.split(".")
+        let emoji = await functions.fetchJson(`https://tenor.googleapis.com/v2/featured?key=AIzaSyAyimkuYQYF_FXVALexPuGQctUWRURdCYQ&contentfilter=high&media_filter=png_transparent&component=proactive&collection=emoji_kitchen_v5&q=${encodeURIComponent(emo1)}_${encodeURIComponent(emo2)}`)
+        m.reply(emoji.results[0].url, {asSticker: true, caption: config.text.ty})
+    }
 }

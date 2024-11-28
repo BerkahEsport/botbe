@@ -5,8 +5,10 @@ export default {
     command: ["play"],
     tags: "tools",
     desc: "Looking for a list of YouTube videos...",
-    run: async(m, {sock, args, text, prefix: usedPrefix, functions, config}) => {
-        const gh = m.github
+    run: async(m, {
+        sock,
+        text
+    }) => {
         if (!text) throw "✳️ What do you want me to search for on YouTube?";
         const { all: [bestItem, ...moreItems] } = await ytSearch(text);
         const videoItems = moreItems.filter(item => item.type === 'video');
@@ -25,7 +27,7 @@ export default {
 🖼️ Gambar: _${populerItem.image}_
 🖼️ Icon: _${populerItem.thumbnail}_
 🔗 URL: _${populerItem.url}_`.trim()
-        sock.sendFile(m.from, populerItem.thumbnail, "", caption, m)
-        await sock.sendFile(m.from, dl.audio.dlurl, populerItem.title, "", m, {mime: "audio/mpeg"})
+        sock.sendFile(m.from, populerItem.thumbnail, "", caption, m);
+        await sock.sendFile(m.from, dl.audio.dlurl, populerItem.title, "", m, {mime: "audio/mpeg"});
     }
 }

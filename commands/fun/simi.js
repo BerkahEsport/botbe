@@ -12,23 +12,27 @@ export default {
     isAdmin: false,
     isGroup: false,
     isPrivate: false,
-	run: async(m, {text, axios}) => {
-async function simtalk(text) {
-    const params = new URLSearchParams();
-    params.append("text", text);
-    params.append("lc", "id");
-    const { data } = await axios({
-        method: "POST",
-        url: "https://api.simsimi.vn/v2/simtalk",
-        data: params,
-    });
-    return data;
-    }
-try {
-    let api = await simtalk(text);
-    m.reply(api.message, {font: true});
+	run: async(m, {
+        text,
+        axios
+    }) => {
+        async function simtalk(text) {
+            const params = new URLSearchParams();
+            params.append("text", text);
+            params.append("lc", "id");
+            const { data } = await axios({
+                method: "POST",
+                url: "https://api.simsimi.vn/v2/simtalk",
+                data: params,
+            });
+            return data;
+            }
+
+        try {
+            let api = await simtalk(text);
+            m.reply(api.message, {font: true});
         } catch {
-    m.reply("Simi doesn't understand, try asking someone else. 🙁", {font: true});
+        m.reply("Simi doesn't understand, try asking someone else. 🙁", {font: true});
+        }
     }
-}
 }

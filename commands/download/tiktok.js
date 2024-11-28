@@ -13,31 +13,11 @@ export default {
     isGroup: false,
     isPrivate: false,
     run: async(m, {
-        prefix: usedPrefix,
-        noPrefix,
-        command,
-        arg,
         args,
-        text,
         sock,
-        commands,
-        cmd,
-        name,
-        user,
-        settings,
-        stats,
-        isGroup,
-        isAdmin,
-        isBotAdmin,
-        admin,
-        metadata,
-        participants,
-        store,
-        config,
         functions,
-        axios,
-        cheerio
-    }) => {
+        axios
+      }) => {
         async function tiktok(query) {
             if (!functions.isUrl(query, "tiktok")) throw ("Enter the TikTok URL correctly!");
             let response = await axios("https://lovetik.com/api/ajax/search", {

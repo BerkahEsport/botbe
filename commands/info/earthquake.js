@@ -1,6 +1,6 @@
 export default {
     name: "earthquake",
-    command: ["earthquake"],
+    command: ["earthquake", "eq"],
     tags: "info",
     desc: "",
     customPrefix: "",
@@ -13,30 +13,8 @@ export default {
     isGroup: false,
     isPrivate: false,
     run: async(m, {
-        prefix,
-        noPrefix,
-        command,
-        arg,
-        args,
-        text,
         sock,
-        commands,
-        cmd,
-        name,
-        user,
-        settings,
-        stats,
-        isGroup,
-        isAdmin,
-        isBotAdmin,
-        admin,
-        metadata,
-        participants,
-        store,
-        config,
-        functions,
-        axios,
-        cheerio
+        functions
     }) => {
         const link = "https://data.bmkg.go.id/DataMKG/TEWS/";
         try {
@@ -97,4 +75,4 @@ export default {
             }
         }
     }
-    }
+}

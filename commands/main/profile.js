@@ -13,34 +13,12 @@ export default {
     isGroup: false,
     isPrivate: false,
     run: async(m, {
-        prefix,
-        noPrefix,
-        command,
-        arg,
-        args,
-        text,
         sock,
-        commands,
-        cmd,
-        name,
-        user,
-        settings,
-        stats,
-        isGroup,
-        isAdmin,
-        isBotAdmin,
-        admin,
-        metadata,
-        participants,
-        store,
-        config,
-        functions,
-        axios,
-        cheerio
+        functions
     }) => {
-    let who = m.mentions && m.mentions[0] ? m.mentions[0] : m.fromMe ? sock.user.jid : m.sender
-    let username = sock.getName(who)
-    let str = `❏───❏ *ᴘʀᴏꜰɪʟᴇ* ❏───❏
+        let who = m.mentions && m.mentions[0] ? m.mentions[0] : m.fromMe ? sock.user.jid : m.sender
+        let username = sock.getName(who)
+        let str = `❏───❏ *ᴘʀᴏꜰɪʟᴇ* ❏───❏
 💌 • *Nickname:* ${username || `@${who.split`@`[0]}`} 
 🎐 • *Username:* ${global.db.users[who].registered ? global.db.users[who].name : username}
 📧 • *Tag:* @${who.replace(/@.+/, "")}
@@ -50,6 +28,6 @@ export default {
 🌟 • *Premium:* ${global.db.users[who].premium ? "✅" :"❌"} ${global.db.users[who].premium ? 
 `\n⏰ • *PremiumTime:* ${functions.runtime(global.db.users[who].premiumTime)}` : ""} 
 📑 • *Registered:* ${global.db.users[who].registered ? "✅": "❌"}`.trim()
-    sock.sendFile(m.from, await sock.profilePictureUrl(who, "image").catch(_ => "./src/avatar_contact.png"), `Profile_`, str, m, {font: true})
+        sock.sendFile(m.from, await sock.profilePictureUrl(who, "image").catch(_ => "./src/avatar_contact.png"), `Profile_`, str, m, {font: true})
     }
 }

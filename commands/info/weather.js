@@ -13,68 +13,46 @@ export default {
     isGroup: false,
     isPrivate: false,
     run: async(m, {
-        prefix,
-        noPrefix,
-        command,
-        arg,
-        args,
         text,
-        sock,
-        commands,
-        cmd,
-        name,
-        user,
-        settings,
-        stats,
-        isGroup,
-        isAdmin,
-        isBotAdmin,
-        admin,
-        metadata,
-        participants,
-        store,
-        config,
         functions,
-        axios,
-        cheerio
+        axios
     }) => {
-try {
-    let response = axios.get('https://api.weatherapi.com/v1/current.json?key=897dba35c1d94f4cbea134758220207&q=' + text)
-    let res = await response
-    let {
-        name,
-        region,
-        country,
-        lat,
-        lon,
-        tz_id,
-        localtime_epoch,
-        localtime
-    } = res.data.location
-    let {
-        last_updated_epoch,
-        last_updated,
-        temp_c,
-        temp_f,
-        is_day,
-        wind_mph,
-        wind_kph,
-        wind_degree,
-        wind_dir,
-        pressure_mb,
-        pressure_in,
-        precip_mm,
-        precip_in,
-        humidity,
-        cloud,
-        feelslike_c,
-        feelslike_f,
-        vis_km,
-        vis_miles,
-        uv,
-        gust_mph,
-        gust_kph
-    } = res.data.current
+            let response = axios.get('https://api.weatherapi.com/v1/current.json?key=897dba35c1d94f4cbea134758220207&q=' + text)
+            let res = await response
+            let {
+                name,
+                region,
+                country,
+                lat,
+                lon,
+                tz_id,
+                localtime_epoch,
+                localtime
+            } = res.data.location
+            let {
+                last_updated_epoch,
+                last_updated,
+                temp_c,
+                temp_f,
+                is_day,
+                wind_mph,
+                wind_kph,
+                wind_degree,
+                wind_dir,
+                pressure_mb,
+                pressure_in,
+                precip_mm,
+                precip_in,
+                humidity,
+                cloud,
+                feelslike_c,
+                feelslike_f,
+                vis_km,
+                vis_miles,
+                uv,
+                gust_mph,
+                gust_kph
+            } = res.data.current
     let caption = `
 *- - - - [ CONDITION ] - - -*
 ${res.data.current.condition.text}
@@ -111,11 +89,7 @@ ${functions.readMore()}
 *Vis Miles:* ${vis_miles}
 *UV:* ${uv}
 *Gust Mph:* ${gust_mph}
-*Gust Kph:* ${gust_kph}
-    `.trim()
-m.reply("https:" + res.data.current.condition.icon, {caption, font: true})
-        } catch(e) {
-            throw (e)
-        }
+*Gust Kph:* ${gust_kph}`.trim();
+        m.reply("https:" + res.data.current.condition.icon, {caption, font: true});
     }
 }

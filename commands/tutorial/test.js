@@ -12,7 +12,7 @@ export default {
 	isAdmin: false,
 	isGroup: false,
 	isPrivate: false,
-	run: async(m, { text, sock, config, functions}) => {
-	m.reply(`Iya @${m.pushName}, bot active!`)
-}
+	run: async(m) => {
+		m.reply(`Iya @${m.pushName}, bot active!`)
+	}
 }

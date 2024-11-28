@@ -10,12 +10,12 @@ export default async function message_upsert(sock, m, store, commands, config, f
 
 	// Variabel setup
 	m.limit = false;
-	let user = global.db.users[m.sender];
-	let settings = global.db.settings[sock.user.jid || config.number.bot+"@s.whatsapp.net"];
-	let stats = global.db.stats;
+	const user = global.db.users[m.sender];
+	const settings = global.db.settings[sock.user.jid || config.number.bot+"@s.whatsapp.net"];
+	const stats = global.db.stats;
+	const quoted = m.isQuoted && /http/i.test(m.body) ? m : m.isQuoted ? m.quoted : m;
 	let isPrefix, isCommand, noPrefix, arg, args, command, text, commandResult = undefined ;
 	try {
-
 		if (m.fromMe) return;
 
 		// Calling commands
@@ -88,6 +88,7 @@ export default async function message_upsert(sock, m, store, commands, config, f
 				args,
 				text,
 				sock,
+				quoted,
 				commands,
 				cmd,
 				name,
@@ -170,7 +171,7 @@ Example: ¿${prefix}register ${m.pushName || "userBE"}.18¿`, {font: true});
 				m.reply(`Feature access denied, ${+cmd.limit} limits required for feature to be accessed!!`, {font: true});
 				continue;
 			}
-			if (!!cmd.example && !text) {
+			if (!!cmd.example && !quoted.text) {
 				m.react("❓");
 				m.reply(`*⭓─❖『 USAGE INFO 』❖─⭓*
 
@@ -182,17 +183,17 @@ Example: ¿${prefix}register ${m.pushName || "userBE"}.18¿`, {font: true});
 				m.react("⏳");
 				await cmd.run(m, _arguments);
 				if (!m.isPremium) m.limit = m.limit || cmd.limit || false;
-				commandResult = true
+				commandResult = true;
 			} catch(e) {
 				m.limit = false;
 				if (e) {
-				m.log(e)
+				m.log(e);
 				if (typeof e == "string") {
 						m.reply(e, {font: true});
 					} else {
 						commandResult = false;
 					if (e.name) {
-						let err = functions.format(e)
+						let err = functions.format(e);
 						m.report(`*🗂️ Name:* ${name} ${m.isGroup ? "\n🔗 *" + m.metadata.subject + "*" : ""}
 👤 *Sender:* ${m.pushName}
 💬 *Chat:* https://wa.me/${m.sender.replace("@s.whatsapp.net","")}
@@ -206,11 +207,11 @@ m.reply(`( ⚈̥̥̥̥̥́⌢⚈̥̥̥̥̥̀) *𝔼ℝℝ𝕆ℝ* ( ⚈̥̥̥̥�
 • _Problematic features please report the owner!_
 *Chat:* _https://wa.me/${config.number.owner}_
 > Or repeat a few more times!`);
-						};
-					};
+						}
+					}
 				} break;
 			} continue;
-		};
+		}
 	} catch(e) {
 			m.report(e);
 			m.log("Error a messages.upsert: ", e);
@@ -225,15 +226,15 @@ m.reply(`( ⚈̥̥̥̥̥́⌢⚈̥̥̥̥̥̀) *𝔼ℝℝ𝕆ℝ* ( ⚈̥̥̥̥�
 					if (m.limit && !m.isPremium) {
 						user.limit -= +m.limit
 						m.reply(+m.limit == 1 ? `${+m.limit} limit are used.` : `${+m.limit} limits are used.`, {font: true});
-					};
-				};
+					}
+				}
 			if (isCommand) {
-					stats.today += 1
-					stats.total += 1
+					stats.today += 1;
+					stats.total += 1;
 				if (commandResult) {
-					stats.success += 1
+					stats.success += 1;
 				} else {
-					stats.failed += 1
+					stats.failed += 1;
 				}
 			}
 		}

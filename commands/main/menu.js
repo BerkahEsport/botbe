@@ -75,7 +75,7 @@ Object.entries(list).forEach(([type, commandArray]) => {
     teks += `└───────⭓\n\n`;
 });
 
-            sock.reply(m.from, teks, m, {font: true, thumbnail: "https://telegra.ph/file/47b3652155f158b931bda.jpg"})
+            await sock.reply(m.from, teks, m, {font: true, thumbnail: "https://telegra.ph/file/47b3652155f158b931bda.jpg"});
         }
 	},
 customPrefix: "",

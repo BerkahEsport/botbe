@@ -4,7 +4,7 @@ export default {
     tags: "anime",
     desc: "",
     customPrefix: "",
-    example: "%prefix%commamd naruto",
+    example: "naruto",
     limit: true,
     isOwner: false,
     isPremium: false,
@@ -13,71 +13,51 @@ export default {
     isGroup: false,
     isPrivate: false,
     run: async(m, {
-        prefix,
-        noPrefix,
-        command,
-        arg,
-        args,
         text,
-        sock,
-        commands,
-        cmd,
-        name,
-        user,
-        settings,
-        stats,
-        isGroup,
-        isAdmin,
-        isBotAdmin,
-        admin,
-        metadata,
-        participants,
-        store,
-        config,
         functions,
         axios,
         cheerio
     }) => {
-async function animeIdSr(t) {
-    return new Promise((i, e) => {
-        axios
-            .get(`https://nontonanimeid.cyou/?s=${t}`)
-            .then(async ({
-                data: t
-            }) => {
-                const e = cheerio.load(t);
-                let n = [];
-                e(".result > ul > li")
-                    .get()
-                    .map((t) => {
-                        let i = e(t).find("a").attr("href"),
-                            a = e(t).find("h2").text(),
-                            s = e(t).find("img").attr("src"),
-                            d = e(t).find(".descs").text(),
-                            r = e(t).find(".nilaiseries").text(),
-                            o = e(t).find(".typeseries").text(),
-                            l = [];
-                        e(t)
-                            .find('span[class="genre"]')
+        async function animeIdSr(t) {
+            return new Promis$((resolve, reject) => {
+                axios
+                    .get(`https://nontonanimeid.cyou/?s=${t}`)
+                    .then(async ({
+                        data: t
+                    }) => {
+                        const $ = cheerio.load(t);
+                        let result = [];
+                        $(".result > ul > li")
                             .get()
                             .map((t) => {
-                                l.push(e(t).text());
+                                let i = $(t).find("a").attr("href"),
+                                    name = $(t).find("h2").text(),
+                                    thumbnail = $(t).find("img").attr("src"),
+                                    description = $(t).find(".descs").text(),
+                                    rating = $(t).find(".nilaiseries").text(),
+                                    type = $(t).find(".typeseries").text(),
+                                    genre = [];
+                                $(t)
+                                    .find('span[class="genre"]')
+                                    .get()
+                                    .map((t) => {
+                                        l.push($(t).text());
+                                    }),
+                                    result.push({
+                                        name,
+                                        thumbnail,
+                                        rating,
+                                        type,
+                                        description,
+                                        genre: genre.toString(),
+                                        url: i,
+                                    });
                             }),
-                            n.push({
-                                name: a,
-                                thumb: s,
-                                stars: r,
-                                type: o,
-                                desc: d,
-                                genre: l.toString(),
-                                url: i,
-                            });
-                    }),
-                    i(n);
-            })
-            .catch(e);
-    });
-}
-m.reply(functions.mapList(await animeIdSr(text), "NONTON ANIME"), {font: true})
-}
+                            resolve(result);
+                    })
+                    .catch(reject());
+            });
+        }
+        m.reply(functions.mapList(await animeIdSr(text), "NONTON ANIME"), {font: true})
+    }
 }

@@ -14,7 +14,6 @@ export default {
     isPrivate: false,
     run: async(m, {
         sock,
-        text,
         functions,
         args,
         config

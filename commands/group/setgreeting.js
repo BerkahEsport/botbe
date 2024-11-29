@@ -1,6 +1,6 @@
 export default {
-    name: "sWelcome",
-    command: ["sWelcome", "sBye"],
+    name: ["setwelcome", "setbye"],
+    command: ["setwelcome", "setbye"],
     tags: "group",
     desc: "Useful for providing group member information.",
     customPrefix: "",
@@ -43,7 +43,7 @@ ${m.quoted.body}`);
     global.db.groups[m.from].sBye = m.quoted.body || "-";
                 } else {
                     m.reply(`The Goodbye message to group users who left was successfully set.
-    Become:
+Become:
 
     ${text}`);
     global.db.groups[m.from].sBye = text || "-";

@@ -2,7 +2,7 @@ export default {
     name: "lexicaart",
     command: ["lexicaart", "la"],
     tags: "ai",
-    desc: "",
+    desc: "Convert text to image using lexica.art",
     customPrefix: "",
     example: "girl student",
     limit: 3,

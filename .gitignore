@@ -1,0 +1,6 @@
+node_modules
+package-lock.json
+auth_session
+tmp/
+lib/json/
+*.bak

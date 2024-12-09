@@ -14,7 +14,12 @@ export default async function message_upsert(sock, m, store, commands, config, f
 	const settings = global.db.settings[sock.user.jid || config.number.bot+"@s.whatsapp.net"];
 	const stats = global.db.stats;
 	const quoted = m.isQuoted && /http/i.test(m.body) ? m : m.isQuoted ? m.quoted : m;
-	let isPrefix, isCommand, noPrefix, arg, args, command, text, commandResult = undefined ;
+	let isPrefix, isCommand, noPrefix, commandResult = undefined ;
+	let [firstWord, ...words] = m.body.split(" ").filter((v) => v);
+	let command = (firstWord || "").toLowerCase();
+	let arg = m.body.trim().split` `.slice(1);
+	let args = words || [];
+	let text = arg.join` `;
 	try {
 		if (m.fromMe) return;
 

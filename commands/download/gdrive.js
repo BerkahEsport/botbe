@@ -1,3 +1,17 @@
+/*<============== CREDITS ==============>
+        Author: berkahesport
+        Github: https://github.com/BerkahEsport/
+        Contact me: 62895375950107
+
+        Do not delete the source code.
+        It is prohibited to
+        sell and buy scripts
+        without the knowledge
+        of the script owner.
+
+        Thank you to Allah S.W.T
+<============== CREDITS ==============>*/
+
 export default {
 name: "gdrive",
 command: ["gdrive", "gddl"],
@@ -14,7 +28,10 @@ isGroup: false,
 isPrivate: false,
 run: async(m, {
     args,
-    axios
+    axios,
+    functions,
+    api,
+    config
     }) => {
     
 async function GDriveDl(url) {
@@ -71,7 +88,8 @@ async function GDriveDl(url) {
         await conn.sendFile(m.from, res.downloadUrl, res.fileName + res.mimetype, res.fileName + res.mimetype, m)
     } catch (e) {
         console.log(e)
-        throw ("Bot tidak memiliki akses ke GoogleDrive ini")
+        const data = await functions.fetchJson(`${api}api/gdrive?url=${args[0]}&apikey=${config.settings.apikey}`);
+        await sock.sendFile(m.from, data.result.link, "", "", m);
     }
 }
 }

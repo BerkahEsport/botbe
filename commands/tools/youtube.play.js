@@ -1,4 +1,17 @@
-import ytSearch from "yt-search";
+/*<============== CREDITS ==============>
+        Author: berkahesport
+        Github: https://github.com/BerkahEsport/
+        Contact me: 62895375950107
+
+        Do not delete the source code.
+        It is prohibited to
+        sell and buy scripts
+        without the knowledge
+        of the script owner.
+
+        Thank you to Allah S.W.T
+<============== CREDITS ==============>*/
+
 import {youtube} from "../../lib/js/ytdl.js";
 export default {
     name: "play",
@@ -7,13 +20,13 @@ export default {
     desc: "Looking for a list of YouTube videos...",
     run: async(m, {
         sock,
-        text
+        text,
+        functions,
+        api
     }) => {
         if (!text) throw "✳️ What do you want me to search for on YouTube?";
-        const { all: [bestItem, ...moreItems] } = await ytSearch(text);
-        const videoItems = moreItems.filter(item => item.type === 'video');
-        const populerItem = bestItem.type === 'video' ? bestItem : videoItems[0];
-        const dl = await youtube.download(populerItem.url);
+        const data = await functions.fetchJson(api+"ytsearch?text="+encodeURIComponent(text));
+        const dl = await youtube.download(data.result[0].url);
         let caption = `
 👤 Pemilik: _${populerItem.author.name}_
 🎥 Tipe: _${populerItem.type}_

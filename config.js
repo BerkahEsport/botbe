@@ -8,7 +8,9 @@ Thanks you...
 export default {
         settings: {
             prefix: ".",
-            session: "auth_session",
+            restapi: "https://berkahesport.my.id/api/",
+            apikey: "your-apikey", // Get it from https://berkahesport.my.id/
+            groqkey: "", // Contact me for the API key https:/wa.me/62895375950107 or source code https://console.groq.com/keys
             store: false // using store
         },
         name: {
@@ -39,11 +41,11 @@ export default {
             subs: "Don't just look, make sure to subscribe too! \n https://m.youtube.com/channel/UCG_Xj6eHBMaW9HTHTya9q6w"
         },
         Exif: { // For sticker
-            packId: "https://moexti.jw.lt/",
+            packId: "https://berkahesport.my.id/",
             packName: `ʙᴇʀᴋᴀʜᴇꜱᴘᴏʀᴛ.ɪᴅ\nChatBOT: 6289649672623`,
             packPublish: "Thank's to:\nAllah S.W.T",
             packEmail: "berkahesport@gmail.com",
-            packWebsite: "https://moexti.jw.lt/",
+            packWebsite: "https://berkahesport.my.id/",
             androidApp: "https://play.google.com/store/apps/details?id=com.bitsmedia.android.muslimpro",
             iOSApp: "https://apps.apple.com/id/app/muslim-pro-al-quran-adzan/id388389451?|=id",
             emojis: [],

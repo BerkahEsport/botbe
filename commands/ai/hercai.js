@@ -1,3 +1,17 @@
+/*<============== CREDITS ==============>
+		Author: berkahesport
+		Github: https://github.com/BerkahEsport/
+		Contact me: 62895375950107
+
+		Do not delete the source code.
+		It is prohibited to
+		sell and buy scripts
+		without the knowledge
+		of the script owner.
+
+		Thank you to Allah S.W.T
+<============== CREDITS ==============>*/
+
 export default {
 	name: "hercai",
 	command: ["hercai"],
@@ -14,9 +28,10 @@ export default {
 	isPrivate: false,
 	run: async (m, {
         functions,
-        quoted
+        quoted,
+		api
     }) => {
-        let response = await functions.fetchJson(`https://hercai.onrender.com/v3/hercai?question=${quoted.text}`)
-		m.reply(functions.list(response, "Herc.AI"));
+        let response = await functions.fetchJson(`${api}/api/hercai?text=${quoted.text}`)
+		m.reply(response.result);
 	}
 }

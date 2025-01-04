@@ -1,3 +1,19 @@
+/*<============== CREDITS ==============>
+	Author: @berkahesport
+	Contact me: 62895375950107
+    Website: https://berkahesport.my.id/
+	
+	Do not delete the source code.
+	It is prohibited to sell and buy
+	WhatsApp BOT scripts
+	without the knowledge
+	of the script owner.
+	
+	Selling = Sin 
+	
+	Thank you to Allah S.W.T
+<============== CREDITS ==============>*/
+
 import axios from "axios";
 import * as cheerio from "cheerio";
 export default async function message_upsert(sock, m, store, commands, config, functions) {
@@ -110,7 +126,8 @@ export default async function message_upsert(sock, m, store, commands, config, f
 				config,
 				functions,
 				axios,
-				cheerio
+				cheerio,
+				api: config.settings.restapi
 			}
 		
 		// Execution code

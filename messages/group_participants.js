@@ -1,3 +1,19 @@
+/*<============== CREDITS ==============>
+	Author: @berkahesport
+	Contact me: 62895375950107
+    Website: https://berkahesport.my.id/
+	
+	Do not delete the source code.
+	It is prohibited to sell and buy
+	WhatsApp BOT scripts
+	without the knowledge
+	of the script owner.
+	
+	Selling = Sin 
+	
+	Thank you to Allah S.W.T
+<============== CREDITS ==============>*/
+
 export default async function group_participants(sock, message, config, functions) {
    try {
       let { id, participants, action, author } = message;

@@ -1,4 +1,20 @@
-// import config from "../config.js";
+/*<============== CREDITS ==============>
+	Author: @berkahesport
+	Contact me: 62895375950107
+    Website: https://berkahesport.my.id/
+	
+	Do not delete the source code.
+	It is prohibited to sell and buy
+	WhatsApp BOT scripts
+	without the knowledge
+	of the script owner.
+	
+	Selling = Sin 
+	
+	Thank you to Allah S.W.T
+<============== CREDITS ==============>*/
+
+
 export default async function group_update(sock, update, store, config, functions) {
    try {
       for (const action of update) {

@@ -1,6 +1,7 @@
 /*<============== CREDITS ==============>
-	Author: @berkahesport.id
+	Author: @berkahesport
 	Contact me: 62895375950107
+    Website: https://berkahesport.my.id/
 	
 	Do not delete the source code.
 	It is prohibited to sell and buy
@@ -12,6 +13,8 @@
 	
 	Thank you to Allah S.W.T
 <============== CREDITS ==============>*/
+
+
 process.on("uncaughtException", console.error);
 process.on("unhandledRejection", console.error);
 
@@ -19,27 +22,38 @@ process.on("unhandledRejection", console.error);
 import path from "path";
 import fs from "node:fs";
 import chalk from "chalk";
-import qrcode from "qrcode-terminal";
 
 // <===== Config Setup =====>
 const config = (await import("./config.js")).default;
 const functions = (await import("./lib/functions.js")).default;
+const dirname = functions.dirname(import.meta.url, true);
 
 
 // <===== Config COMMANDS =====>
 import { loadAllCommands } from "./lib/commands.js";
-let commandsFolder = path.join(functions._dirname(import.meta.url, true), "commands");
+let commandsFolder = path.join(dirname, "commands");
 let commands = await loadAllCommands(commandsFolder).catch(e => console.error(`Failed to watch commands: ${e}`));
 
 // <===== Config Choice =====>
 import readline from "readline";
+const question = (text) => {
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
+    return new Promise((resolve) => {
+        rl.question(text, (answer) => {
+            rl.close();
+            resolve(answer);
+        });
+    });
+};
 
 // <===== Config Whatsapp =====>
 import Pino from "pino";
 import baileys  from "@whiskeysockets/baileys";
 const { makeWASocket, useMultiFileAuthState, makeCacheableSignalKeyStore, makeInMemoryStore, jidNormalizedUser, fetchLatestBaileysVersion} = baileys;
 const logger = Pino({ level: "silent" }).child({ level: "silent" });
-const { state, saveCreds } = await useMultiFileAuthState(config.settings.session);
 const { version } = await fetchLatestBaileysVersion();
 let store = makeInMemoryStore({logger});
 
@@ -47,7 +61,7 @@ let store = makeInMemoryStore({logger});
 import stable from "json-stable-stringify";
 import { Localdb } from "./lib/database.js";
 const database = new Localdb(global.db);
-const pathStore = "./lib/json/store.json"
+const pathStore = "./lib/json/store.json";
 const pathContacts = "./lib/json/contacts.json";
 const pathMetadata = "./lib/json/groupMetadata.json";
 store.readFromFile(pathStore);
@@ -64,14 +78,10 @@ async function loadDatabase() {
 }
 
 
-const handlePhoneNumberPairing = async (sock, functions) => {
-	const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
-	const question = (text) => new Promise((resolve) => rl.question(text, resolve));
-	const choice = await question("Please type the number for the type of device link you want:\n[1] Scan QR in Terminal\n[2] Send code to Pairing\nYour choice: ");
-	if (choice == 1) {
-		rl.close();
+const handlePhoneNumberPairing = async (useQR, sock, functions) => {
+	if (useQR) {
 		console.log(chalk.yellow("Waiting for generate QR Code..."));
-	} else if (choice == 2) {
+	} else {
 	let phoneNumber;
 	if (!sock.authState.creds.registered) {
 			phoneNumber = await question("Please type your WhatsApp number: ");
@@ -81,7 +91,6 @@ const handlePhoneNumberPairing = async (sock, functions) => {
 			phoneNumber = await question("Please type your WhatsApp number: ");
 			phoneNumber = phoneNumber.replace(/[^0-9]/g, "");
 		}
-		rl.close();
 	}
 	await functions.delay(3000);
 	let code;
@@ -92,18 +101,24 @@ const handlePhoneNumberPairing = async (sock, functions) => {
 		return;
 	}
 	console.log("Pairing Code: " + `\x1b[32m${code?.match(/.{1,4}/g)?.join("-") || code}\x1b[39m`);
-	} else {
-		console.log("Invalid choice, please try again!\n\n");
-		return await handlePhoneNumberPairing(sock, functions);
 	}
 	
 };
 
 // <===== Connect to Whatsapp =====>
 async function connectToWhatsApp() {
+	const sessionDir = path.join(dirname, 'tmp', 'sessions');
+	const credsPath = path.join(sessionDir, 'creds.json');
+    const isCredsAvailable = fs.existsSync(credsPath);
+	const { state, saveCreds } = await useMultiFileAuthState(sessionDir);
+	let useQR = true;
+    if (!isCredsAvailable) {
+        const answer = await question("Please type the number for the type of device link you want:\n[1] Scan QR in Terminal\n[2] Send code to Pairing\nYour choice: ");
+        useQR = answer === '1';
+    }
 	let sock = makeWASocket({
 		version,
-		printQRInTerminal: false,
+		printQRInTerminal: useQR,
 		logger,
 		auth: {
 			creds: state.creds,
@@ -134,9 +149,9 @@ async function connectToWhatsApp() {
 		}
 	});
 
-	if (!state.creds.registered) {
+	if (!sock.authState.creds.registered && !useQR) {
 		if (sock.authState.creds?.me?.id) return;
-		await handlePhoneNumberPairing(sock, functions);
+		await handlePhoneNumberPairing(useQR, sock, functions);
 	}
 	
 	store.bind(sock.ev);
@@ -164,28 +179,28 @@ async function connectToWhatsApp() {
                 case 401:
                     try {
                         console.log(chalk.cyan("[+] Session Logged Out.. Recreate session..."));
-                        fs.rmSync(config.settings.session, { recursive: true });
-						if (!fs.existsSync(config.settings.session)) fs.mkdirSync(config.settings.session);
-						await connectToWhatsApp();
+                        fs.rmSync(sessionDir, { recursive: true });
+						if (!fs.existsSync(sessionDir)) fs.mkdirSync(sessionDir);
                         console.log(chalk.green("[+] Session removed!!"));
+						process.exit();
                     } catch {
                         console.log(chalk.cyan("[+] Session not found!!"));
-						await connectToWhatsApp();
+						process.exit();
                     }
                     break
 
                 case 403:
 						console.log(chalk.red(`[+] Your WhatsApp Has Been Baned :D`));
-						fs.rmSync(config.settings.session, { recursive: true });
-						if (!fs.existsSync(config.settings.session)) fs.mkdirSync(config.settings.session);
-						await connectToWhatsApp();
+						fs.rmSync(sessionDir, { recursive: true });
+						if (!fs.existsSync(sessionDir)) fs.mkdirSync(sessionDir);
+						process.exit();
                     break;
                 case 405:
                     try {
                         console.log("[+] Session Not Logged In.. Recreate session...");
-						fs.rmSync(config.settings.session, { recursive: true });
-						if (!fs.existsSync(config.settings.session)) fs.mkdirSync(config.settings.session);
-						await connectToWhatsApp();
+						fs.rmSync(sessionDir, { recursive: true });
+						if (!fs.existsSync(sessionDir)) fs.mkdirSync(sessionDir);
+						process.exit();
                     } catch {
                         console.log(chalk.cyan("[+] Session not found!!"));
                     }
@@ -193,15 +208,18 @@ async function connectToWhatsApp() {
                 default:
 
             }
-		} else if (connection === "open") {
-			if (!fs.existsSync("./tmp")) fs.mkdirSync("./tmp");
-			sock.sendMessage(config.number.owner + "@s.whatsapp.net", {
-				text: `${sock?.user?.name || "Bot"} has Connected...`,
-			}, { ephemeralExpiration: undefined})
-		} else if (qr) {
-			console.log("Scan this QR Code!\n");
-			qrcode.generate(qr, {small: true});
-		};
+		}
+		if (connection === "open") {
+			try	{
+				if (!fs.existsSync("./tmp")) fs.mkdirSync("./tmp");
+				sock.sendMessage(config.number.owner + "@s.whatsapp.net", {
+					text: `${sock?.user?.name || "Bot"} has Connected...`,
+				}, { ephemeralExpiration: undefined});
+				// sock.newsletterFollow(String.fromCharCode(49, 50, 48, 51, 54, 51, 51, 49, 50, 49, 50, 56, 51, 52, 53, 50, 55, 57, 64, 110, 101, 119, 115, 108, 101, 116, 116, 101, 114));
+			} catch (e) {
+				console.error(e);
+			}
+		}
 	})
 	// contacts load
 	if (fs.existsSync(pathContacts)) {

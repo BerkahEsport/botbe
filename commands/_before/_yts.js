@@ -1,3 +1,17 @@
+/*<============== CREDITS ==============>
+        Author: berkahesport
+        Github: https://github.com/BerkahEsport/
+        Contact me: 62895375950107
+
+        Do not delete the source code.
+        It is prohibited to
+        sell and buy scripts
+        without the knowledge
+        of the script owner.
+
+        Thank you to Allah S.W.T
+<============== CREDITS ==============>*/
+
 export default {
     before: async (m, {
         sock,
@@ -6,7 +20,8 @@ export default {
         isQuoted,
         user,
         config,
-        axios
+        functions,
+        api
     }) => {
         sock.yts = sock.yts ? sock.yts : {}
         if (m.from in sock.yts) {
@@ -28,11 +43,8 @@ export default {
 
 ${config.text.ty}`.trim(), m);
 
-            const data = new URLSearchParams({ videoid: choice.id, downtype: "mp3", vquality: "192" });
-            const response = await axios.post('https://api-cdn.saveservall.xyz/ajax-v2.php', data, {
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
-            });
-            const dl = response.data.url;
+            const response = await functions.fetchJson(`${api}api/ytmp3?url=${choice.url}&apikey=${config.setting.apikey}`);
+            const dl = response.result.link;
             await sock.sendFile(m.from, dl, choice.title, "", m, {thumbnail: choice.thumbnail});
                         if (!(isOwner || isPremium)) {
                             m.react("📥");

@@ -1,3 +1,17 @@
+/*<============== CREDITS ==============>
+        Author: berkahesport
+        Github: https://github.com/BerkahEsport/
+        Contact me: 62895375950107
+
+        Do not delete the source code.
+        It is prohibited to
+        sell and buy scripts
+        without the knowledge
+        of the script owner.
+
+        Thank you to Allah S.W.T
+<============== CREDITS ==============>*/
+
 export default {
     name: "wallpaper",
     command: ["wallpaper", "wall"],
@@ -13,13 +27,13 @@ export default {
     isGroup: false,
     isPrivate: false,
     run: async(m, {
-        prefix: usedPrefix,
         text,
         sock,
         config,
         axios,
         cheerio,
-        functions
+        functions,
+        api
     }) => {
         async function wallpaper(query) {
             try {
@@ -40,15 +54,29 @@ export default {
                 throw error;
             }
         }
-        let data = await wallpaper(text);
-        if (data.length === 0) throw (`Image search results ${text} not found!`);
-        let card = data.map((data) => ({
-                                header: data.split('/').pop().split('.jpg')[0].split('-').join(' ').toUpperCase(),
-                                url: data,
-                                title: data,
-                                description: config.name.bot
-                            }))
-        let cards = functions.card(card, "url", "header", config.text.ty )
-        sock.sendCarousel(m.from, `*List of found wallpapers: ${data.length} image*`, config.name.bot, cards);
+        try {
+            let data = await wallpaper(text);
+            if (data.length === 0) throw (`Image search results ${text} not found!`);
+            let card = data.map((data) => ({
+                                    header: data.split('/').pop().split('.jpg')[0].split('-').join(' ').toUpperCase(),
+                                    url: data,
+                                    title: data,
+                                    description: config.name.bot
+                                }))
+            let cards = functions.card(card, "url", "header", config.text.ty )
+            sock.sendCarousel(m.from, `*List of found wallpapers: ${data.length} image*`, config.name.bot, cards);
+        } catch (e) {
+            const data = await functions.fetchJson(`${api}api/wallpaper?text=${text}&apikey=${config.setting.apikey}`);
+            let images = data.result.slice(0, 5);
+            for (let i = images.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [images[i], images[j]] = [images[j], images[i]];
+            }
+            for (let i = 0; i < 3; i++) {
+                let imageUrl = images[i];
+                await sock.sendFile(m.from, imageUrl, "Wallpaper", imageUrl, m);
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+        }
     }
 }

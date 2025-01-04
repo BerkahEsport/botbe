@@ -1,3 +1,17 @@
+/*<============== CREDITS ==============>
+        Author: berkahesport
+        Github: https://github.com/BerkahEsport/
+        Contact me: 62895375950107
+
+        Do not delete the source code.
+        It is prohibited to
+        sell and buy scripts
+        without the knowledge
+        of the script owner.
+
+        Thank you to Allah S.W.T
+<============== CREDITS ==============>*/
+
 export default {
     name: "gitclone",
     command: ["gitclone"],
@@ -15,16 +29,24 @@ export default {
     run: async(m, {
         args,
         sock,
-        axios
+        axios,
+        config,
+        functions,
+        api
     }) => {
-        const regex = /(?:https|git)(?::\/\/|@)github\.com[\/:]([^\/:]+)\/(.+)/i;
-        let [_, username, repo] = args[0].match(regex) || [];
-        repo = repo.replace(/.git$/, '');
-        let url = `https://api.github.com/repos/${username}/${repo}/zipball`;
-        let response = await axios.head(url);
-        let contentDisposition = response.headers['content-disposition'];
-        let filename = contentDisposition.match(/attachment; filename=(.*)/)[1];
-        // m.reply(await( await axios.get(url)).data)
-        sock.sendFile(m.from, url, filename, null, m, {asDocument: true, mime: "application"})
+        try {
+            const regex = /(?:https|git)(?::\/\/|@)github\.com[\/:]([^\/:]+)\/(.+)/i;
+            let [_, username, repo] = args[0].match(regex) || [];
+            repo = repo.replace(/.git$/, '');
+            let url = `https://api.github.com/repos/${username}/${repo}/zipball`;
+            let response = await axios.head(url);
+            let contentDisposition = response.headers['content-disposition'];
+            let filename = contentDisposition.match(/attachment; filename=(.*)/)[1];
+            sock.sendFile(m.from, url, filename, null, m, {asDocument: true, mime: "application"})
+        } catch (e) {
+            console.log(e);
+            const data = await functions.fetchJson(`${api}api/github?url=${args[0]}&apikey=${config.settings.apikey}`);
+            await sock.sendFile(m.from, data.result.link, `Github`, "", m);
+        }
     }
 }

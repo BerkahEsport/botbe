@@ -1,3 +1,17 @@
+/*<============== CREDITS ==============>
+        Author: berkahesport
+        Github: https://github.com/BerkahEsport/
+        Contact me: 62895375950107
+
+        Do not delete the source code.
+        It is prohibited to
+        sell and buy scripts
+        without the knowledge
+        of the script owner.
+
+        Thank you to Allah S.W.T
+<============== CREDITS ==============>*/
+
 export default {
     name: "capcut",
     command: ["capcut"],
@@ -16,7 +30,9 @@ export default {
         text,
         sock,
         axios,
-        cheerio
+        functions,
+        api,
+        config
     }) => {
 
 function capcutdl(Url) {
@@ -46,16 +62,20 @@ function capcutdl(Url) {
 		});
 	});
     }
-
+try {
     let data = await capcutdl(text);
     let caption = `*DOWNLOADER CAPCUT*
-
-
 *Title:* ${data.title}
 *Description:* ${data.description}
 *User:* ${data.usage}
 
 ${footer}`.trim();
     await sock.sendFile(m.from, data.originalVideoUrl, "capcut", caption, m);
-    }
+} catch (e) {
+    console.log(e);
+    let caption = `*DOWNLOADER CAPCUT*`
+    const data = await functions.fetchJson(`${api}api/capcut?url=${text}&apikey=${config.setting.apikey}`);
+    await sock.sendFile(m.from, data.result.video, "capcut", caption, m);
+}
+}
 }

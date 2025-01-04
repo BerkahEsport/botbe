@@ -1,3 +1,17 @@
+/*<============== CREDITS ==============>
+        Author: berkahesport
+        Github: https://github.com/BerkahEsport/
+        Contact me: 62895375950107
+
+        Do not delete the source code.
+        It is prohibited to
+        sell and buy scripts
+        without the knowledge
+        of the script owner.
+
+        Thank you to Allah S.W.T
+<============== CREDITS ==============>*/
+
 export default {
     name: "facebook",
     command: ["facebook", "fb"],
@@ -17,15 +31,17 @@ export default {
         sock,
         config,
         axios,
-        cheerio
+        cheerio,
+        functions,
+        api
     }) => {
+      try {
     const response =  await facebookdl(text);
-    if (response.status == 200) {
       await sock.sendFile(m.from, response.message[0].link, `FB`, config.name.bot, m);
-    } else if (response.status == 403) {
-      m.reply(response.message);
-    } else m.reply(response.message);
-
+    } catch (e) {
+      const data = await functions.fetchJson(`${api}api/facebook?url=${text}&apikey=${config.setting.apikey}`);
+      await sock.sendFile(m.from, data.result.hd, `FB`, config.name.bot, m);
+    }
     async function facebookdl(link) {
       const url = 'https://getmyfb.com/process';
       const data = new URLSearchParams({

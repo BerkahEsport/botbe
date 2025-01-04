@@ -12,15 +12,14 @@
         Thank you to Allah S.W.T
 <============== CREDITS ==============>*/
 
-import { youtube } from "../../lib/js/ytdl.js";
 export default {
-    name: "yta",
-    command: ["yta"],
-    tags: "download",
-    desc: "Download file mp3 with link youtube...",
+    name: "ai",
+    command: ["ai"],
+    tags: "ai",
+    desc: "Q&A with chatgpt ai.",
     customPrefix: "",
-    example: "https://youtu.be/jySbH-dLrYA",
-    limit: 8,
+    example: "Who are you?",
+    limit: false,
     isOwner: false,
     isPremium: false,
     isBotAdmin: false,
@@ -28,12 +27,12 @@ export default {
     isGroup: false,
     isPrivate: false,
     run: async(m, {
-        sock,
-        text,
-        functions
+        quoted,
+        functions,
+        api,
+        config
     }) => {
-        if (!functions.isUrl(text, "youtu")) throw ("Enter the YouTube URL correctly!");
-        const data = await youtube.download(text);
-        await sock.sendFile(m.from, data.audio.dlurl, data.title, "", m);
+        const result = await functions.fetchJson(`${api}api/chatgpt?text=${quoted.text}&apikey=${config.setting.apikey}`);
+        m.reply(result.result);
     }
 }

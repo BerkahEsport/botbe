@@ -1,3 +1,17 @@
+/*<============== CREDITS ==============>
+        Author: berkahesport
+        Github: https://github.com/BerkahEsport/
+        Contact me: 62895375950107
+
+        Do not delete the source code.
+        It is prohibited to
+        sell and buy scripts
+        without the knowledge
+        of the script owner.
+
+        Thank you to Allah S.W.T
+<============== CREDITS ==============>*/
+
 export default {
 	name: "menu",
 	command: ["menu"],
@@ -79,6 +93,7 @@ This is a List of Available Commands:\n\n`
                     });
                     Object.entries(list).forEach(([type, commandArray]) => {
                         teks += `┌──⭓ *${type.toUpperCase()} Menu*\n`;
+                        teks += `│➣ Total commands: ${commandArray.length}\n`;
                         teks += `│\n`;
                         teks += `${commandArray.map((command, index) => {
                             if (!command.name || (Array.isArray(command.name) && command.name.every(name => name === ""))) return "";

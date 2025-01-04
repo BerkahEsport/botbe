@@ -1,3 +1,17 @@
+/*<============== CREDITS ==============>
+        Author: berkahesport
+        Github: https://github.com/BerkahEsport/
+        Contact me: 62895375950107
+
+        Do not delete the source code.
+        It is prohibited to
+        sell and buy scripts
+        without the knowledge
+        of the script owner.
+
+        Thank you to Allah S.W.T
+<============== CREDITS ==============>*/
+
 export default {
 	name: "instagram",
 	command: ["instagram", "ig"],
@@ -14,9 +28,10 @@ export default {
     isPrivate: false,
 	run: async(m, {
         functions,
-        args
+        args,
+        config
     }) => {
-        let ig = await functions.fetchJson(`https://aemt.uk.to/download/igdl?url=${args[0]}`)
+        let ig = await functions.fetchJson(`${api}api/instagram?url=${args[0]}&apikey=${config.settings.apikey}`);
         m.reply(ig.result[0].url, {caption: functions.mapList(ig.result, "Instagram DL"), font: true})
     }
 }

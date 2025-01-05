@@ -3,4 +3,5 @@ package-lock.json
 tmp/
 lib/json/
 test.js
+config.js
 *.bak

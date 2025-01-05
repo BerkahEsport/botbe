@@ -59,8 +59,8 @@ let store = makeInMemoryStore({logger});
 
 // <===== Config STORE =====>
 import stable from "json-stable-stringify";
-import { Localdb } from "./lib/database.js";
-const database = new Localdb(global.db);
+import { Localdb, MongoDB } from "./lib/database.js";
+const database = !!config.settings.mongodb ? new MongoDB(config.settings.mongodb, "botbe") : new Localdb();
 const pathStore = "./lib/json/store.json";
 const pathContacts = "./lib/json/contacts.json";
 const pathMetadata = "./lib/json/groupMetadata.json";
@@ -73,10 +73,9 @@ async function loadDatabase() {
 		groups: {},
 		stats: {},
 		settings: {},
-		...((await database.fetch()) || {})
+		...((await database.read()) || {})
 	};
 }
-
 
 const handlePhoneNumberPairing = async (useQR, sock, functions) => {
 	if (useQR) {
@@ -204,7 +203,7 @@ async function connectToWhatsApp() {
                     } catch {
                         console.log(chalk.cyan("[+] Session not found!!"));
                     }
-                    break
+                    break;
                 default:
 
             }
@@ -244,7 +243,7 @@ async function connectToWhatsApp() {
 				}
 			}
 		} catch (e) {
-			console.log(chalk.bgRed(chalk.yellow(`Error contact update: ${e}`)))
+			console.log(chalk.bgRed(chalk.yellow(`Error contact update: ${e}`)));
 		}
 	});
 
@@ -259,7 +258,7 @@ async function connectToWhatsApp() {
 				};
 			}
 		} catch (e) {
-			console.log(chalk.bgRed(chalk.yellow(`Error contact upsert: ${e}`)))
+			console.log(chalk.bgRed(chalk.yellow(`Error contact upsert: ${e}`)));
 		}
 	});
 
@@ -276,21 +275,21 @@ async function connectToWhatsApp() {
 					}
 				}
 			} catch (e) {
-			console.log(chalk.bgRed(chalk.yellow(`Error groups update: ${e}`)))
+			console.log(chalk.bgRed(chalk.yellow(`Error groups update: ${e}`)));
 		}
 	});
 	// messages response
 	sock.ev.on("messages.upsert", async ({ type, messages }) => {
 		const config = await (await import(`./config.js?update=${Date.now()}`)).default;
-		const functions = await (await import(`./lib/functions.js?update=${Date.now()}`)).default;// nambah semua metadata ke store
-		await (await import(`./lib/simplification.js?update=${Date.now()}`)).default(sock, store, config, functions)
+		const functions = await (await import(`./lib/functions.js?update=${Date.now()}`)).default;
+		await (await import(`./lib/simplification.js?update=${Date.now()}`)).default(sock, store, config, functions);
 		if (store.groupMetadata && Object.keys(store.groupMetadata).length === 0) store.groupMetadata = await sock.groupFetchAllParticipating();
 		if (type === "notify" || type === "append") {
 			let msg = messages[0];
 			if (msg.message) {
 				let type = Object.keys(msg.message)[0];
 				if (type === "protocolMessage") return;
-				if (msg.key.remoteJid === "status@broadcast") return;
+				if (msg.key.remoteJid === "status@broadcast" || msg.key.remoteJid.endsWith("@newsletter")) return;
 				msg.message = msg.message?.ephemeralMessage ? msg.message.ephemeralMessage.message : msg.message;
 				let m = await (await import(`./lib/serialize.js?v=${Date.now()}`)).default(sock, msg, store, config, functions);
 				await (await import(`./messages/message_upsert.js?v=${Date.now()}`)).default(sock, m, store, commands, config, functions);
@@ -300,15 +299,15 @@ async function connectToWhatsApp() {
 
 	// group participants update
 	sock.ev.on("group-participants.update", async (message) => {
-		const config = await (await import(`./config.js?update=${Date.now()}`)).default
+		const config = await (await import(`./config.js?update=${Date.now()}`)).default;
 		const functions = await (await import(`./lib/functions.js?update=${Date.now()}`)).default;
-		await (await import(`./messages/group_participants.js?v=${Date.now()}`)).default(sock, message, config, functions)
+		await (await import(`./messages/group_participants.js?v=${Date.now()}`)).default(sock, message, config, functions);
 	})
 }
 // For loading database
-loadDatabase()
+await loadDatabase();
 // Start to connect whatsapp
-connectToWhatsApp()
+connectToWhatsApp();
 // Save Database every 30 second
 setInterval(async () => {
 	// write database bot
@@ -325,4 +324,4 @@ setInterval(async () => {
 		store.writeToFile(pathStore);
 	}
 
-}, 60 * 1000)
+}, 60 * 1000);

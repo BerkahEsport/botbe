@@ -11,6 +11,7 @@ export default {
             restapi: "https://berkahesport.my.id/api/",
             apikey: "your-apikey", // Get it from https://berkahesport.my.id/
             groqkey: "", // Contact me for the API key https:/wa.me/62895375950107 or source code https://console.groq.com/keys
+            mongodb: "", // MongoDB connection string https://cloud.mongodb.com/
             store: false // using store
         },
         name: {

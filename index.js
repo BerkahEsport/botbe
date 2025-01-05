@@ -14,7 +14,6 @@
 	Thank you to Allah S.W.T
 <============== CREDITS ==============>*/
 
-
 process.on("uncaughtException", console.error);
 process.on("unhandledRejection", console.error);
 
@@ -31,8 +30,9 @@ const dirname = functions.dirname(import.meta.url, true);
 
 // <===== Config COMMANDS =====>
 import { loadAllCommands } from "./lib/commands.js";
-let commandsFolder = path.join(dirname, "commands");
+const commandsFolder = path.join(dirname, "commands");
 let commands = await loadAllCommands(commandsFolder).catch(e => console.error(`Failed to watch commands: ${e}`));
+const usedCommandRecently = new Set();
 
 // <===== Config Choice =====>
 import readline from "readline";
@@ -101,7 +101,6 @@ const handlePhoneNumberPairing = async (useQR, sock, functions) => {
 	}
 	console.log("Pairing Code: " + `\x1b[32m${code?.match(/.{1,4}/g)?.join("-") || code}\x1b[39m`);
 	}
-	
 };
 
 // <===== Connect to Whatsapp =====>
@@ -205,7 +204,6 @@ async function connectToWhatsApp() {
                     }
                     break;
                 default:
-
             }
 		}
 		if (connection === "open") {
@@ -213,7 +211,7 @@ async function connectToWhatsApp() {
 				if (!fs.existsSync("./tmp")) fs.mkdirSync("./tmp");
 				sock.sendMessage(config.number.owner + "@s.whatsapp.net", {
 					text: `${sock?.user?.name || "Bot"} has Connected...`,
-				}, { ephemeralExpiration: undefined});
+				}, { ephemeralExpiration: 86400000});
 				// sock.newsletterFollow(String.fromCharCode(49, 50, 48, 51, 54, 51, 51, 49, 50, 49, 50, 56, 51, 52, 53, 50, 55, 57, 64, 110, 101, 119, 115, 108, 101, 116, 116, 101, 114));
 			} catch (e) {
 				console.error(e);
@@ -292,7 +290,7 @@ async function connectToWhatsApp() {
 				if (msg.key.remoteJid === "status@broadcast" || msg.key.remoteJid.endsWith("@newsletter")) return;
 				msg.message = msg.message?.ephemeralMessage ? msg.message.ephemeralMessage.message : msg.message;
 				let m = await (await import(`./lib/serialize.js?v=${Date.now()}`)).default(sock, msg, store, config, functions);
-				await (await import(`./messages/message_upsert.js?v=${Date.now()}`)).default(sock, m, store, commands, config, functions);
+				await (await import(`./messages/message_upsert.js?v=${Date.now()}`)).default(sock, m, store, commands, config, functions, usedCommandRecently);
 			}
 		}
 	})

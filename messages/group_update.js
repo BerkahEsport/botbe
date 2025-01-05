@@ -43,7 +43,9 @@ export default async function group_update(sock, update, store, config, function
                      sourceUrl: config.group.ofc
                   }
                }
-            })
+            }, {
+               ephemeralExpiration: 86400000
+            });
          } else if (!action.announce) {
             sock.sendMessage(action.id, {
                text: `*❖━━━━[ ɢʀᴏᴜᴘ ᴏᴘᴇɴ ]━━━━━━❖*`, contextInfo: {
@@ -56,6 +58,8 @@ export default async function group_update(sock, update, store, config, function
                      sourceUrl: config.group.ofc
                   }
                }
+            }, {
+               ephemeralExpiration: 86400000
             })
          } break;
       } return;

@@ -16,10 +16,14 @@
 
 import axios from "axios";
 import * as cheerio from "cheerio";
-export default async function message_upsert(sock, m, store, commands, config, functions) {
-	
+export default async function message_upsert(sock, m, store, commands, config, functions, usedCommandRecently) {
+	const isFiltered = (from) => !!usedCommandRecently.has(from);
+	const addFilter = (from) => {
+		usedCommandRecently.add(from);
+		setTimeout(() => usedCommandRecently.delete(from), 5000) // 5 detik.
+	}
 	// Self mode on if you want.
-	if (m.sender.split("@")[0] === config.number.owner) return;
+	// if (m.sender.split("@")[0] !== config.number.owner) return;
 
 	// Setup for DB
 	await (await import(`../lib/database.js?update=${Date.now()}`)).default(sock, m, config, functions);
@@ -135,6 +139,9 @@ export default async function message_upsert(sock, m, store, commands, config, f
 			await cmd.before(m, _arguments);
 		}
 		if (!isCommand) continue;
+		if (isCommand && isFiltered(m.sender)) {
+			return m.reply('「 ❗ 」 Give a 5 second delay per command bro!');
+		}
 		if (isCommand) {
 			if (!user?.registered && !(name == "register.js") && !(m.body.startsWith(prefix+"register") || m.body.startsWith(prefix+"reg"))) {
 				m.react("🚫");
@@ -234,7 +241,7 @@ m.reply(`( ⚈̥̥̥̥̥́⌢⚈̥̥̥̥̥̀) *𝔼ℝℝ𝕆ℝ* ( ⚈̥̥̥̥�
 			m.log("Error a messages.upsert: ", e);
 	} finally {
 			try {
-				await (await import(`../lib/print.js?v=${Date.now()}`)).default(sock, m, user, config, functions);
+				await (await import(`../lib/print.js?v=${Date.now()}`)).default(sock, m, user, config, functions, isCommand, command);
 				} catch (e) {
 					m.log("Error a print: ", e);
 				};
@@ -250,16 +257,14 @@ m.reply(`( ⚈̥̥̥̥̥́⌢⚈̥̥̥̥̥̀) *𝔼ℝℝ𝕆ℝ* ( ⚈̥̥̥̥�
 					stats.total += 1;
 				if (commandResult) {
 					stats.success += 1;
+					m.react("✅");
 				} else {
 					stats.failed += 1;
+					m.react("❌");
 				}
-			}
-		}
-		if (isCommand) {
-			if (commandResult) {
-				m.react("✅");
-			} else {
-				m.react("❌");
+				if (!m.isPremium) {
+					addFilter(m.sender)
+				}
 			}
 		}
 	}

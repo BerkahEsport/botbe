@@ -52,6 +52,8 @@ ${metadata?.desc || "Nothing Description!"}
                      sourceUrl: config.group.ofc
                   }
                }
+            }, {
+               ephemeralExpiration: 86400000
             })
         }
     }

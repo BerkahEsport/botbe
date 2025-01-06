@@ -11,7 +11,7 @@
 
         Thank you to Allah S.W.T
 <============== CREDITS ==============>*/
-
+import fs from "fs";
 export default {
 	name: "menu",
 	command: ["menu"],
@@ -93,7 +93,7 @@ This is a List of Available Commands:\n\n`
                     });
                     Object.entries(list).forEach(([type, commandArray]) => {
                         teks += `┌──⭓ *${type.toUpperCase()} Menu*\n`;
-                        teks += `│➣ Total commands: ${commandArray.length}\n`;
+                        teks += `│➣ Total: ${commandArray.length}\n`;
                         teks += `│\n`;
                         teks += `${commandArray.map((command, index) => {
                             if (!command.name || (Array.isArray(command.name) && command.name.every(name => name === ""))) return "";
@@ -106,7 +106,7 @@ This is a List of Available Commands:\n\n`
                         teks += `│\n`;
                         teks += `└───────⭓\n\n`;
                     });
-            await sock.reply(m.from, teks, m, {font: true, thumbnail: "https://telegra.ph/file/47b3652155f158b931bda.jpg"});
+            await sock.reply(m.from, teks, m, {font: true, thumbnail: fs.readFileSync("./src/thumbnail.jpg")});
         }
 	}
 }

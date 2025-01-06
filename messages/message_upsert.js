@@ -20,7 +20,7 @@ export default async function message_upsert(sock, m, store, commands, config, f
 	const isFiltered = (from) => !!usedCommandRecently.has(from);
 	const addFilter = (from) => {
 		usedCommandRecently.add(from);
-		setTimeout(() => usedCommandRecently.delete(from), 5000) // 5 detik.
+		setTimeout(() => usedCommandRecently.delete(from), 5000) // 5 second.
 	}
 	// Self mode on if you want.
 	// if (m.sender.split("@")[0] !== config.number.owner) return;

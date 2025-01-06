@@ -25,22 +25,16 @@ export default {
         api
     }) => {
         if (!text) throw "✳️ What do you want me to search for on YouTube?";
-        const data = await functions.fetchJson(api+"ytsearch?text="+encodeURIComponent(text));
-        const dl = await youtube.download(data.result[0].url);
-        let caption = `
-👤 Pemilik: _${populerItem.author.name}_
-🎥 Tipe: _${populerItem.type}_
-🆔 ID: _${populerItem.videoId}_
-📺 Judul: _${populerItem.title}_
-⏱️ Durasi: _${populerItem.duration.seconds} detik_
-⏰ Waktu: _${populerItem.timestamp} menit_
-⌚ Tahun: _${populerItem.ago}_
-👀 Dilihat: _${populerItem.views}x_
-📝 Deskripsi: _${populerItem.description}_
-🖼️ Gambar: _${populerItem.image}_
-🖼️ Icon: _${populerItem.thumbnail}_
-🔗 URL: _${populerItem.url}_`.trim()
-        sock.sendFile(m.from, populerItem.thumbnail, "", caption, m);
-        await sock.sendFile(m.from, dl.audio.dlurl, populerItem.title, "", m, {mime: "audio/mpeg"});
-    }
+        const data = await functions.fetchJson(api+"play?text="+text);
+
+        let caption = functions.list(data.result, "YOUTUBE PLAY")
+        sock.sendFile(m.from, data.result.thumbnail_formats[0].url, "", caption, m);
+        try {
+            await sock.sendFile(m.from, data.result.link, data.result.title, "", m, {mime: "audio/mpeg"});
+        } catch(e) {
+            m.log(e);
+            const dl = await youtube.download(data.result.videoUrl);
+            await sock.sendFile(m.from, dl.audio.dlurl, data.result[0].title, "", m, {mime: "audio/mpeg"});
+        }
+        }
 }

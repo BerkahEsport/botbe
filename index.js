@@ -26,12 +26,16 @@ import chalk from "chalk";
 const config = (await import("./config.js")).default;
 const functions = (await import("./lib/functions.js")).default;
 const dirname = functions.dirname(import.meta.url, true);
-
+if (config.settings.case) {
+    functions.log("Bot menggunakan model case.", "green", "bold");
+} else {
+    functions.log("Bot menggunakan model plugin.", "green", "bold");
+}
 
 // <===== Config COMMANDS =====>
 import { loadAllCommands } from "./lib/commands.js";
 const commandsFolder = path.join(dirname, "commands");
-let commands = await loadAllCommands(commandsFolder).catch(e => console.error(`Failed to watch commands: ${e}`));
+let commands = await loadAllCommands(commandsFolder, config.settings.case).catch(e => console.error(`Failed to watch commands: ${e}`));
 const usedCommandRecently = new Set();
 
 // <===== Config Choice =====>
@@ -290,6 +294,10 @@ async function connectToWhatsApp() {
 				if (msg.key.remoteJid === "status@broadcast" || msg.key.remoteJid.endsWith("@newsletter")) return;
 				msg.message = msg.message?.ephemeralMessage ? msg.message.ephemeralMessage.message : msg.message;
 				let m = await (await import(`./lib/serialize.js?v=${Date.now()}`)).default(sock, msg, store, config, functions);
+				if (config.settings.case) {
+					await (await import(`./case.js?update=${Date.now()}`)).default(sock, m, config, functions, usedCommandRecently);
+					return;
+				}
 				await (await import(`./messages/message_upsert.js?v=${Date.now()}`)).default(sock, m, store, commands, config, functions, usedCommandRecently);
 			}
 		}

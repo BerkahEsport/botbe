@@ -87,7 +87,7 @@ This is a List of Available Commands:\n\n`
                     const tagList = Object.values(commands);
                     const list = {};
                     tagList.forEach((command) => {
-                        if (!command.tags) return;
+                        if (!command?.tags) return;
                         if (!(command.tags in list)) list[command.tags] = [];
                         list[command.tags].push(command);
                     });

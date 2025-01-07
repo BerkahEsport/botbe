@@ -36,8 +36,11 @@ export default async function switchcase(sock, m, config, functions, usedCommand
     const args = m.args;
     const text = m.text;
 	const quoted = m.isQuoted && /http/i.test(m.body) ? m : m.isQuoted ? m.quoted : m;
-    let commandResult = undefined ;
+    const isReaction = m.body.match(/(bot|berkahesport|berkahesportbot|botberkah|berkahesport.id|botbe)/gi);
+    const isCallingBot = /^bot|Bot|Boti|Botbe/i.test(m.body);
+    let commandResult = undefined;
     const registered = user?.registered;
+    const isCreator = (functions.wa([config.number.owner, ...config.number.mods, ...settings.mods])).includes(m.sender);
     try {
         if (!registered) { // Dont delete this code becase will error.
             const regTime = Date.now();
@@ -191,7 +194,7 @@ text += `
             break;
         }
         if (["*"].some(v => m.body?.toLowerCase()?.startsWith(v)) && isOwner) {
-            m.reply(functions.format(message));
+            m.reply(functions.format(quoted));
         }
         if ([">", "eval", "=>"].some(v => m.body?.toLowerCase()?.startsWith(v))) {
             if (!isOwner) return m.reply("owner");
@@ -212,7 +215,7 @@ text += `
                 ?.catch((err) => m.reply(format(err)))
         }
         if (["$", "exec"].some(a => m.body?.toLowerCase()?.startsWith(a))) {
-            if (!m.isOwner) return m.reply("owner")
+            if (!isOwner) return m.reply("owner");
             try {
                 exec(m.text, async (err, stdout) => {
                     if (err) return m.reply(functions.format(err))
@@ -222,10 +225,10 @@ text += `
                 m.reply(functions.format(e));
             }
         }
-        if (/^bot|Bot|Boti|Botbe/i.test(m.body)) {
-            m.reply(`ɪʏᴀ "${m.pushName}" ᴀᴅᴀ ᴀᴘᴀ?\n\n${config.name.bot}`)
+        if (isCallingBot) {
+            m.reply(`ɪʏᴀ "${m.pushName}" ᴀᴅᴀ ᴀᴘᴀ?\n\n${config.name.bot}`);
         }
-        if ( !m.fromMe && m.body.match( /(bot|berkahesport|berkahesportbot|botberkah|berkahesport.id|botbe)/gi ) ) {
+        if ( !m.fromMe && isReaction) {
             let res = JSON.parse(fs.readFileSync('./lib/emoji.json'));
             let em = res.emoji;
             let emot = functions.random(em);

@@ -14,7 +14,7 @@
 
 export default {
     name: "infobot",
-    command: ["infobot"],
+    command: ["infobot", "ping"],
     tags: "main",
     desc: "Show this OS spesification...",
     customPrefix: "",

@@ -72,7 +72,7 @@ export default async function message_upsert(sock, m, store, commands, config, f
 				command = (firstWord || "").toLowerCase();
 				arg = noPrefix.trim().split` `.slice(1);
 				args = words || [];
-				text = arg.join` `;isPrefix = true;
+				text = arg.join` `;
 				if (!cmd.customPrefix) {
 					isCommand = cmd.command instanceof RegExp ? cmd.command.test(command)
 								: Array.isArray(cmd.command) ? cmd.command.some(cmd => cmd === command)
@@ -263,7 +263,7 @@ m.reply(`( ⚈̥̥̥̥̥́⌢⚈̥̥̥̥̥̀) *𝔼ℝℝ𝕆ℝ* ( ⚈̥̥̥̥�
 					m.react("❌");
 				}
 				if (!m.isPremium) {
-					addFilter(m.sender)
+					addFilter(m.sender);
 				}
 			}
 		}

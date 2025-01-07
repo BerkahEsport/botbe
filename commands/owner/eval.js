@@ -18,6 +18,13 @@ export default {
   customPrefix: ["*", ">"],
   tags: "owner",
   desc: "Eval checker!",
+  example: "m",
+  isOwner: true,
+  isBotAdmin: false,
+  isAdmin: false,
+  isGroup: false,
+  isPrivate: false,
+  isPremium: false,
   run: async (m, argument) => {
     // Dont delete this bottom code
     let {
@@ -62,13 +69,6 @@ export default {
       ?.then((res) => {console.log(res)
         m.reply(functions.format(res))})
       ?.catch((err) => {console.log(err)
-         m.reply(functions.format(err))});
-  },
-example: "",
-isOwner: true,
-isBotAdmin: false,
-isAdmin: false,
-isGroup: false,
-isPrivate: false,
-isPremium: false,
+        m.reply(functions.format(err))});
+  }
 }

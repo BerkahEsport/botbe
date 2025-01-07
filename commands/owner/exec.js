@@ -19,7 +19,7 @@ export default {
   customPrefix: "$",
   tags: "owner",
   desc: "Executing system...",
-  example: "",
+  example: "dir",
   isOwner: true,
   isBotAdmin: false,
   isAdmin: false,

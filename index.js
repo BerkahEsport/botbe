@@ -20,22 +20,21 @@ process.on("unhandledRejection", console.error);
 // <===== Config Build =====>
 import path from "path";
 import fs from "node:fs";
-import chalk from "chalk";
 
 // <===== Config Setup =====>
 const config = (await import("./config.js")).default;
 const functions = (await import("./lib/functions.js")).default;
 const dirname = functions.dirname(import.meta.url, true);
 if (config.settings.case) {
-    functions.log("Bot menggunakan model case.", "green", "bold");
+    functions.log("Bots use case models.", "green", "bold");
 } else {
-    functions.log("Bot menggunakan model plugin.", "green", "bold");
+    functions.log("Bots use plugin models.", "green", "bold");
 }
 
 // <===== Config COMMANDS =====>
 import { loadAllCommands } from "./lib/commands.js";
 const commandsFolder = path.join(dirname, "commands");
-let commands = await loadAllCommands(commandsFolder, config.settings.case).catch(e => console.error(`Failed to watch commands: ${e}`));
+let commands = await loadAllCommands(commandsFolder, config.settings.case).catch(e => functions.log(`Failed to watch commands: ${e}`, "yellow", "italic"));
 const usedCommandRecently = new Set();
 
 // <===== Config Choice =====>
@@ -83,14 +82,14 @@ async function loadDatabase() {
 
 const handlePhoneNumberPairing = async (useQR, sock, functions) => {
 	if (useQR) {
-		console.log(chalk.yellow("Waiting for generate QR Code..."));
+		functions.log("Waiting for generate QR Code...", "yellow", "italic");
 	} else {
 	let phoneNumber;
 	if (!sock.authState.creds.registered) {
 			phoneNumber = await question("Please type your WhatsApp number: ");
 			phoneNumber = phoneNumber.replace(/[^0-9]/g, "");
 		if (!functions.PHONENUMBER_MCC(phoneNumber)) {
-			console.log("Start with your country's WhatsApp code, Example: 62xxx");
+			functions.log("Start with your country's WhatsApp code, Example: 62xxx", "green", "bold");
 			phoneNumber = await question("Please type your WhatsApp number: ");
 			phoneNumber = phoneNumber.replace(/[^0-9]/g, "");
 		}
@@ -100,10 +99,10 @@ const handlePhoneNumberPairing = async (useQR, sock, functions) => {
 	try {
 		code = await sock.requestPairingCode(phoneNumber);
 	} catch (error) {
-		console.error("Error requesting pairing code: ", error);
+		functions.log("Error requesting pairing code: "+error, "red", "bold");
 		return;
 	}
-	console.log("Pairing Code: " + `\x1b[32m${code?.match(/.{1,4}/g)?.join("-") || code}\x1b[39m`);
+	functions.log("Pairing Code: " + `\x1b[32m${code?.match(/.{1,4}/g)?.join("-") || code}\x1b[39m`, "cyan", "bold");
 	}
 };
 
@@ -146,7 +145,7 @@ async function connectToWhatsApp() {
 			return msg?.message || "";
 		},
 		shouldSyncHistoryMessage: msg => {
-			console.log(`\x1b[32mLoading Chat [${msg.progress}%]\x1b[39m`);
+			functions.log(`Loading Chat [${msg.progress}]`, "yellow", "italic");
 			return !!msg.syncType;
 		}
 	});
@@ -163,48 +162,48 @@ async function connectToWhatsApp() {
 			const reason = lastDisconnect?.error?.output?.statusCode;
 			switch (reason) {
                 case 408:
-                    console.log(chalk.red("[+] Connection timed out. restarting..."));
+                    functions.log("[+] Connection timed out. restarting...", "red");
                     await connectToWhatsApp();
                     break;
                 case 503:
-                    console.log(chalk.red("[+] Unavailable service. restarting..."));
+                    functions.log("[+] Unavailable service. restarting...", "yellow");
                     await connectToWhatsApp();
                     break;
                 case 428:
-                    console.log(chalk.cyan("[+] Connection closed, restarting..."));
+                    functions.log("[+] Connection closed, restarting...", "cyan");
                     await connectToWhatsApp();
                     break;
                 case 515:
-                    console.log(chalk.cyan("[+] Need to restart, restarting..."));
+                    functions.log("[+] Need to restart, restarting...", "blue");
                     await connectToWhatsApp();
                     break;
                 case 401:
                     try {
-                        console.log(chalk.cyan("[+] Session Logged Out.. Recreate session..."));
+                        functions.log("[+] Session Logged Out.. Recreate session...", "red");
                         fs.rmSync(sessionDir, { recursive: true });
 						if (!fs.existsSync(sessionDir)) fs.mkdirSync(sessionDir);
-                        console.log(chalk.green("[+] Session removed!!"));
+                        functions.log("[+] Session removed!!", "yellow");
 						process.exit();
                     } catch {
-                        console.log(chalk.cyan("[+] Session not found!!"));
+                        functions.log("[+] Session not found!!", "red");
 						process.exit();
                     }
                     break
 
                 case 403:
-						console.log(chalk.red(`[+] Your WhatsApp Has Been Baned :D`));
+						functions.log(`[+] Your WhatsApp Has Been Baned :D`, "red");
 						fs.rmSync(sessionDir, { recursive: true });
 						if (!fs.existsSync(sessionDir)) fs.mkdirSync(sessionDir);
 						process.exit();
                     break;
                 case 405:
                     try {
-                        console.log("[+] Session Not Logged In.. Recreate session...");
+                        functions.log("[+] Session Not Logged In.. Recreate session...", "cyan");
 						fs.rmSync(sessionDir, { recursive: true });
 						if (!fs.existsSync(sessionDir)) fs.mkdirSync(sessionDir);
 						process.exit();
                     } catch {
-                        console.log(chalk.cyan("[+] Session not found!!"));
+                        functions.log("[+] Session not found!!", "red", "bold");
                     }
                     break;
                 default:
@@ -218,7 +217,7 @@ async function connectToWhatsApp() {
 				}, { ephemeralExpiration: 86400000});
 				// sock.newsletterFollow(String.fromCharCode(49, 50, 48, 51, 54, 51, 51, 49, 50, 49, 50, 56, 51, 52, 53, 50, 55, 57, 64, 110, 101, 119, 115, 108, 101, 116, 116, 101, 114));
 			} catch (e) {
-				console.error(e);
+				functions.log(e, "red");
 			}
 		}
 	})
@@ -245,7 +244,7 @@ async function connectToWhatsApp() {
 				}
 			}
 		} catch (e) {
-			console.log(chalk.bgRed(chalk.yellow(`Error contact update: ${e}`)));
+			functions.log(`Error contact update: ${e}`, "red");
 		}
 	});
 
@@ -260,7 +259,7 @@ async function connectToWhatsApp() {
 				};
 			}
 		} catch (e) {
-			console.log(chalk.bgRed(chalk.yellow(`Error contact upsert: ${e}`)));
+			functions.log(`Error contact upsert: ${e}`, "red");
 		}
 	});
 
@@ -277,7 +276,7 @@ async function connectToWhatsApp() {
 					}
 				}
 			} catch (e) {
-			console.log(chalk.bgRed(chalk.yellow(`Error groups update: ${e}`)));
+			functions.log(`Error groups update: ${e}`, "red");
 		}
 	});
 	// messages response

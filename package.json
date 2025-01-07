@@ -17,7 +17,6 @@
     "@google/generative-ai": "^0.21.0",
     "@whiskeysockets/baileys": "^6.7.9",
     "axios": "^1.6.8",
-    "chalk": "^5.3.0",
     "cheerio": "^1.0.0",
     "file-type": "^19.0.0",
     "fluent-ffmpeg": "^2.1.2",

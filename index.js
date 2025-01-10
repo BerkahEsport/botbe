@@ -35,7 +35,8 @@ if (config.settings.case) {
 import { loadAllCommands } from "./lib/commands.js";
 const commandsFolder = path.join(dirname, "commands");
 let commands = await loadAllCommands(commandsFolder, config.settings.case).catch(e => functions.log(`Failed to watch commands: ${e}`, "yellow", "italic"));
-const usedCommandRecently = new Set();
+let usedCommandRecently = new Set();
+let usedAIRecently = new Set();
 
 // <===== Config Choice =====>
 import readline from "readline";
@@ -294,10 +295,10 @@ async function connectToWhatsApp() {
 				msg.message = msg.message?.ephemeralMessage ? msg.message.ephemeralMessage.message : msg.message;
 				let m = await (await import(`./lib/serialize.js?v=${Date.now()}`)).default(sock, msg, store, config, functions);
 				if (config.settings.case) {
-					await (await import(`./case.js?update=${Date.now()}`)).default(sock, m, config, functions, usedCommandRecently);
+					await (await import(`./case.js?update=${Date.now()}`)).default(sock, m, config, functions, usedCommandRecently, usedAIRecently);
 					return;
 				}
-				await (await import(`./messages/message_upsert.js?v=${Date.now()}`)).default(sock, m, store, commands, config, functions, usedCommandRecently);
+				await (await import(`./messages/message_upsert.js?v=${Date.now()}`)).default(sock, m, store, commands, config, functions, usedCommandRecently, usedAIRecently);
 			}
 		}
 	})

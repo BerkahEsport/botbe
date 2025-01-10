@@ -16,11 +16,16 @@
 
 import axios from "axios";
 import * as cheerio from "cheerio";
-export default async function message_upsert(sock, m, store, commands, config, functions, usedCommandRecently) {
+export default async function message_upsert(sock, m, store, commands, config, functions, usedCommandRecently, usedAIRecently) {
 	const isFiltered = (from) => !!usedCommandRecently.has(from);
-	const addFilter = (from) => {
+	const addFilter = (from, time = 5000) => {
 		usedCommandRecently.add(from);
-		setTimeout(() => usedCommandRecently.delete(from), 5000) // 5 second.
+		setTimeout(() => usedCommandRecently.delete(from), time) // 5 second.
+	}
+	const isFilteredAI = (from) => !!usedAIRecently.has(from);
+	const addFilterAI = (from, time = 30000) => {
+		usedAIRecently.add(from);
+		setTimeout(() => usedAIRecently.delete(from), time) // 5 second.
 	}
 	// Self mode on if you want.
 	// if (m.sender.split("@")[0] !== config.number.owner) return;
@@ -100,6 +105,7 @@ export default async function message_upsert(sock, m, store, commands, config, f
 					}
 				}
 			}
+			if (!isPrefix && isFilteredAI(m.sender)) return m.react("⏱");
 			let _arguments = {
 				prefix,
 				noPrefix,
@@ -245,7 +251,7 @@ m.reply(`( ⚈̥̥̥̥̥́⌢⚈̥̥̥̥̥̀) *𝔼ℝℝ𝕆ℝ* ( ⚈̥̥̥̥�
 				} catch (e) {
 					m.log("Error a print: ", e);
 				};
-			if (user) { 
+			if (user) {
 				if (m.isUser) {
 					if (m.limit && !m.isPremium) {
 						user.limit -= +m.limit
@@ -265,6 +271,9 @@ m.reply(`( ⚈̥̥̥̥̥́⌢⚈̥̥̥̥̥̀) *𝔼ℝℝ𝕆ℝ* ( ⚈̥̥̥̥�
 				if (!m.isPremium) {
 					addFilter(m.sender);
 				}
+			}
+			if (!isCommand) {
+				addFilterAI(m.sender);
 			}
 		}
 	}

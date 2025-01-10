@@ -32,7 +32,7 @@ export default {
         api,
         config
     }) => {
-        const result = await functions.fetchJson(`${api}api/chatgpt?text=${quoted.text}&apikey=${config.setting.apikey}`);
+        const result = await functions.fetchJson(`${api}api/chatgpt?text=${quoted.text}&apikey=${config.settings.apikey}`);
         m.reply(result.result);
     }
 }

@@ -36,6 +36,7 @@ export default {
                 config,
                 functions
         }) => {
+                if (!user) return;
                 const regTime = Date.now();
                 let [ name, age ] = text.split(".");
                 if ( user?.registered === true ) throw (`You are already registered in the bot database!`);

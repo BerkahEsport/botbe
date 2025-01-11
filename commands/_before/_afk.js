@@ -17,12 +17,13 @@ export default {
     user,
     functions
   }) => {
+    if (!user) return;
     let afkmode = functions.random([" ✿.｡.:* 𝒜𝐹𝒦 𝑀𝒪𝒟𝐸 *.:｡.✿", "╰☆☆ ₐFK MₒDₑ ☆☆╮", "░▒▓█ 【A】【F】【K】 【M】【O】【D】【E】 █▓▒░", "▁ ▂ ▄ ▅ ▆ ▇ █ 〜A∿F∿K∿ ∿M∿O∿D∿E〜 █ ▇ ▆ ▅ ▄ ▂ ▁", "【☆】★【☆】★【𝒜𝐹𝒦 𝑀𝒪𝒟𝐸】★【☆】★【☆】" , ".•♫•♬• Å⫶F̊⫶K̊⫶ M̊⫶O̊⫶D̊⫶E̊⫶ •♬•♫•.", "꧁༒☬ A̴F̴K̴ ̴M̴O̴D̴E̴ ☬༒꧂", "§.•¨°÷•..× AFK MODE ×,.•¨°÷•..§", "░▒▓█►─═  ᴀꜰᴋ ᴍᴏᴅᴇ ═─◄█▓▒░", " ✴  🎀  𝒜𝐹𝒦 𝑀❁𝒟𝐸  🎀  ✴", "꧁𓊈𒆜 ƎᗡOW ⋊Ⅎ∀ 𒆜𓊉꧂", "•´¯`•. A͎͍͐￫F͎͍͐￫K͎͍͐￫ M͎͍͐￫O͎͍͐￫D͎͍͐￫E͎͍͐￫ .•´¯`•"]);
     let jids = [...new Set([...(m.mentions || []), ...(m.quoted ? [m.quoted.sender] : [])])];
     for (let jid of jids) {
         let who = global.db.users[jid];
-        let afk = who?.afk;
         if (!who) continue;
+        let afk = who.afk;
         if (!afk || afk < 0) continue;
         let reason = who.afkReason || "";
         m.reply(`${ afkmode}

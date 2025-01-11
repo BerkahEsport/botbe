@@ -21,7 +21,7 @@ export default {
     let jids = [...new Set([...(m.mentions || []), ...(m.quoted ? [m.quoted.sender] : [])])];
     for (let jid of jids) {
         let who = global.db.users[jid];
-        let afk = who.afk;
+        let afk = who?.afk;
         if (!who) continue;
         if (!afk || afk < 0) continue;
         let reason = who.afkReason || "";

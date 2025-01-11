@@ -22,13 +22,6 @@ export default async function message_upsert(sock, m, store, commands, config, f
 		usedCommandRecently.add(from);
 		setTimeout(() => usedCommandRecently.delete(from), time) // 5 second.
 	}
-	const isFilteredAI = (from) => !!usedAIRecently.has(from);
-	const addFilterAI = (from, time = 30000) => {
-		usedAIRecently.add(from);
-		setTimeout(() => usedAIRecently.delete(from), time) // 5 second.
-	}
-	// Self mode on if you want.
-	// if (m.sender.split("@")[0] !== config.number.owner) return;
 
 	// Setup for DB
 	await (await import(`../lib/database.js?update=${Date.now()}`)).default(sock, m, config, functions);
@@ -42,6 +35,8 @@ export default async function message_upsert(sock, m, store, commands, config, f
 	let isPrefix, isCommand, noPrefix, arg, args, command, text, commandResult = undefined ;
 	try {
 		if (m.fromMe) return;
+		// Self mode on if you want.
+		if (settings.self) return m.react("💤");
 
 		// Calling commands
 		for (let name in commands) {
@@ -105,7 +100,6 @@ export default async function message_upsert(sock, m, store, commands, config, f
 					}
 				}
 			}
-			if (!isPrefix && isFilteredAI(m.sender)) return m.react("⏱");
 			let _arguments = {
 				prefix,
 				noPrefix,
@@ -121,6 +115,8 @@ export default async function message_upsert(sock, m, store, commands, config, f
 				user,
 				settings,
 				stats,
+				isPrefix,
+				isCommand,
 				isOwner: m.isOwner,
 				isQuoted: m.isQuoted,
 				isGroup: m.isGroup,
@@ -137,7 +133,8 @@ export default async function message_upsert(sock, m, store, commands, config, f
 				functions,
 				axios,
 				cheerio,
-				api: config.settings.restapi
+				api: config.settings.restapi,
+				task: usedAIRecently
 			}
 		
 		// Execution code
@@ -271,9 +268,6 @@ m.reply(`( ⚈̥̥̥̥̥́⌢⚈̥̥̥̥̥̀) *𝔼ℝℝ𝕆ℝ* ( ⚈̥̥̥̥�
 				if (!m.isPremium) {
 					addFilter(m.sender);
 				}
-			}
-			if (!isCommand) {
-				addFilterAI(m.sender);
 			}
 		}
 	}

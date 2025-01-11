@@ -31,28 +31,40 @@ export default {
             prefix,
             command,
             args,
+            config,
             settings,
+            functions
         } = context;
 
         if (command === "on") {
             switch (args[0]) {
                 case "autoai":
                     settings.autoai = true;
-                    m.reply("Fitur auto AI berhasil dinyalakan!");
-                    break;
-
+                    await m.reply("Auto AI feature successfully turned on!");
+                break;
+                case "self":
+                    settings.self = true;
+                    await m.reply(`Self bot successfully turned on!
+                        
+${functions.list([...config.number.mods], "List can access bot:")}`);
+                break;
+    
                 default:
-                    m.reply(`Fitur switch yang dapat digunakan:\n\n*${prefix + command} autoai*\nJika .on, bot dapat merespon otomatis di private chat dan merespon otomatis di grup jika ditandai.`);
+                    m.reply(`Switch features that can be used:\n\n*${prefix + command} autoai*\nIf .on, the bot can auto-respond in private chat and auto-respond in groups if marked.\n\n*${prefix + command} self*`);
             }
         } else if (command === "off") {
             switch (args[0]) {
                 case "autoai":
                     settings.autoai = false;
-                    m.reply("Fitur auto AI berhasil dimatikan!");
+                    m.reply("The auto AI feature has been successfully turned off!");
+                    break;
+                case "self":
+                    settings.self = false;
+                    await m.reply(`Self bot successfully turned off!`);
                     break;
 
                 default:
-                    m.reply(`Fitur switch yang dapat digunakan:\n\n*${prefix + command} autoai*\nJika .off, bot tidak akan merespon otomatis.`);
+                    m.reply(`Switch features that can be used:\n\n*${prefix + command} autoai*\n\nIf .off, the bot will not respond automatically.\n\n*${prefix + command} self*`);
             }
         }
     }

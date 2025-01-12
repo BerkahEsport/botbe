@@ -38,9 +38,12 @@ export default async function switchcase(sock, m, config, functions, usedCommand
 	const quoted = m.isQuoted && /http/i.test(m.body) ? m : m.isQuoted ? m.quoted : m;
     const isReaction = m.body.match(/(bot|berkahesport|berkahesportbot|botberkah|berkahesport.id|botbe)/gi);
     const isCallingBot = /^bot|Bot|Boti|Botbe/i.test(m.body);
+    const registered = user?.registered || false;
+    const isCreator = (functions.wa([config.number.owner])).includes(m.sender);
+    const isWhitelist = (functions.wa([config.number.owner, ...config.number.mods, ...settings.mods])).includes(m.sender);
+    const api = config.settings.restapi;
     let commandResult = undefined;
-    const registered = user?.registered;
-    const isCreator = (functions.wa([config.number.owner, ...config.number.mods, ...settings.mods])).includes(m.sender);
+    
     try {
         if (!registered) { // Dont delete this code becase will error.
             const regTime = Date.now();
@@ -56,9 +59,12 @@ export default async function switchcase(sock, m, config, functions, usedCommand
                 user.registeredTime = +regTime;
                 user.premium = false;
                 user.premiumTime = 0;
+                user.banned = false;
                 user.limit = 10;
                 user.name = name;
                 user.age = parseInt( age );
+                user.afk = -1;
+                user.afkReason = "";
             m.reply(`*「 REGISTERED 」*
 
 ┏─• *USER BOT*
@@ -72,8 +78,8 @@ export default async function switchcase(sock, m, config, functions, usedCommand
 > ${config.name.bot || sock.user.name}`, {font: true});
         }
 
-    if (settings.self && !m.isOwner) return;
-    if (m.from && global.db.groups[m.from]?.isBanned && !m.isOwner) return;
+    if (settings.self && !isWhitelist) return;
+    if (m.from && global.db.groups[m.from]?.isBanned && !isWhitelist) return;
     if (isCommand && isFiltered(m.sender)) {
         m.reply('「 ❗ 」 Give a 5 second delay per command bro!');
         return;
@@ -91,11 +97,11 @@ if (m.from in sock.yts) {
             if (!arg[1]) return m.reply("Silahkan balas pesan, masukkan angka dan tipe! \nContoh: 1 mp3 ");
             if (Number(arg[0]) > sock.yts[m.from][1].length) return m.reply("Pilihan angka tidak ada! \nContoh: 1 mp3 ");
             if (arg[1] == "mp3" || arg[1] == "audio") {
-                let data = (await functions.fetchJson(`${config.settings.restapi}ytmp3?url=${sock.yts[m.from][1][Number(arg[0])].url}&apikey=${config.settings.apikey}`)).result;
+                let data = (await functions.fetchJson(`${api}ytmp3?url=${sock.yts[m.from][1][Number(arg[0])].url}&apikey=${config.settings.apikey}`)).result;
                 await sock.sendFile(m.from, data.link, data.title, "", m);
             }
             if (arg[1] == "mp4" || arg[1] == "video") {
-                let data = (await functions.fetchJson(`${config.settings.restapi}ytmp4?url=${sock.yts[m.from][1][Number(arg[0])].url}&apikey=${config.settings.apikey}`)).result;
+                let data = (await functions.fetchJson(`${api}ytmp4?url=${sock.yts[m.from][1][Number(arg[0])].url}&apikey=${config.settings.apikey}`)).result;
                 let datas = await functions.getFile(data.link);
                 m.reply(datas.data, {asDocument: true, fileName: data.title});
             }
@@ -177,7 +183,7 @@ text += `
                 if (!args[0]) return m.reply(`Masukkan pencarian youtube!`)
                 if ( global.db.users[m.sender].limit < 1) return m.reply("limit")
                 if (functions.limit(m, 1)) {
-                let data = (await functions.fetchJson(`${config.settings.restapi}ytsearch?text=${text}&apikey=${config.settings.apikey}`)).result
+                let data = (await functions.fetchJson(`${api}ytsearch?text=${text}&apikey=${config.settings.apikey}`)).result
                 const id = await m.reply(functions.mapList(data, "*★彡[ʏᴏᴜᴛᴜʙᴇ ꜱᴇᴀʀᴄʜ]彡★*", "ᴮᵃˡᵃˢ ᵈᵃⁿ ᵏⁱʳⁱᵐ ˢᵉˢᵘᵃⁱ ᵃⁿᵍᵏᵃ!"));
                 sock.yts = sock.yts ? sock.yts : {}
                 sock.yts[m.from] = [
@@ -193,11 +199,11 @@ text += `
             }
             break;
         }
-        if (["*"].some(v => m.body?.toLowerCase()?.startsWith(v)) && isOwner) {
+        if (["*"].some(v => m.body?.toLowerCase()?.startsWith(v)) && isCreator) {
             m.reply(functions.format(quoted));
         }
         if ([">", "eval", "=>"].some(v => m.body?.toLowerCase()?.startsWith(v))) {
-            if (!isOwner) return m.reply("owner");
+            if (!isCreator) return m.reply("owner");
             let evalCmd = "";
             try {
                 evalCmd = /await/i.test(text) ? eval("(async() => { " + text + " })()") : eval(text);
@@ -215,7 +221,7 @@ text += `
                 ?.catch((err) => m.reply(format(err)))
         }
         if (["$", "exec"].some(a => m.body?.toLowerCase()?.startsWith(a))) {
-            if (!isOwner) return m.reply("owner");
+            if (!isCreator) return m.reply("owner");
             try {
                 exec(m.text, async (err, stdout) => {
                     if (err) return m.reply(functions.format(err))

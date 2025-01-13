@@ -26,9 +26,9 @@ const config = (await import("./config.js")).default;
 const functions = (await import("./lib/functions.js")).default;
 const dirname = functions.dirname(import.meta.url, true);
 if (config.settings.case) {
-    functions.log("Bots use case models.", "green", "bold");
+    functions.log("Bots use case models. Loading file case.js", "green", "bold");
 } else {
-    functions.log("Bots use plugin models.", "green", "bold");
+    functions.log("Bots use plugin models. Loading commands folder.", "green", "bold");
 }
 
 // <===== Config COMMANDS =====>

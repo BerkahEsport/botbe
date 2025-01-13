@@ -36,7 +36,7 @@ export default async function message_upsert(sock, m, store, commands, config, f
 	try {
 		if (m.fromMe) return;
 		// Self mode on if you want.
-		if (settings.self) return m.react("💤");
+		if (settings.self && !m.isOwner) return m.react("💤");
 
 		// Calling commands
 		for (let name in commands) {

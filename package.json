@@ -15,7 +15,7 @@
   "description": "Base Bot for WhatsApp",
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
-    "@whiskeysockets/baileys": "github:BerkahEsport/BaileysBeton",
+    "@whiskeysockets/baileys": "^6.7.9",
     "axios": "^1.6.8",
     "cheerio": "^1.0.0",
     "file-type": "^19.0.0",

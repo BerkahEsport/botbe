@@ -30,8 +30,11 @@ export default {
         args,
         sock,
         functions,
-        axios
+        axios,
+        api,
+        config
       }) => {
+        try {
         async function tiktok(query) {
             if (!functions.isUrl(query, "tiktok")) throw ("Enter the TikTok URL correctly!");
             let response = await axios("https://lovetik.com/api/ajax/search", {
@@ -63,5 +66,10 @@ Author: ¿${data.author}¿
 
 WM: ¿${data.wm}¿`, m, {font: true});
           await sock.sendFile(m.from, data.audio, "tiktok", "", m);
+    } catch(e) {
+      m.log(e);
+      const data = await functions.fetchJson(`${api}api/tiktok?url=${args[0]}&apikey=${config.settings.apikey}`);
+      m.reply(data.result.link);
     }
-    }
+  }
+}

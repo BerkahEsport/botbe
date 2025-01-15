@@ -28,6 +28,13 @@ export default {
             ofc: "https://chat.whatsapp.com/JKdIWr5fj990Ux2oqTjTo5",
             chid: "120363312128345279@newsletter"
         },
+        logo: {
+            nothing: "https://telegra.ph/file/6b9cbf4c186b050a31de8.jpg",
+            thumbs: "https://raw.githubusercontent.com/BerkahEsport/database/main/tmp/gmbr/logo2.png",
+            thumb: "https://telegra.ph/file/47b3652155f158b931bda.jpg",
+            be: "https://i.ibb.co/YTXmJfF/berkahesport.png",
+            accessDenied: "https://pomf2.lain.la/f/8c7we849.jpg"
+        },
         text: {
             create: "² October 2021",
             wait: "```「▰▰▰▰▱▱▱▱▱▱」Loading...```",

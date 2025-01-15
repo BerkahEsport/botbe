@@ -18,7 +18,7 @@ export default {
     tags: "tools",
     desc: "Search for the chords of the song you want to search for.",
     customPrefix: "",
-    example: "akhirnya ku menemukanmu",
+    example: "",
     limit: true,
     isOwner: false,
     isPremium: false,
@@ -27,11 +27,24 @@ export default {
     isGroup: false,
     isPrivate: false,
     run: async(m, {
-        text,
-        functions,
-        axios,
-        cheerio
-    }) => {
+      sock,
+      text,
+      functions,
+      axios,
+      cheerio,
+      api,
+      prefix,
+      command,
+      config
+  }) => {
+    if (!text) throw ("Input text!");
+      try {
+        const data = await functions.fetchJson(api+"api/chord?text="+text);
+        const body = functions.list(data.result.detail, "CHORD RESULT");
+        const card = functions.card("", "", "", "", data.result.search,  "artist", "title", `${prefix+command} title`)
+        sock.sendCarousel(m.from, body, config.name.bot, card);
+      } catch(e) {
+        m.log(e);
         async function chord(query) {
           return new Promise(async(resolve, reject) => {
           const head = {"User-Agent":"Mozilla/5.0 (Linux; Android 9; CPH1923) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.62 Mobile Safari/537.36",
@@ -48,6 +61,7 @@ export default {
             }).catch(reject);
           });
         }
-      m.reply(functions.list(await chord(text)), {font: true})
+      m.reply(functions.list(await chord(text)), {font: true});
+    }
   }
 }

@@ -33,7 +33,9 @@ export default {
         args,
         prefix,
         stats,
-        config
+        config,
+        functions,
+        isGroup
     }) => {
         if (args.length >= 1) {
                     let data = []
@@ -72,6 +74,15 @@ export default {
 
                     m.reply(`*Command Info :*\n\n${data.join("\n")}`)
                 } else {
+                    const tagList = Object.values(commands);
+                    const totalCmd = tagList.length;
+                    const list = {};
+                    tagList.forEach((command) => {
+                        if (!command?.tags) return;
+                        if (!(command.tags in list)) list[command.tags] = [];
+                        list[command.tags].push(command);
+                    });
+                    
                     let teks = `Hello @${m.sender.split("@")[0]}!
 
 - *${config.name.bot || sock.user.name}*
@@ -83,30 +94,41 @@ export default {
 │➣ Today: ${stats.today} hits.
 └───────⭓
 
-This is a List of Available Commands:\n\n`
-                    const tagList = Object.values(commands);
-                    const list = {};
-                    tagList.forEach((command) => {
-                        if (!command?.tags) return;
-                        if (!(command.tags in list)) list[command.tags] = [];
-                        list[command.tags].push(command);
-                    });
-                    Object.entries(list).forEach(([type, commandArray]) => {
-                        teks += `┌──⭓ *${type.toUpperCase()} Menu*\n`;
-                        teks += `│➣ Total: ${commandArray.length}\n`;
-                        teks += `│\n`;
-                        teks += `${commandArray.map((command, index) => {
-                            if (!command.name || (Array.isArray(command.name) && command.name.every(name => name === ""))) return "";
-                            const commandNames = Array.isArray(command.name) ? command.name : [command.name];
-                            const prefixedNames = commandNames.filter(name => name !== "").map(name => command.customPrefix ? `${command.customPrefix}_¿${name}¿_` : `${prefix}_¿${name}¿_`);
-                            if (prefixedNames.length === 0) return "";
-                            const limitText = command.limit ? `[ ${command.limit === true ? "" : +command.limit}Ⓛ ]` : "";
-                            return `${index === 0 ? "│" : "│"}➣ ${prefixedNames.map(name => `${name} ${limitText}`).join('\n│➣ ')}`;
-                        }).filter(Boolean).join("\n")}\n`;
-                        teks += `│\n`;
-                        teks += `└───────⭓\n\n`;
-                    });
-            await sock.reply(m.from, teks, m, {font: true, thumbnail: fs.readFileSync("./src/thumbnail.jpg")});
+This is a List of Available Commands:\nTotal full commands: ${totalCmd}\n\n`
+
+Object.entries(list).forEach(([type, commandArray]) => {
+    teks += `┌──⭓ *${type.toUpperCase()} Menu*\n`;
+    teks += `│➣ Total: ${commandArray.length}\n`;
+    teks += `│\n`;
+    teks += `${commandArray.map((command, index) => {
+        if (!command.name || (Array.isArray(command.name) && command.name.every(name => name === ""))) return "";
+        const commandNames = Array.isArray(command.name) ? command.name : [command.name];
+        const prefixedNames = commandNames.filter(name => name !== "").map(name => command.customPrefix ? `${command.customPrefix}_¿${name}¿_` : `${prefix}_¿${name}¿_`);
+        if (prefixedNames.length === 0) return "";
+        const limitText = command.limit ? `[ ${command.limit === true ? "" : +command.limit}Ⓛ ]` : "";
+        return `${index === 0 ? "│" : "│"}➣ ${prefixedNames.map(name => `${name} ${limitText}`).join('\n│➣ ')}`;
+    }).filter(Boolean).join("\n")}\n`;
+    teks += `│\n`;
+    teks += `└───────⭓\n\n`;
+});
+            if (isGroup) {
+                await sock.reply(m.from, teks, m, {font: true, thumbnail: fs.readFileSync("./src/thumbnail.jpg")});
+            } else {
+                const cards = functions.card([{
+                    url: await sock.profilePictureUrl(m.sender, "image"),
+                    title: functions.greeting(m.pushName)
+                }], "", "", "",
+            [{
+                title: "Profile",
+                text: "Check your profile.",
+                id: `${prefix}profile`
+            },
+                
+            ]);
+                const body = teks.replaceAll("¿", "");
+                const footer = config.name.bot;
+                sock.sendCarousel(m.from, body, footer, cards);
+            }
         }
-	}
+    }
 }

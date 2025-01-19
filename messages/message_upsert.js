@@ -16,7 +16,7 @@
 
 import axios from "axios";
 import * as cheerio from "cheerio";
-export default async function message_upsert(sock, m, store, commands, config, functions, usedCommandRecently, usedAIRecently) {
+export default async function message_upsert(sock, m, store, commands, config, functions, usedCommandRecently, usedAIRecently, temp) {
 	const isFiltered = (from) => !!usedCommandRecently.has(from);
 	const addFilter = (from, time = 5000) => {
 		usedCommandRecently.add(from);
@@ -134,7 +134,8 @@ export default async function message_upsert(sock, m, store, commands, config, f
 				axios,
 				cheerio,
 				api: config.settings.restapi,
-				task: usedAIRecently
+				task: usedAIRecently,
+				temp
 			}
 		
 		// Execution code
@@ -216,7 +217,7 @@ Example: ¿${prefix}register ${m.pushName || "userBE"}.18¿`, {font: true});
 				if (e) {
 				m.log(e);
 				if (typeof e == "string") {
-						m.reply(e, {font: true});
+						m.reply(e);
 					} else {
 						commandResult = false;
 					if (e.name) {

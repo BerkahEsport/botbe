@@ -33,6 +33,7 @@ export default {
         args,
         prefix,
         stats,
+        user,
         config,
         functions,
         isGroup
@@ -123,7 +124,11 @@ Object.entries(list).forEach(([type, commandArray]) => {
                 text: "Check your profile.",
                 id: `${prefix}profile`
             },
-                
+            {
+                title: user.ai ? "OFF AI" : "ON AI",
+                text: user.ai ? "Deactivated ai response." : "Activated ai response.",
+                id: user.ai ? `${prefix}off ai` : `${prefix}on ai`
+            },
             ]);
                 const body = teks.replaceAll("¿", "");
                 const footer = config.name.bot;

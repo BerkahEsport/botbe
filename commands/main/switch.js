@@ -19,30 +19,31 @@ export default {
     desc: "Menyalakan atau mematikan fitur.",
     customPrefix: "",
     example: "",
-    limit: false,
-    isOwner: true,
-    isPremium: false,
-    isBotAdmin: false,
-    isAdmin: false,
-    isGroup: false,
-    isPrivate: false,
     run: async (m, context) => {
         const {
             prefix,
             command,
             args,
             config,
+            user,
             settings,
-            functions
+            functions,
+            isOwner
         } = context;
 
         if (command === "on") {
             switch (args[0]) {
+                case "ai":
+                    user.ai = true;
+                    await m.reply("Auto AI feature successfully turned on your chat!");
+                break;
                 case "autoai":
+                    if (!isOwner) throw ("owner");
                     settings.autoai = true;
                     await m.reply("Auto AI feature successfully turned on!");
                 break;
                 case "self":
+                    if (!isOwner) throw ("owner");
                     settings.self = true;
                     await m.reply(`Self bot successfully turned on!
                         
@@ -54,11 +55,17 @@ ${functions.list([...config.number.mods], "List can access bot:")}`);
             }
         } else if (command === "off") {
             switch (args[0]) {
+                case "ai":
+                    user.ai = false;
+                    await m.reply("Auto AI feature successfully turned off your chat!");
+                break;
                 case "autoai":
+                    if (!isOwner) throw ("owner");
                     settings.autoai = false;
                     m.reply("The auto AI feature has been successfully turned off!");
                     break;
                 case "self":
+                    if (!isOwner) throw ("owner");
                     settings.self = false;
                     await m.reply(`Self bot successfully turned off!`);
                     break;

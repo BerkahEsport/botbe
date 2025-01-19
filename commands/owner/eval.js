@@ -49,7 +49,9 @@ export default {
         participants,
         store,
         config,
-        functions
+        functions,
+        temp,
+        task
     } = argument
     let evalCmd;
     try {

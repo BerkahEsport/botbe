@@ -16,7 +16,7 @@ Author: @berkahesport.id
 
 Github: @berkahesport
 
-Contact me: https://wa.me/62895375950107
+Contact me: https://wa.me/6289654279897
 
 Group WA: https://tinyurl.com/berkahesport
 

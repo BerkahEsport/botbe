@@ -13,10 +13,10 @@
 <============== CREDITS ==============>*/
 
 export default {
-    name: "tebakanime",
-    command: ["tebakanime", "helpta"],
+    name: "tebakgambar",
+    command: ["tebakgambar", "helptg"],
     tags: "games",
-    desc: "Guess game tebakanime.",
+    desc: "Guess game tebakgambar.",
     customPrefix: "",
     example: "",
     limit: false,
@@ -33,7 +33,7 @@ export default {
         prefix
     }) => {
         temp = temp || new Map();
-        const id = "tebakanime-"+m.from;
+        const id = "tebakgambar-"+m.from;
         if (!temp.has(id)) return;
         try {
             const answerBody = m.body.toLowerCase().trim();
@@ -46,7 +46,7 @@ export default {
                     m.reply(`✅ *That's great*, your answer is correct.!\n\n🎉 *Reward*: ${reward} exp.`);
                     user.exp += reward;
                 } else {
-                    m.reply(`❌ Your answer is incorrect!\nLet's try again with another answer.\n\n💡 Type *${prefix}helpta* for help.\n🕒 Timer: ${times}`)
+                    m.reply(`❌ Your answer is incorrect!\nLet's try again with another answer.\n\n💡 Type *${prefix}helptg* for help.\n🕒 Timer: ${times}`)
                 }
             }
         } catch (e) {
@@ -63,36 +63,39 @@ export default {
         command
     }) => {
         temp = temp || new Map();
-        const id = "tebakanime-" + m.from;
+        const id = "tebakgambar-" + m.from;
         switch (command) {
-            case "tebakanime":
+            case "tebakgambar":
                 if (temp.has(id)) {
-                    return m.reply("🚩 Game tebakanime in progress!");
+                    return m.reply("🚩 Game tebakgambar in progress!");
                 }
-                const result = await functions.api("api/tebakanime");
+                const result = await functions.api("api/tebakgambar");
                 const timeout = 90000;
                 const times = functions.timer(timeout);
                 const reward = functions.randomInt(1, 100);
                 const image = result.result.img;
-                const question = `🎉 *Tebak Anime!* 🎉
+                const answer = result.result.jawaban;
+                const clue = result.result.deskripsi;
+                const question = `🎉 *Tebak Gambar!* 🎉
 
-🖼️ *What this Anime!:*
+🖼️ *What this image!*
+🔍 *Description:*
+${clue}
 
 ⏳ *Time:* ${(timeout / 1000).toFixed(2)} second.
-💡 *Type:* _${prefix} helpta_ for help.
+💡 *Type:* _${prefix} helptg_ for help.
 🏆 *Bonus:* ${reward} XP.`.trim();
-                const answer = result.result.jawaban;
                 const data = await sock.sendFile(m.from, image, "", question, m);
                 const timer = setTimeout(() => {
                     if (temp.has(id)) {
-                        const expiredTeks = `⏱️ Time's up!\nThe answer is ${answer}\n\n🗑️ Game tebakanime cleared.`;
+                        const expiredTeks = `⏱️ Time's up!\nThe answer is ${answer}\n\n🗑️ Game tebakgambar cleared.`;
                         sock.reply(m.from, expiredTeks, m);
                         temp.delete(id);
                     }
                 }, timeout);
                 temp.set(id, [data, answer, reward, timer, times]);
             break;
-            case "helpta":
+            case "helptg":
                 if (temp.has(id)) {
                     const gameData = temp.get(id);
                     const [data, answer] = gameData;

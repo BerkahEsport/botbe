@@ -36,11 +36,11 @@ export default {
         const id = "tebakjenaka-"+m.from;
         if (!temp.has(id)) return;
         try {
-            const answerBody = m.body.toLowerCase();
+            const answerBody = m.body.toLowerCase().trim();
             const gameData = temp.get(id);
             const [data, answer, reward, timer, times] = gameData;
             if (data.key.id === quoted.id) {
-                if (answer === answerBody) {
+                if (answer.toLowerCase() === answerBody) {
                     temp.delete(id);
                     clearTimeout(timer);
                     m.reply(`✅ *That's great*, your answer is correct.!\n\n🎉 *Reward*: ${reward} exp.`);
@@ -83,7 +83,7 @@ export default {
                         sock.reply(m.from, expiredTeks, m);
                     }
                 }, timeout);
-                temp.set(id, [data, answer.toLowerCase(), reward, timer, times]);
+                temp.set(id, [data, answer, reward, timer, times]);
             break;
             case "helptj":
                 if (temp.has(id)) {

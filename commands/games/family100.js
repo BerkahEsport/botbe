@@ -41,7 +41,7 @@ export default {
         if (!temp.has(id)) return;
         let room = temp.get(id);
         let [data, question, answer, answered, reward, timer, times] = room;
-        let textSender = m.body.toLowerCase().replace(/[^\w\s\-]+/, "");
+        let textSender = m.body.toLowerCase().replace(/[^\w\s\-]+/, "").trim();
         let isSurrender = /nyerah|surrender/i.test(m.body);
         if (!isSurrender) {
             let index = answer.indexOf(textSender);
@@ -86,7 +86,7 @@ ${isSurrender ? "" : `+${reward} EXP for each correct answer`}`.trim();
                     return m.reply("🚩 Game family100 in progress!");
                 }
                 const result = await functions.api("api/family100");
-                const timeout = 60000;
+                const timeout = 300000;
                 const times = functions.timer(timeout);
                 const reward = functions.randomInt(1, 100);
                 const answer = result.result.jawaban;

@@ -30,9 +30,7 @@ export default {
         args,
         sock,
         functions,
-        axios,
-        api,
-        config
+        axios
       }) => {
         try {
         async function tiktok(query) {
@@ -68,7 +66,7 @@ WM: ¿${data.wm}¿`, m, {font: true});
           await sock.sendFile(m.from, data.audio, "tiktok", "", m);
     } catch(e) {
       m.log(e);
-      const data = await functions.fetchJson(`${api}api/tiktok?url=${args[0]}&apikey=${config.settings.apikey}`);
+      const data = await functions.api("api/tiktok", args[0]);
       m.reply(data.result.link);
     }
   }

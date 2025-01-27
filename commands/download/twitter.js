@@ -28,10 +28,9 @@ export default {
     isPrivate: false,
 	run: async(m, {
         functions,
-        args,
-        config
+        args
     }) => {
-        let twitter = await functions.fetchJson(`${api}api/tx2twitter?url=${args[0]}&apikey=${config.settings.apikey}`);
+        let twitter = await functions.api("api/tx2twitter", args[0]);
         m.reply(twitter.result?.[0]?.image || twitter.result?.[0]?.video, {caption: functions.list(twitter.result, "Twitter DL"), font: true});
     }
 }

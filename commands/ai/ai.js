@@ -28,11 +28,9 @@ export default {
     isPrivate: false,
     run: async(m, {
         quoted,
-        functions,
-        api,
-        config
+        functions
     }) => {
-        const result = await functions.fetchJson(`${api}api/chatgpt?text=${quoted.text}&apikey=${config.settings.apikey}`);
+        const result = await functions.api("api/chatgpt", quoted.text);
         m.reply(result.result);
     }
 }

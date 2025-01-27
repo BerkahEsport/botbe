@@ -28,10 +28,9 @@ export default {
 	isPrivate: false,
 	run: async (m, {
         functions,
-        quoted,
-		api
+        quoted
     }) => {
-        let response = await functions.fetchJson(`${api}/api/hercai?text=${quoted.text}`)
+        let response = await functions.api("api/hercai", quoted.text);
 		m.reply(response.result);
 	}
 }

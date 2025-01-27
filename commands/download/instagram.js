@@ -28,10 +28,9 @@ export default {
     isPrivate: false,
 	run: async(m, {
         functions,
-        args,
-        config
+        args
     }) => {
-        let ig = await functions.fetchJson(`${api}api/instagram?url=${args[0]}&apikey=${config.settings.apikey}`);
+        let ig = await functions.api("api/instagram", args[0]);
         m.reply(ig.result[0].url, {caption: functions.mapList(ig.result, "Instagram DL"), font: true})
     }
 }

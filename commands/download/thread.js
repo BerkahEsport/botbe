@@ -28,10 +28,9 @@ export default {
     isPrivate: false,
 	run: async(m, {
         functions,
-        args,
-        config
+        args
     }) => {
-        let thread = await functions.fetchJson(`${api}api/thread?url=${args[0]}&apikey=${config.settings.apikey}`);
+        let thread = await functions.api("api/thread", args[0]);
         m.reply(thread.result?.image_urls[0]?.download_url || thread.result?.video_urls[0]?.download_url);
     }
 }

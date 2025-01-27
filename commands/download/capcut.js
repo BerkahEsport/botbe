@@ -18,7 +18,7 @@ export default {
     tags: "download",
     desc: "Search or Download videos from capcut.",
     customPrefix: "",
-    example: "",
+    example: "https://www.capcut.com/t/Zs8Sw9wsE/%20aesthetic",
     limit: false,
     isOwner: false,
     isPremium: false,
@@ -30,9 +30,7 @@ export default {
         text,
         sock,
         axios,
-        functions,
-        api,
-        config
+        functions
     }) => {
 
 function capcutdl(Url) {
@@ -74,7 +72,7 @@ ${footer}`.trim();
 } catch (e) {
     console.log(e);
     let caption = `*DOWNLOADER CAPCUT*`
-    const data = await functions.fetchJson(`${api}api/capcut?url=${text}&apikey=${config.setting.apikey}`);
+    const data = await functions.api("api/capcut", text);
     await sock.sendFile(m.from, data.result.video, "capcut", caption, m);
 }
 }

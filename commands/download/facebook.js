@@ -32,14 +32,13 @@ export default {
         config,
         axios,
         cheerio,
-        functions,
-        api
+        functions
     }) => {
       try {
     const response =  await facebookdl(text);
       await sock.sendFile(m.from, response.message[0].link, `FB`, config.name.bot, m);
     } catch (e) {
-      const data = await functions.fetchJson(`${api}api/facebook?url=${text}&apikey=${config.setting.apikey}`);
+      const data = await functions.api("api/facebook", text);
       await sock.sendFile(m.from, data.result.hd, `FB`, config.name.bot, m);
     }
     async function facebookdl(link) {

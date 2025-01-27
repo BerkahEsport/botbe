@@ -30,9 +30,7 @@ export default {
         args,
         sock,
         axios,
-        config,
-        functions,
-        api
+        functions
     }) => {
         try {
             const regex = /(?:https|git)(?::\/\/|@)github\.com[\/:]([^\/:]+)\/(.+)/i;
@@ -45,7 +43,7 @@ export default {
             sock.sendFile(m.from, url, filename, null, m, {asDocument: true, mime: "application"})
         } catch (e) {
             console.log(e);
-            const data = await functions.fetchJson(`${api}api/github?url=${args[0]}&apikey=${config.settings.apikey}`);
+            const data = await functions.api("api/github", args[0]);
             await sock.sendFile(m.from, data.result.link, `Github`, "", m);
         }
     }

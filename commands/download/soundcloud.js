@@ -29,11 +29,9 @@ export default {
     run: async(m, {
         args,
         sock,
-        functions,
-        api,
-        config
+        functions
       }) => {
-      const data = await functions.fetchJson(`${api}api/soundcloud?url=${args[0]}&apikey=${config.settings.apikey}`);
+      const data = await functions.api("api/soundcloud", args[0]);
       await sock.sendFile(m.from, data.result.link, "", data.result.info, m);
   }
 }

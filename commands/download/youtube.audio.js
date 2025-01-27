@@ -33,7 +33,12 @@ export default {
         functions
     }) => {
         if (!functions.isUrl(text, "youtu")) throw ("Enter the YouTube URL correctly!");
-        const data = await youtube.download(text);
-        await sock.sendFile(m.from, data.audio.dlurl, data.title, "", m);
+        try {
+            const data = await functions.api("api/ytmp3", text);
+            await sock.sendFile(m.from, data.result.link, data.result.title, "", m);
+        } catch (error) {
+            const data = await youtube.download(text);
+            await sock.sendFile(m.from, data.audio.dlurl, data.title, "", m);
+        }
     }
 }

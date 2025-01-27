@@ -66,7 +66,7 @@ export default {
             let cards = functions.card(card, "url", "header", config.text.ty )
             sock.sendCarousel(m.from, `*List of found wallpapers: ${data.length} image*`, config.name.bot, cards);
         } catch (e) {
-            const data = await functions.fetchJson(`${api}api/wallpaper?text=${text}&apikey=${config.setting.apikey}`);
+            const data = await functions.api("api/wallpaper", text);
             let images = data.result.slice(0, 5);
             for (let i = images.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));

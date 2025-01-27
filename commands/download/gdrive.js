@@ -29,9 +29,7 @@ isPrivate: false,
 run: async(m, {
     args,
     axios,
-    functions,
-    api,
-    config
+    functions
     }) => {
     
 async function GDriveDl(url) {
@@ -88,7 +86,7 @@ async function GDriveDl(url) {
         await conn.sendFile(m.from, res.downloadUrl, res.fileName + res.mimetype, res.fileName + res.mimetype, m)
     } catch (e) {
         console.log(e)
-        const data = await functions.fetchJson(`${api}api/gdrive?url=${args[0]}&apikey=${config.settings.apikey}`);
+        const data = await functions.api("api/gdrive", args[0]);
         await sock.sendFile(m.from, data.result.link, "", "", m);
     }
 }

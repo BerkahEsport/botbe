@@ -28,11 +28,9 @@ export default {
     isPrivate: false,
     run: async(m, {
         quoted,
-        functions,
-        api,
-        config
+        functions
     }) => {
-        const result = await functions.fetchJson(`${api}api/typliai?text=${quoted.text}&apikey=${config.settings.apikey}`);
+        const result = await functions.api("api/typliai", quoted.text);
         m.reply(result.result);
     }
 }

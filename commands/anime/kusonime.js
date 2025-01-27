@@ -28,11 +28,9 @@ export default {
     isPrivate: false,
     run: async(m, {
         quoted,
-        functions,
-        api,
-        config
+        functions
     }) => {
-        const result = await functions.fetchJson(`${api}api/kusonime?text=${quoted.text}&apikey=${config.settings.apikey}`);
+        const result = await functions.api("api/kusonime", quoted.text);
         m.reply(functions.listObj(result.result), "KUSONIME");
     }
 }

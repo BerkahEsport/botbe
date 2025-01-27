@@ -1,6 +1,6 @@
 /* <============== CREDITS ==============>
 Author: @berkahesport.id
-Contact me: 62895375950107
+Contact me: 6289654279897
 
 Do not delete the source.
 Thanks you...
@@ -10,7 +10,7 @@ export default {
             prefix: ".",
             restapi: "https://berkahesport.my.id/",
             apikey: "your-apikey", // Get it from https://berkahesport.my.id/
-            groqkey: "", // Contact me for the API key https:/wa.me/62895375950107 or source code https://console.groq.com/keys
+            groqkey: "", // Contact me for the API key https:/wa.me/6289654279897 or source code https://console.groq.com/keys
             mongodb: "", // MongoDB connection string https://cloud.mongodb.com/
             store: false, // using store
             case: false // if true using case not plugin
@@ -21,8 +21,8 @@ export default {
         },
         number: {
             bot: "", // If you want
-            mods: ["62895375950107"],
-            owner: "62895375950107"
+            mods: ["6289654279897"],
+            owner: "6289654279897"
         },
         group: {
             ofc: "https://chat.whatsapp.com/JKdIWr5fj990Ux2oqTjTo5",
@@ -45,7 +45,7 @@ export default {
                 "```「▰▰▰▰▱▱▱▱▱▱」Loading...```",
                 "```「▰▰▰▰▰▱▱▱▱▱」Loading...```"
             ],
-            error: "( ⚈̥̥̥̥̥́⌢⚈̥̥̥̥̥̀) *𝔼ℝℝ𝕆ℝ* ( ⚈̥̥̥̥̥́⌢⚈̥̥̥̥̥̀)\n\n• The feature encountered an error. Please report it to the owner!\n> *Chat the owner*: _https://wa.me/62895375950107_ \n> _Or try the command again after a while!_",
+            error: "( ⚈̥̥̥̥̥́⌢⚈̥̥̥̥̥̀) *𝔼ℝℝ𝕆ℝ* ( ⚈̥̥̥̥̥́⌢⚈̥̥̥̥̥̀)\n\n• The feature encountered an error. Please report it to the owner!\n> *Chat the owner*: _https://wa.me/6289654279897_ \n> _Or try the command again after a while!_",
             ty: "\n> 💭 ʜᴇʀᴇ ɪꜱ ᴛʜᴇ ʀᴇꜱᴜʟᴛ... \n> ᴅᴏɴ'ᴛ ꜰᴏʀɢᴇᴛ ᴛᴏ ꜱᴜᴘᴘᴏʀᴛ ɪɢ @ʙᴇʀᴋᴀʜᴇꜱᴘᴏʀᴛ.ɪᴅ! \n> 👍 ᴛʜᴀɴᴋ ʏᴏᴜ!",
             subs: "Don't just look, make sure to subscribe too! \n https://m.youtube.com/channel/UCG_Xj6eHBMaW9HTHTya9q6w"
         },
@@ -62,7 +62,7 @@ export default {
             ramadhan: "*(人◕‿◕) ℝ𝕒𝕞𝕒𝕕𝕙𝕒𝕟 𝔹𝕦𝕝𝕒𝕟 𝕊𝕦𝕔𝕚 (•◡•)* • ᴍᴏʜᴏɴ ᴍᴀᴀꜰ ꜱᴇʟᴀᴍᴀ ʙᴜʟᴀɴ ꜱᴜᴄɪ ʀᴀᴍᴀᴅʜᴀɴ ꜰɪᴛᴜʀ ɪɴɪ ᴅɪ ᴍᴀᴛɪᴋᴀɴ. ᴛᴇʀɪᴍᴀ ᴋᴀꜱɪʜ!",
             text: "*𝕋𝔼𝕂𝕊 𝕃𝕀𝕄𝕀𝕋𝔼𝔻* • ᴛᴇᴋꜱ ʏᴀɴɢ ᴋᴀᴍᴜ ᴍᴀꜱᴜᴋᴋᴀɴ ᴛᴇʀʟᴀʟᴜ ʙᴀɴʏᴀᴋ! ᴍᴀᴋꜱ. 1500 ᴋᴀʀᴀᴋᴛᴇʀ. ",
             unreg: "ʜᴀʟʟᴏ ᴋᴀᴋ ! 👋\nᴀɴᴅᴀ ʜᴀʀᴜs ᴍᴇɴᴅᴀғᴛᴀʀ ᴋᴇ ᴅᴀᴛᴀʙᴀsᴇ ʙᴏᴛ ᴅᴜʟᴜ sᴇʙᴇʟᴜᴍ ᴍᴇɴɢɢᴜɴᴀᴋᴀɴ ғɪᴛᴜʀ ɪɴɪ\n\nᴋᴇᴛɪᴋ .daftar ɴᴀᴍᴀ.ᴜᴍᴜʀ \nᴄᴏɴᴛᴏʜ .daftar BerkahEsport.26",//➞ ᴋʟɪᴄᴋ ᴛᴏᴍʙᴏʟ ᴅɪʙᴀᴡᴀʜ ᴜɴᴛᴜᴋ ᴍᴇɴᴅᴀғᴛᴀʀ ᴋᴇ ᴅᴀᴛᴀʙᴀsᴇ ʙᴏᴛ
-            error: "( ⚈̥̥̥̥̥́⌢⚈̥̥̥̥̥̀) *𝔼ℝℝ𝕆ℝ* ( ⚈̥̥̥̥̥́⌢⚈̥̥̥̥̥̀)\n\n• ꜰɪᴛᴜʀ ᴛᴇʀᴊᴀᴅɪ ᴋᴇꜱᴀʟᴀʜᴀɴ, ꜱɪʟᴀʜᴋᴀɴ ʟᴀᴘᴏʀᴋᴀɴ ᴏᴡɴᴇʀ!\n\n> ᴄʜᴀᴛ ᴏᴡɴᴇʀ: https://wa.me/62895375950107\n> _Atau ulangi perintah beberapa saat lagi!!_"
+            error: "( ⚈̥̥̥̥̥́⌢⚈̥̥̥̥̥̀) *𝔼ℝℝ𝕆ℝ* ( ⚈̥̥̥̥̥́⌢⚈̥̥̥̥̥̀)\n\n• ꜰɪᴛᴜʀ ᴛᴇʀᴊᴀᴅɪ ᴋᴇꜱᴀʟᴀʜᴀɴ, ꜱɪʟᴀʜᴋᴀɴ ʟᴀᴘᴏʀᴋᴀɴ ᴏᴡɴᴇʀ!\n\n> ᴄʜᴀᴛ ᴏᴡɴᴇʀ: https://wa.me/6289654279897\n> _Atau ulangi perintah beberapa saat lagi!!_"
         },
         Exif: { // For sticker
             packId: "https://berkahesport.my.id/",

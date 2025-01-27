@@ -44,12 +44,12 @@ export default {
       }
       for (let i = 0; i < 10; i++) {
         let imageUrl = images[i];
-        await sock.sendFile(m.from, imageUrl, "Pinteres", imageUrl, m);
+        await sock.sendFile(m.from, imageUrl, "Pinterest", imageUrl, m);
         await new Promise(resolve => setTimeout(resolve, 1000));
       }
     } catch (e) {
       console.error(e);
-      const data = await functions.fetchJson(`${api}api/pinterest?text=${text}&apikey=${config.setting.apikey}`);
+      const data = await functions.api("api/pinterest", text);
       let images = data.result.slice(0, 10);
 
       for (let i = images.length - 1; i > 0; i--) {
@@ -58,7 +58,7 @@ export default {
       }
       for (let i = 0; i < 10; i++) {
         let imageUrl = images[i];
-        await sock.sendFile(m.from, imageUrl, "Pinteres", imageUrl, m);
+        await sock.sendFile(m.from, imageUrl, "Pinterest", imageUrl, m);
         await new Promise(resolve => setTimeout(resolve, 1000));
       }
     }

@@ -13,10 +13,10 @@
 <============== CREDITS ==============>*/
 
 export default {
-    name: "family100",
-    command: ["family100", "helpf100"],
+    name: "kuis",
+    command: ["kuis", "helpkuis"],
     tags: "games",
-    desc: "Guess game family100.",
+    desc: "Guess game kuis.",
     customPrefix: "",
     example: "",
     limit: false,
@@ -36,8 +36,8 @@ export default {
         similarity
     }) => {
         temp = temp || new Map();
-        let id = "family100-" + m.from;
-        if (command == "helpf100") return;
+        let id = "kuis-" + m.from;
+        if (command == "helpkuis") return;
         if (!temp.has(id)) return;
         let room = temp.get(id);
         let [data, question, answer, answered, reward, timer, times] = room;
@@ -79,30 +79,30 @@ ${isSurrender ? "" : `+${reward} EXP for each correct answer`}`.trim();
         command
     }) => {
         temp = temp || new Map();
-        const id = "family100-"+m.from;
+        const id = "kuis-"+m.from;
         switch (command) {
-            case "family100":
+            case "kuis":
                 if (temp.has(id)) {
-                    return m.reply("🚩 Game family100 in progress!");
+                    return m.reply("🚩 Game kuis in progress!");
                 }
-                const result = await functions.api("api/family100");
+                const result = await functions.api("api/kuis");
                 const timeout = 60000;
                 const times = functions.timer(timeout);
                 const reward = functions.randomInt(1, 100);
                 const answer = result.result.jawaban;
                 const answered = Array.from(answer, () => false);
-                const question = `❓ *Question*: ${result.result.soal}\nThere are *${answer.length}* answers ${ answer.find(v => v.includes(" ")) ? `(some answers contain spaces)`: ""}\n\n💡 *Clue*:Type *${prefix}helpf100* for help.\n⏱️ *Timer*: ${times}.`;
+                const question = `❓ *Question*: ${result.result.soal}\nThere are *${answer.length}* answers ${ answer.find(v => v.includes(" ")) ? `(some answers contain spaces)`: ""}\n\n💡 *Clue*:Type *${prefix}helpkuis* for help.\n⏱️ *Timer*: ${times}.`;
                 const data = await sock.reply(m.from, question, m);
                 const timer = setTimeout(() => {
                     if (temp.has(id)) {
                         temp.delete(id);
-                        const expiredTeks = `⏱️ Time's up!\n\n🗑️ Game family100 cleared.`;
+                        const expiredTeks = `⏱️ Time's up!\n\n🗑️ Game kuis cleared.`;
                         sock.reply(m.from, expiredTeks, m);
                     }
                 }, timeout);
                 temp.set(id, [data, question, answer, answered, reward, timer, times]);
             break;
-            case "helpf100":
+            case "helpkuis":
                 if (temp.has(id)) {
                     const gameData = temp.get(id);
                     const [data, question, answer] = gameData;

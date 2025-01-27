@@ -25,7 +25,6 @@ export default {
         user,
         config,
         functions,
-        api,
         temp
     }) => {
         temp = temp || new Map();

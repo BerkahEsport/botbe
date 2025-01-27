@@ -15,7 +15,7 @@
 <============== CREDITS ==============>*/
 
 import fs from "fs";
-export default async function switchcase(sock, m, config, functions, usedCommandRecently) {
+export default async function switchcase(sock, m, config, functions, usedCommandRecently, usedAIRecently, temp) {
     const isFiltered = (from) => !!usedCommandRecently.has(from);
 	const addFilter = (from) => {
 		usedCommandRecently.add(from);
@@ -42,6 +42,7 @@ export default async function switchcase(sock, m, config, functions, usedCommand
     const isCreator = (functions.wa([config.number.owner])).includes(m.sender);
     const isWhitelist = (functions.wa([config.number.owner, ...config.number.mods, ...settings.mods])).includes(m.sender);
     const api = config.settings.restapi;
+    let task = usedAIRecently;
     let commandResult = undefined;
     
     try {
@@ -90,26 +91,38 @@ export default async function switchcase(sock, m, config, functions, usedCommand
     }
 
 // Answer from command yts
-sock.yts = sock.yts ? sock.yts : {}
-if (m.from in sock.yts) {
+const id = "yts-" + m.from;
+if (temp.has(id)) {
+    let getID = temp.get(id);
+    let [key, result, timer] = getID;
     if (m.isQuoted) {
-        if (sock.yts[m.from][0].id === quoted.id) {
+        if (key === quoted.id) {
             if (!arg[1]) return m.reply("Silahkan balas pesan, masukkan angka dan tipe! \nContoh: 1 mp3 ");
-            if (Number(arg[0]) > sock.yts[m.from][1].length) return m.reply("Pilihan angka tidak ada! \nContoh: 1 mp3 ");
+            if (Number(arg[0]) > result.length) return m.reply("Pilihan angka tidak ada! \nContoh: 1 mp3 ");
             if (arg[1] == "mp3" || arg[1] == "audio") {
-                let data = (await functions.fetchJson(`${api}ytmp3?url=${sock.yts[m.from][1][Number(arg[0])].url}&apikey=${config.settings.apikey}`)).result;
+                let data = (await functions.fetchJson(`${api}ytmp3?url=${result[Number(arg[0])].url}&apikey=${config.settings.apikey}`)).result;
                 await sock.sendFile(m.from, data.link, data.title, "", m);
             }
             if (arg[1] == "mp4" || arg[1] == "video") {
-                let data = (await functions.fetchJson(`${api}ytmp4?url=${sock.yts[m.from][1][Number(arg[0])].url}&apikey=${config.settings.apikey}`)).result;
+                let data = (await functions.fetchJson(`${api}ytmp4?url=${result[Number(arg[0])].url}&apikey=${config.settings.apikey}`)).result;
                 let datas = await functions.getFile(data.link);
                 m.reply(datas.data, {asDocument: true, fileName: data.title});
             }
+            temp.delete(id);
         }
     }
 }
-        // Setiap case baru yang dibuat wajib isi komentar untuk mengisi kategori perintah .menu
-        // Every new case that is created must fill in comments to fill the .menu command category
+        /*  Setiap case baru yang dibuat wajib isi komentar untuk mengisi kategori perintah .menu
+            Every new case that is created must fill in comments to fill the .menu command category
+
+            case "menu": {
+                // main -> This comment will become the category of command
+                const categorizedCases...
+            }
+            break
+        
+            Important: Comments are mandatory!
+        */
         switch (command) {
             case "menu": {
                 // main
@@ -180,21 +193,18 @@ text += `
             break;
             case "yts": case "play": {
                 // downloader
-                if (!args[0]) return m.reply(`Masukkan pencarian youtube!`)
+                if (!text) return m.reply(`Masukkan pencarian youtube!`)
                 if ( global.db.users[m.sender].limit < 1) return m.reply("limit")
                 if (functions.limit(m, 1)) {
-                let data = (await functions.fetchJson(`${api}ytsearch?text=${text}&apikey=${config.settings.apikey}`)).result
-                const id = await m.reply(functions.mapList(data, "*★彡[ʏᴏᴜᴛᴜʙᴇ ꜱᴇᴀʀᴄʜ]彡★*", "ᴮᵃˡᵃˢ ᵈᵃⁿ ᵏⁱʳⁱᵐ ˢᵉˢᵘᵃⁱ ᵃⁿᵍᵏᵃ!"));
-                sock.yts = sock.yts ? sock.yts : {}
-                sock.yts[m.from] = [
-                    {
-                        id: id.key.id
-                    },
-                    data,
-                    setTimeout(() => {
-                        delete sock.yts[m.from]
-                        data = null
-                    },  120000)]
+                    const id = "yts-" + m.from;
+                    let data = await functions.api("api/ytsearch", text);
+                    let teks = data.result.map((v, i) => `\n▶️ *ɴᴏᴍᴏʀ:* ${i+1}\n📌 *ᴊᴜᴅᴜʟ:* ${v.title}\n🔗 *ᴜʀʟ:* ${v.url}\n⏲️ *ᴘᴜʙʟɪꜱʜ:* ${v.published_at}\n⌚ *ᴅᴜʀᴀꜱɪ:* ${v.duration}\n👁️ *ᴅɪʟɪʜᴀᴛ:* ${v.views}`.trim()).filter( v => v).join("\n\n*<==== 「"+config.name.bot+"」 ====>*\n\n");
+                    let key = await sock.sendFile(m.from, data.result[0].thumbnail, "", "*─「 ★彡[ʏᴏᴜᴛᴜʙᴇ ꜱᴇᴀʀᴄʜ]彡★ 」─*\n\nᴮᵃˡᵃˢ ᵈᵃⁿ ᵏⁱʳⁱᵐ ˢᵉˢᵘᵃⁱ ᵃⁿᵍᵏᵃ!\n\n" + teks, m);
+                    const timer = setTimeout(() => {
+                        temp.delete(id);
+                        data = null;
+                    },  120000);
+                    temp.set(id, [key.key.id, data.result, timer]);
                 }
             }
             break;

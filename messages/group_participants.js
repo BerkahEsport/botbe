@@ -1,7 +1,7 @@
 /*<============== CREDITS ==============>
 	Author: @berkahesport
 	Contact me: 6289654279897
-    Website: https://berkahesport.my.id/
+   Website: https://berkahesport.my.id/
 	
 	Do not delete the source code.
 	It is prohibited to sell and buy

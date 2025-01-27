@@ -9,7 +9,7 @@ export default {
         settings: {
             prefix: ".",
             restapi: "https://berkahesport.my.id/",
-            apikey: "your-apikey", // Get it from https://berkahesport.my.id/
+            apikey: "free_be", // This default apikey over 1000 limit/day. Get apikey unlimited from https://berkahesport.my.id/ or contact owner BE: https:/wa.me/6289654279897
             groqkey: "", // Contact me for the API key https:/wa.me/6289654279897 or source code https://console.groq.com/keys
             mongodb: "", // MongoDB connection string https://cloud.mongodb.com/
             store: false, // using store

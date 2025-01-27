@@ -27,6 +27,7 @@ export default {
     isGroup: false,
     isPrivate: false,
     run: async(m, {
+        command,
         functions
     }) => {
         switch (command) {

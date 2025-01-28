@@ -38,7 +38,7 @@ export default {
             const media = await sock.downloadMediaMessage(quoted);
             const link = await upload(media);
             console.log("Upload link: ", link.result)
-            const result = await functions.fetchJson(`${api}api/geminiimg?url=${link.result}&text=${text}&apikey=${config.settings.apikey}`);
+            const result = await functions.fetchJson(`${api}api/geminiimg?url=${link.result}&text=${text}&key=${config.settings.key}`);
             m.reply(result.result);
         } else throw("Send image and write your question please!")
     }

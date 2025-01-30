@@ -25,11 +25,6 @@ import fs from "node:fs";
 const config = (await import("./config.js")).default;
 const functions = (await import("./lib/functions.js")).default;
 const dirname = functions.dirname(import.meta.url, true);
-if (config.settings.case) {
-    functions.log("Bots use case models. Loading file case.js", "green", "bold");
-} else {
-    functions.log("Bots use plugin models. Loading commands folder.", "green", "bold");
-}
 
 // <===== Config COMMANDS =====>
 import { loadAllCommands } from "./lib/commands.js";
@@ -73,12 +68,35 @@ store.readFromFile(pathStore);
 // <===== Config DATABASE =====>
 async function loadDatabase() {
 	global.db = {
+		model: undefined,
 		users: {},
 		groups: {},
 		stats: {},
 		settings: {},
 		...((await database.read()) || {})
 	};
+}
+
+// <===== Config MODEL =====>
+async function selectModel(global, functions, question) {
+    if (global.db.model === undefined) {
+        const answer = await question("Please select model (1: Case, 2: Plugin) [default: 2]:\nYour choice: ");
+        const choice = answer.trim() === "1" ? true : false;
+        global.db.model = choice;
+        if (choice) {
+            functions.log("Bots use case models. Loading file case.js", "green", "bold");
+        } else {
+            functions.log("Bots use plugin models. Loading commands folder.", "green", "bold");
+        }
+    } else {
+        if (global.db.model) {
+            functions.log("Bots use case models. Loading file case.js", "green", "bold");
+        } if (config.settings.case) {
+			functions.log("Bots use case models. Loading file case.js", "green", "bold");
+		} else {
+			functions.log("Bots use plugin models. Loading commands folder.", "green", "bold");
+		}
+    }
 }
 
 const handlePhoneNumberPairing = async (useQR, sock, functions) => {
@@ -294,7 +312,7 @@ async function connectToWhatsApp() {
 				if (msg.key.remoteJid === "status@broadcast" || msg.key.remoteJid.endsWith("@newsletter")) return;
 				msg.message = msg.message?.ephemeralMessage ? msg.message.ephemeralMessage.message : msg.message;
 				let m = await (await import(`./lib/serialize.js?v=${Date.now()}`)).default(sock, msg, store, config, functions);
-				if (config.settings.case) {
+				if (global.db.model || config.settings.case) {
 					await (await import(`./case.js?update=${Date.now()}`)).default(sock, m, config, functions, usedCommandRecently, usedAIRecently, temp);
 					return;
 				}
@@ -312,6 +330,8 @@ async function connectToWhatsApp() {
 }
 // For loading database
 await loadDatabase();
+// Select model bot
+await selectModel(global, functions, question);
 // Start to connect whatsapp
 connectToWhatsApp();
 // Save Database every 30 second

@@ -19,7 +19,7 @@ export default async function switchcase(sock, m, config, functions, usedCommand
     const isFiltered = (from) => !!usedCommandRecently.has(from);
 	const addFilter = (from) => {
 		usedCommandRecently.add(from);
-		setTimeout(() => usedCommandRecently.delete(from), 5000) // 5 second.
+		setTimeout(() => usedCommandRecently.delete(from), 5000); // 5 second.
 	}
     if (m.fromMe) return; // Don't remove it or you'll get a backdoor attack crying >_<
     await (await import(`./lib/database.js?update=${Date.now()}`)).default(sock, m, config, functions);
@@ -44,7 +44,6 @@ export default async function switchcase(sock, m, config, functions, usedCommand
     const api = config.settings.restapi;
     let task = usedAIRecently;
     let commandResult = undefined;
-    
     try {
         if (!registered) { // Dont delete this code becase will error.
             const regTime = Date.now();
@@ -66,6 +65,7 @@ export default async function switchcase(sock, m, config, functions, usedCommand
                 user.age = parseInt( age );
                 user.afk = -1;
                 user.afkReason = "";
+                user.ai = false;
             m.reply(`*「 REGISTERED 」*
 
 ┏─• *USER BOT*
@@ -90,6 +90,7 @@ export default async function switchcase(sock, m, config, functions, usedCommand
         commandResult = true;
     }
 
+// <==== Barrier Auto Response ====>
 // Answer from command yts
 const id = "yts-" + m.from;
 if (temp.has(id)) {
@@ -108,21 +109,28 @@ if (temp.has(id)) {
                 let datas = await functions.getFile(data.link);
                 m.reply(datas.data, {asDocument: true, fileName: data.title});
             }
+            clearTimeout(timer);
             temp.delete(id);
         }
     }
 }
-        /*  Setiap case baru yang dibuat wajib isi komentar untuk mengisi kategori perintah .menu
-            Every new case that is created must fill in comments to fill the .menu command category
+// <==== Barrier Auto Response ====>
+
+
+        /*  
+            Setiap case baru yang dibuat wajib isi komentar untuk mengisi kategori perintah .menu
+            Every new case that is created must fill in comments to fill the .menu command category.
 
             case "menu": {
-                // main -> This comment will become the category of command
-                const categorizedCases...
+                // main -> This comment will become the category of command.
+                const categorizedCases... -> Your codes here!
             }
-            break
+            break;
         
             Important: Comments are mandatory!
         */
+
+// <==== Your Case Code Here ====>
         switch (command) {
             case "menu": {
                 // main
@@ -194,7 +202,7 @@ text += `
             case "yts": case "play": {
                 // downloader
                 if (!text) return m.reply(`Masukkan pencarian youtube!`)
-                if ( global.db.users[m.sender].limit < 1) return m.reply("limit")
+                if (global.db.users[m.sender].limit < 1) return m.reply("limit")
                 if (functions.limit(m, 1)) {
                     const id = "yts-" + m.from;
                     let data = await functions.api("api/ytsearch", text);
@@ -208,7 +216,130 @@ text += `
                 }
             }
             break;
+            case "tiktok": case "tt": {
+                // downloader
+                if (!text) return m.reply(`Enter the Tiktok URL correctly!`)
+                if (global.db.users[m.sender].limit < 1) return m.reply("limit")
+                if (functions.limit(m, 1)) {
+                    const data = await functions.api("api/tiktok", args[0]);
+                    await m.reply(data.result.link);
+                }
+            }
+            break;
+            case "facebook": {
+                // downloader
+                if (!text) return m.reply(`Enter the Facebook URL correctly!`)
+                if (global.db.users[m.sender].limit < 1) return m.reply("limit")
+                if (functions.limit(m, 1)) {
+                    const data = await functions.api("api/facebook", args[0]);
+                    await m.reply(data.result.hd);
+                }
+            }
+            break;
+            case "gdrive": {
+                // downloader
+                if (!text) return m.reply(`Enter the GDrive URL correctly!`)
+                if (global.db.users[m.sender].limit < 1) return m.reply("limit")
+                if (functions.limit(m, 1)) {
+                    const data = await functions.api("api/gdrive", args[0]);
+                    await m.reply(data.result.link);
+                }
+            }
+            break;
+            case "github": {
+                // downloader
+                if (!text) return m.reply(`Enter the Github URL correctly!`)
+                if (global.db.users[m.sender].limit < 1) return m.reply("limit")
+                if (functions.limit(m, 1)) {
+                    const data = await functions.api("api/github", args[0]);
+                    await m.reply(data.result.link);
+                }
+            }
+            break;
+            case "instagram": {
+                // downloader
+                if (!text) return m.reply(`Enter the instagram URL correctly!`)
+                if (global.db.users[m.sender].limit < 1) return m.reply("limit")
+                if (functions.limit(m, 1)) {
+                    const data = await functions.api("api/instagram", args[0]);
+                    m.reply(data.result[0].url, {caption: functions.mapList(data.result, "Instagram DL")});
+                }
+            }
+            break;
+            case "soundcloud": {
+                // downloader
+                if (!text) return m.reply(`Enter the Soundcloud URL correctly!`)
+                if (global.db.users[m.sender].limit < 1) return m.reply("limit")
+                if (functions.limit(m, 1)) {
+                    const data = await functions.api("api/soundcloud", args[0]);
+                    await m.reply(data.result.link);
+                }
+            }
+            break;
+            case "thread": {
+                // downloader
+                if (!text) return m.reply(`Enter the thread URL correctly!`)
+                if (global.db.users[m.sender].limit < 1) return m.reply("limit")
+                if (functions.limit(m, 1)) {
+                    const data = await functions.api("api/thread", args[0]);
+                    await m.reply(data.result?.image_urls[0]?.download_url || data.result?.video_urls[0]?.download_url);
+                }
+            }
+            break;
+            case "tx2twitter": {
+                // downloader
+                if (!text) return m.reply(`Enter the Tx2twitter URL correctly!`)
+                if (global.db.users[m.sender].limit < 1) return m.reply("limit")
+                if (functions.limit(m, 1)) {
+                    const data = await functions.api("api/tx2twitter", args[0]);
+                    await m.reply(data.result?.[0]?.image || data.result?.[0]?.video, {caption: functions.list(data.result, "Twitter DL")});
+                }
+            }
+            break;
+            case "yta": {
+                // downloader
+                if (!text) return m.reply(`Enter the youtube URL correctly!`)
+                if (global.db.users[m.sender].limit < 1) return m.reply("limit")
+                if (functions.limit(m, 1)) {
+                    const data = await functions.api("api/ytmp3", args[0]);
+                    await sock.sendFile(m.from, data.result.link, data.result.title, "", m);
+                }
+            }
+            break;
+            case "ytmp3": {
+                // downloader
+                if (!text) return m.reply(`Enter the youtube URL correctly!`)
+                if (global.db.users[m.sender].limit < 1) return m.reply("limit")
+                if (functions.limit(m, 1)) {
+                    const data = await functions.api("api/ytmp3", args[0]);
+                    await sock.sendFile(m.from, data.result.link, data.result.title, "", m, {asDocument: true});
+                }
+            }
+            break;
+            case "ytv": {
+                // downloader
+                if (!text) return m.reply(`Enter the youtube URL correctly!`)
+                if (global.db.users[m.sender].limit < 1) return m.reply("limit")
+                if (functions.limit(m, 1)) {
+                    const data = await functions.api("api/ytmp4", args[0]);
+                    await sock.sendFile(m.from, data.result.link, data.result.title, "", m);
+                }
+            }
+            break;
+            case "ytmp4": {
+                // downloader
+                if (!text) return m.reply(`Enter the youtube URL correctly!`)
+                if (global.db.users[m.sender].limit < 1) return m.reply("limit")
+                if (functions.limit(m, 1)) {
+                    const data = await functions.api("api/ytmp4", args[0]);
+                    await sock.sendFile(m.from, data.result.link, data.result.title, "", m, {asDocument: true});
+                }
+            }
+            break;
         }
+// <==== End Case Code ====>
+
+// <==== For Other Code ====>
         if (["*"].some(v => m.body?.toLowerCase()?.startsWith(v)) && isCreator) {
             m.reply(functions.format(quoted));
         }
@@ -227,8 +358,8 @@ text += `
                     reject(err);
                 }
             })
-                ?.then((res) => m.reply(format(res)))
-                ?.catch((err) => m.reply(format(err)))
+                ?.then((res) => m.reply(functions.format(res)))
+                ?.catch((err) => m.reply(functions.format(err)))
         }
         if (["$", "exec"].some(a => m.body?.toLowerCase()?.startsWith(a))) {
             if (!isCreator) return m.reply("owner");
@@ -250,6 +381,8 @@ text += `
             let emot = functions.random(em);
             m.react(`${emot}`);
         }
+// <==== End Other Code ====>
+
     } catch(e) {
             commandResult = false;
 			m.report(e);

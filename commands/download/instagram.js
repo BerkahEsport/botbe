@@ -31,6 +31,6 @@ export default {
         args
     }) => {
         let ig = await functions.api("api/instagram", args[0]);
-        m.reply(ig.result[0].url, {caption: functions.mapList(ig.result, "Instagram DL"), font: true})
+        m.reply(ig.result[0].url, {caption: functions.mapList(ig.result, "Instagram DL"), font: true});
     }
 }

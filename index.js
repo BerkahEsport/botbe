@@ -127,6 +127,7 @@ const handlePhoneNumberPairing = async (useQR, sock, functions) => {
 
 // <===== Connect to Whatsapp =====>
 async function connectToWhatsApp() {
+	functions.log("Bot using version: "+version, "yellow");
 	const sessionDir = path.join(dirname, 'tmp', 'sessions');
 	const credsPath = path.join(sessionDir, 'creds.json');
     const isCredsAvailable = fs.existsSync(credsPath);
@@ -146,23 +147,23 @@ async function connectToWhatsApp() {
 		},
 		generateHighQualityLinkPreview: true,
 		browser: [ "Ubuntu", "Edge", "20.0.04" ],
-		markOnlineOnConnect: false,
-		generateHighQualityLinkPreview: true,
-		syncFullHistory: true,
-		retryRequestDelayMs: 10,
-		transactionOpts: { maxCommitRetries: 10, delayBetweenTriesMs: 10 },
-		defaultQueryTimeoutMs: undefined,
-		maxMsgRetryCount: 15,
-		appStateMacVerification: {
-			patch: true,
-			snapshot: true,
-		},
-		getMessage: async key => {
-			const jid = jidNormalizedUser(key.remoteJid);
-			const msg = await store.loadMessage(jid, key.id);
+		// markOnlineOnConnect: false,
+		// generateHighQualityLinkPreview: true,
+		// syncFullHistory: true,
+		// retryRequestDelayMs: 10,
+		// transactionOpts: { maxCommitRetries: 10, delayBetweenTriesMs: 10 },
+		// defaultQueryTimeoutMs: undefined,
+		// maxMsgRetryCount: 15,
+		// appStateMacVerification: {
+		// 	patch: true,
+		// 	snapshot: true,
+		// },
+		// getMessage: async key => {
+		// 	const jid = jidNormalizedUser(key.remoteJid);
+		// 	const msg = await store.loadMessage(jid, key.id);
 
-			return msg?.message || "";
-		},
+		// 	return msg?.message || "";
+		// },
 		shouldSyncHistoryMessage: msg => {
 			functions.log(`Loading Chat [${msg.progress}]`, "yellow", "italic");
 			return !!msg.syncType;

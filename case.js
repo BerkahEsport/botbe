@@ -101,13 +101,12 @@ if (temp.has(id)) {
             if (!arg[1]) return m.reply("Silahkan balas pesan, masukkan angka dan tipe! \nContoh: 1 mp3 ");
             if (Number(arg[0]) > result.length) return m.reply("Pilihan angka tidak ada! \nContoh: 1 mp3 ");
             if (arg[1] == "mp3" || arg[1] == "audio") {
-                let data = (await functions.fetchJson(`${api}ytmp3?url=${result[Number(arg[0])].url}&key=${config.settings.key}`)).result;
+                let data = await (await functions.api("api/ytmp3", result[Number(arg[0])].url)).result;
                 await sock.sendFile(m.from, data.link, data.title, "", m);
             }
             if (arg[1] == "mp4" || arg[1] == "video") {
-                let data = (await functions.fetchJson(`${api}ytmp4?url=${result[Number(arg[0])].url}&key=${config.settings.key}`)).result;
-                let datas = await functions.getFile(data.link);
-                m.reply(datas.data, {asDocument: true, fileName: data.title});
+                let data = await (await functions.api("api/ytmp4", result[Number(arg[0])].url)).result;
+                await sock.sendFile(m.from, data.link[0].link, data.title, "", m);
             }
             clearTimeout(timer);
             temp.delete(id);

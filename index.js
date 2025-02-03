@@ -29,10 +29,11 @@ const dirname = functions.dirname(import.meta.url, true);
 // <===== Config COMMANDS =====>
 import { loadAllCommands } from "./lib/commands.js";
 const commandsFolder = path.join(dirname, "commands");
-let commands = await loadAllCommands(commandsFolder, config.settings.case).catch(e => functions.log(`Failed to watch commands: ${e}`, "yellow", "italic"));
+let commands = {};
 let usedCommandRecently = new Set();
 let usedAIRecently = new Set();
 let temp = new Map();
+
 // <===== Config Choice =====>
 import readline from "readline";
 const question = (text) => {
@@ -50,7 +51,7 @@ const question = (text) => {
 
 // <===== Config Whatsapp =====>
 import Pino from "pino";
-import baileys  from "@whiskeysockets/baileys";
+import baileys  from "baileys";
 const { makeWASocket, useMultiFileAuthState, makeCacheableSignalKeyStore, makeInMemoryStore, jidNormalizedUser, fetchLatestBaileysVersion} = baileys;
 const logger = Pino({ level: "silent" }).child({ level: "silent" });
 const { version } = await fetchLatestBaileysVersion();
@@ -84,17 +85,25 @@ async function selectModel(global, functions, question) {
         const choice = answer.trim() === "1" ? true : false;
         global.db.model = choice;
         if (choice) {
-            functions.log("Bots use case models. Loading file case.js", "green", "bold");
+            functions.log("Bots use case models from your choice. Loading file case.js", "green", "bold");
         } else {
-            functions.log("Bots use plugin models. Loading commands folder.", "green", "bold");
+            functions.log("Bots use plugin models from your choice. Loading commands folder.", "green", "bold");
         }
+		commands = await loadAllCommands(commandsFolder, choice).catch(e => functions.log(`Failed to watch commands: ${e}`, "yellow", "italic"));
     } else {
         if (global.db.model) {
-            functions.log("Bots use case models. Loading file case.js", "green", "bold");
-        } if (config.settings.case) {
-			functions.log("Bots use case models. Loading file case.js", "green", "bold");
+            functions.log("The bot uses case mode from a selection of stored databases. Loading file case.js", "green", "italic");
+			commands = await loadAllCommands(commandsFolder, global.db.model).catch(e => functions.log(`Failed to watch commands: ${e}`, "yellow", "italic"));
+        } else if (config.settings.case) {
+			if (config.settings.case) {
+				functions.log("Bots use case models from your file config.js. Loading file case.js", "green", "bold");
+			} else {
+				functions.log("Bots use plugin models from your file config.js. Loading commands folder.", "green", "bold");
+			}
+			commands = await loadAllCommands(commandsFolder, config.settings.case).catch(e => functions.log(`Failed to watch commands: ${e}`, "yellow", "italic"));
 		} else {
-			functions.log("Bots use plugin models. Loading commands folder.", "green", "bold");
+			functions.log("Bots use plugin models from default script. Loading commands folder.", "green", "bold");
+			commands = await loadAllCommands(commandsFolder, false).catch(e => functions.log(`Failed to watch commands: ${e}`, "yellow", "italic"));
 		}
     }
 }
@@ -145,8 +154,8 @@ async function connectToWhatsApp() {
 			creds: state.creds,
 			keys: makeCacheableSignalKeyStore(state.keys, logger)
 		},
-		generateHighQualityLinkPreview: true,
-		browser: [ "Ubuntu", "Edge", "20.0.04" ],
+		// generateHighQualityLinkPreview: true,
+		// browser: [ "Ubuntu", "Edge", "20.0.04" ],
 		// markOnlineOnConnect: false,
 		// generateHighQualityLinkPreview: true,
 		// syncFullHistory: true,
@@ -306,15 +315,26 @@ async function connectToWhatsApp() {
 		await (await import(`./lib/simplification.js?update=${Date.now()}`)).default(sock, store, config, functions);
 		if (store.groupMetadata && Object.keys(store.groupMetadata).length === 0) store.groupMetadata = await sock.groupFetchAllParticipating();
 		if (type === "notify" || type === "append") {
-			let msg = messages[0];
+			const msg = messages[0];
 			if (msg.message) {
-				let type = Object.keys(msg.message)[0];
+				const type = Object.keys(msg.message)[0];
 				if (type === "protocolMessage") return;
-				if (msg.key.remoteJid === "status@broadcast" || msg.key.remoteJid.endsWith("@newsletter")) return;
+				if (msg.key.remoteJid.endsWith("@newsletter")) return;
 				msg.message = msg.message?.ephemeralMessage ? msg.message.ephemeralMessage.message : msg.message;
 				let m = await (await import(`./lib/serialize.js?v=${Date.now()}`)).default(sock, msg, store, config, functions);
+				// react story whatsapp
+				if (m.key && !m.key.fromMe && m.key.remoteJid === "status@broadcast") {
+					console.log("Bot ReadStory Whatsapp: ", m.pushName || "Your Contact", m.sender);
+					if (m.type === "protocolMessage" && m.message.protocolMessage.type === 0) return;
+					await sock.readMessages([m.key]);
+					const id = m.key.participant;
+					const res = JSON.parse(fs.readFileSync('./lib/emoji.json'));
+					const emoji = res.emoji;
+					const emojis = functions.random(emoji);
+					await sock.sendMessage("status@broadcast",{	react: { key: m.key, text: emojis}},{ statusJidList: [jidNormalizedUser(sock.user.id), jidNormalizedUser(id)]});
+				}
 				if (global.db.model || config.settings.case) {
-					await (await import(`./case.js?update=${Date.now()}`)).default(sock, m, config, functions, usedCommandRecently, usedAIRecently, temp);
+					await (await import(`./case.js?update=${Date.now()}`)).default(sock, m, store, config, functions, usedCommandRecently, usedAIRecently, temp);
 					return;
 				}
 				await (await import(`./messages/message_upsert.js?v=${Date.now()}`)).default(sock, m, store, commands, config, functions, usedCommandRecently, usedAIRecently, temp);
@@ -335,14 +355,15 @@ await loadDatabase();
 await selectModel(global, functions, question);
 // Start to connect whatsapp
 connectToWhatsApp();
-// Save Database every 30 second
+// Save Database every 60 second
 setInterval(async () => {
 	// write database bot
 	if (global.db) await database.save(global.db);
-	// write contacts and metadata
+	// write metadata
 	if (store.groupMetadata) {
 		fs.writeFileSync(pathMetadata, stable(store.groupMetadata, {space: 4}));
 	}
+	// write contacts
 	if (store.contacts) {
 		fs.writeFileSync(pathContacts, stable(store.contacts, {space: 4}));
 	}

@@ -34,7 +34,8 @@ export default async function message_upsert(sock, m, store, commands, config, f
 	const quoted = m.isQuoted && /http/i.test(m.body) ? m : m.isQuoted ? m.quoted : m;
 	let isPrefix, isCommand, noPrefix, arg, args, command, text, commandResult = undefined ;
 	try {
-		if (m.fromMe) return;
+		if (m.fromMe) return; // Don't remove it or you'll get a backdoor attack crying >_<
+		if (m.key.remoteJid === "status@broadcast") return; // This is for story whatsapp, if you delete error;
 		// Self mode on if you want.
 		if (settings.self && !m.isOwner) return m.react("💤");
 

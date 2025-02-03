@@ -12,7 +12,7 @@ export default {
             key: "free_be", // This default apikey over 1000 limit/day. Get apikey unlimited from https://berkahesport.my.id/ or contact owner BE: https:/wa.me/6289654279897
             groqkey: "", // Contact me for the API key https:/wa.me/6289654279897 or source code https://console.groq.com/keys
             mongodb: "", // MongoDB connection string https://cloud.mongodb.com/
-            store: false, // using store
+            store: false, // using store (If you use the WhatsApp story feature, you must change it to true, and the consequence is that over time the bot will become slow, so please delete the store.js file in the lib/json folder)
             case: false // if true using case not plugin
         },
         name: {

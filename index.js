@@ -19,7 +19,7 @@ process.on("unhandledRejection", console.error);
 
 // <===== Config Build =====>
 import path from "path";
-import fs from "node:fs";
+import fs from "fs";
 
 // <===== Config Setup =====>
 const config = (await import("./config.js")).default;

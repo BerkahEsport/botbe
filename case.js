@@ -47,28 +47,31 @@ export default async function switchcase(sock, m, store, config, functions, used
     let task = usedAIRecently;
     let commandResult = undefined;
     try {
+        const register = [".register", ".reg", ".daftar"] // add f you want command to register
         if (!registered) { // Dont delete this code becase will error.
-            const regTime = Date.now();
-            let [ name, age ] = text.split(".");
-            if ( user?.registered === true ) throw (`You are already registered in the bot database!`);
-            if ( !text) throw (`Please enter the command correctly. \nExample: ${prefix+command} ${m.pushName || "userBE"}.18`);
-            if ( !name ) throw ("Name cannot be empty (Alphanumeric)!");
-            if ( !age ) throw ("Age cannot be empty (Number)!");
-            if ( parseInt( age ) > 30 ) throw ("Age must not be more than 30!");
-            if ( parseInt( age ) < 7 ) throw ("Age must not be less than 7!");
-                //  Add if you are
-                user.registered = true;
-                user.registeredTime = +regTime;
-                user.premium = false;
-                user.premiumTime = 0;
-                user.banned = false;
-                user.limit = 10;
-                user.name = name;
-                user.age = parseInt( age );
-                user.afk = -1;
-                user.afkReason = "";
-                user.ai = false;
-            m.reply(`*「 REGISTERED 」*
+            if (register.some(cmd => m.body.startsWith(cmd))) {
+                m.react("⚠️");
+                const regTime = Date.now();
+                const [ name, age ] = text.split(".");
+                if ( user?.registered === true ) return m.reply(`You are already registered in the bot database!`);
+                if ( !text) return m.reply(`Please enter the command correctly. \nExample: ${prefix+command} ${m.pushName || "userBE"}.18`);
+                if ( !name ) return m.reply("Name cannot be empty (Alphanumeric)!");
+                if ( !age ) return m.reply("Age cannot be empty (Number)!");
+                if ( parseInt( age ) > 30 ) return m.reply("Age must not be more than 30!");
+                if ( parseInt( age ) < 7 ) return m.reply("Age must not be less than 7!");
+                    //  Add if you are
+                    user.registered = true;
+                    user.registeredTime = +regTime;
+                    user.premium = false;
+                    user.premiumTime = 0;
+                    user.banned = false;
+                    user.limit = 10;
+                    user.name = name;
+                    user.age = parseInt( age );
+                    user.afk = -1;
+                    user.afkReason = "";
+                    user.ai = false;
+                    m.reply(`*「 REGISTERED 」*
 
 ┏─• *USER BOT*
 │▸ *STATUS:* ☑️ SUCCESS
@@ -81,6 +84,14 @@ export default async function switchcase(sock, m, store, config, functions, used
 > ${config.name.bot || sock.user.name}
 > This bot using RestAPI from:
 _¿${api}¿_`, {font: true});
+            return m.react("🆗");;
+            } else {
+                m.react("🆕");
+				m.reply(`Please register first to be able to access the bot!!
+Command: ¿${prefix}register name.age¿
+Example: ¿${prefix}register ${m.pushName || "userBE"}.18¿`, {font: true});
+            return;
+            }
         }
 
     if (settings.self && !isWhitelist) return;
@@ -506,7 +517,7 @@ text += `
 						m.reply(+m.limit == 1 ? `${+m.limit} limit are used.` : `${+m.limit} limits are used.`, {font: true});
 					}
 				}
-			if (isCommand) {
+			if (isCommand && registered) {
 					stats.today += 1;
 					stats.total += 1;
 				if (commandResult) {

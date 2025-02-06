@@ -13,11 +13,15 @@ export default {
             groqkey: "", // Contact me for the API key https:/wa.me/6289654279897 or source code https://console.groq.com/keys
             mongodb: "", // MongoDB connection string https://cloud.mongodb.com/
             store: false, // using store (If you use the WhatsApp story feature, you must change it to true, and the consequence is that over time the bot will become slow, so please delete the store.js file in the lib/json folder)
-            case: false // if true using case not plugin
+            case: false, // if true using case not plugin
+            email: "berkahesport@gmail.com", // input your email
+            address: "Boyolali", // input your address
+            ig: "@berkahesport.id", // input your Instagram
+            github: "https://github.com/BerkahEsport", // input your Github
         },
         name: {
             bot: "ʙᴇʀᴋᴀʜᴇꜱᴘᴏʀᴛ.ɪᴅ", // Just change it according to your wishes.
-            owner: "@berkahesport.id" // Just change it according to your wishes.
+            owner: "berkahesport" // Just change it according to your wishes.
         },
         number: {
             bot: "", // If you want add your bot number.
@@ -29,11 +33,11 @@ export default {
             chid: "120363312128345279@newsletter"
         },
         logo: {
-            nothing: "https://telegra.ph/file/6b9cbf4c186b050a31de8.jpg",
-            thumbs: "https://raw.githubusercontent.com/BerkahEsport/database/main/tmp/gmbr/logo2.png",
             thumb: "https://telegra.ph/file/47b3652155f158b931bda.jpg", // Replace it with your image URL as a menu display etc. in your bot.
+            thumbs: "https://raw.githubusercontent.com/BerkahEsport/database/main/tmp/gmbr/logo2.png",
             be: "https://i.ibb.co/YTXmJfF/berkahesport.png",
-            accessDenied: "https://pomf2.lain.la/f/8c7we849.jpg"
+            accessDenied: "https://pomf2.lain.la/f/8c7we849.jpg",
+            nothing: "https://telegra.ph/file/6b9cbf4c186b050a31de8.jpg"
         },
         text: {
             create: "² October 2021", // Replace it with the date when your bot started.
@@ -50,19 +54,13 @@ export default {
             subs: "Don't just look, make sure to subscribe too! \n https://m.youtube.com/channel/UCG_Xj6eHBMaW9HTHTya9q6w"
         },
         msg: {
-            rowner: "*𝕂ℍ𝕌𝕊𝕌𝕊 𝔻𝔼𝕍𝔼𝕃𝕆ℙ𝔼ℝ* • ᴄᴏᴍᴍᴀɴᴅ ɪɴɪ ʜᴀɴʏᴀ ᴜɴᴛᴜᴋ ᴅᴇᴠᴇʟᴏᴘᴇʀ ʙᴏᴛ",
-            owner: "*𝕂ℍ𝕌𝕊𝕌𝕊 𝕆𝕎ℕ𝔼ℝ* • ᴄᴏᴍᴍᴀɴᴅ ɪɴɪ ʜᴀɴʏᴀ ᴜɴᴛᴜᴋ ᴏᴡɴᴇʀ ʙᴏᴛ",
-            premium: "*𝕂ℍ𝕌𝕊𝕌𝕊 ℙℝ𝔼𝕄𝕀𝕌𝕄* • ᴄᴏᴍᴍᴀɴᴅ ɪɴɪ ʜᴀɴʏᴀ ᴜɴᴛᴜᴋ ᴘʀᴇᴍɪᴜᴍ ᴜsᴇʀ",
-            group: "*𝕂ℍ𝕌𝕊𝕌𝕊 𝔾ℝ𝕆𝕌ℙ* • ᴄᴏᴍᴍᴀɴᴅ ɪɴɪ ʜᴀɴʏᴀ ʙɪsᴀ ᴅɪᴘᴀᴋᴀɪ ᴅɪᴅᴀʟᴀᴍ ɢʀᴏᴜᴘ",
-            private: "*𝕂ℍ𝕌𝕊𝕌𝕊 ℂℍ𝔸𝕋 ℙℝ𝕀𝔹𝔸𝔻𝕀* • ᴄᴏᴍᴍᴀɴᴅ ɪɴɪ ʜᴀɴʏᴀ ʙɪsᴀ ᴅɪᴘᴀᴋᴀɪ ᴅɪᴘʀɪᴠᴀᴛᴇ ᴄʜᴀᴛ",
-            admin: "*𝕂ℍ𝕌𝕊𝕌𝕊 𝔸𝔻𝕄𝕀ℕ* • ᴄᴏᴍᴍᴀɴᴅ ɪɴɪ ʜᴀɴʏᴀ ᴜɴᴛᴜᴋ ᴀᴅᴍɪɴ ɢʀᴏᴜᴘ",
-            botAdmin: "*𝕂ℍ𝕌𝕊𝕌𝕊 𝔹𝕆𝕋 𝔸𝔻𝕄𝕀ℕ* • ᴄᴏᴍᴍᴀɴᴅ ɪɴɪ ʜᴀɴʏᴀ ʙɪsᴀ ᴅɪɢᴜɴᴀᴋᴀɴ ᴋᴇᴛɪᴋᴀ ʙᴏᴛ ᴍᴇɴᴊᴀᴅɪ ᴀᴅᴍɪɴ",
-            restrict: "*𝕄𝔼ℕ𝕌 𝔸𝔻𝕄𝕀ℕ* • ʀᴇsᴛʀɪᴄᴛ ʙᴇʟᴜᴍ ᴅɪɴʏᴀʟᴀᴋᴀɴ ᴅɪᴄʜᴀᴛ ɪɴɪ",
-            nsfw: "*ℙ𝔸ℝ𝔸ℍ 𝕃𝕌!!!* • ɴᴀᴋ ᴋᴀᴍᴜ ʙᴇʟᴜᴍ ᴄᴜᴋᴜᴘ ᴜᴍᴜʀ. ᴊᴀɴɢᴀɴ ᴍᴀᴋꜱᴀ!!!",
-            ramadhan: "*(人◕‿◕) ℝ𝕒𝕞𝕒𝕕𝕙𝕒𝕟 𝔹𝕦𝕝𝕒𝕟 𝕊𝕦𝕔𝕚 (•◡•)* • ᴍᴏʜᴏɴ ᴍᴀᴀꜰ ꜱᴇʟᴀᴍᴀ ʙᴜʟᴀɴ ꜱᴜᴄɪ ʀᴀᴍᴀᴅʜᴀɴ ꜰɪᴛᴜʀ ɪɴɪ ᴅɪ ᴍᴀᴛɪᴋᴀɴ. ᴛᴇʀɪᴍᴀ ᴋᴀꜱɪʜ!",
-            text: "*𝕋𝔼𝕂𝕊 𝕃𝕀𝕄𝕀𝕋𝔼𝔻* • ᴛᴇᴋꜱ ʏᴀɴɢ ᴋᴀᴍᴜ ᴍᴀꜱᴜᴋᴋᴀɴ ᴛᴇʀʟᴀʟᴜ ʙᴀɴʏᴀᴋ! ᴍᴀᴋꜱ. 1500 ᴋᴀʀᴀᴋᴛᴇʀ. ",
-            unreg: "ʜᴀʟʟᴏ ᴋᴀᴋ ! 👋\nᴀɴᴅᴀ ʜᴀʀᴜs ᴍᴇɴᴅᴀғᴛᴀʀ ᴋᴇ ᴅᴀᴛᴀʙᴀsᴇ ʙᴏᴛ ᴅᴜʟᴜ sᴇʙᴇʟᴜᴍ ᴍᴇɴɢɢᴜɴᴀᴋᴀɴ ғɪᴛᴜʀ ɪɴɪ\n\nᴋᴇᴛɪᴋ .daftar ɴᴀᴍᴀ.ᴜᴍᴜʀ \nᴄᴏɴᴛᴏʜ .daftar BerkahEsport.26",//➞ ᴋʟɪᴄᴋ ᴛᴏᴍʙᴏʟ ᴅɪʙᴀᴡᴀʜ ᴜɴᴛᴜᴋ ᴍᴇɴᴅᴀғᴛᴀʀ ᴋᴇ ᴅᴀᴛᴀʙᴀsᴇ ʙᴏᴛ
-            error: "( ⚈̥̥̥̥̥́⌢⚈̥̥̥̥̥̀) *𝔼ℝℝ𝕆ℝ* ( ⚈̥̥̥̥̥́⌢⚈̥̥̥̥̥̀)\n\n• ꜰɪᴛᴜʀ ᴛᴇʀᴊᴀᴅɪ ᴋᴇꜱᴀʟᴀʜᴀɴ, ꜱɪʟᴀʜᴋᴀɴ ʟᴀᴘᴏʀᴋᴀɴ ᴏᴡɴᴇʀ!\n\n> ᴄʜᴀᴛ ᴏᴡɴᴇʀ: https://wa.me/6289654279897\n> _Atau ulangi perintah beberapa saat lagi!!_"
+            rowner: "*𝔻𝔼𝕍𝔼𝕃𝕆ℙ𝔼ℝ 𝕆ℕ𝕃𝕐* • This command is only for bot developers!",
+            owner: "*𝕆𝕎ℕ𝔼ℝ 𝕆ℕ𝕃𝕐* • This command is only for bot owners!",
+            premium: "*ℙℝ𝔼𝕄𝕀𝕌𝕄 𝕆ℕ𝕃𝕐* • This command is only for premium bot users!",
+            group: "*𝔾ℝ𝕆𝕌ℙ 𝕆ℕ𝕃𝕐* • This command can only be used on groups!",
+            private: "*ℙℝ𝕀𝕍𝔸𝕋𝔼 ℂℍ𝔸𝕋* • This command can only be used in private chats",
+            admin: "*𝔸𝔻𝕄𝕀ℕ 𝕆ℕ𝕃𝕐* • This command can only be used by group admins!",
+            botAdmin: "*𝔹𝕆𝕋 𝔸𝔻𝕄𝕀ℕ* • This command can only be used if the bot is a group admin!",
         },
         Exif: { // For sticker
             packId: "https://berkahesport.my.id/",

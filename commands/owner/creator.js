@@ -27,13 +27,17 @@ export default {
     isGroup: false,
     isPrivate: false,
     run: async(m, {
-        functions
-    }) => { 
+        sock,
+        functions,
+        config
+    }) => {
+        sock.sendContact(m.from, config.number.owner);
         m.reply(functions.list({
-            name: "berkahesport",
-            address: "Boyolali",
-            ig: "@berkahesport.id",
-            github: "https://github.com/BerkahEsport"
+            name: config.name.bot,
+            address: config.settings.address,
+            ig: config.settings.ig,
+            github: config.settings.github,
+            email: config.settings.email
         }, "Info Owner"), {font: true});
     }
 }

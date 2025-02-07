@@ -67,7 +67,6 @@ const pathMetadata = "./lib/json/groupMetadata.json";
 store.readFromFile(pathStore);
 
 // <===== Config DATABASE =====>
-let db = global.db;
 async function loadDatabase() {
 	global.db = {
 		model: undefined,

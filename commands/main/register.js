@@ -53,7 +53,7 @@ export default {
                         user.limit = 10;
                         user.name = name;
                         user.age = parseInt( age );
-        m.reply(`*「 REGISTERED 」*
+        await m.reply(`*「 REGISTERED 」*
 
 ┏─• *USER BOT*
 │▸ *STATUS:* ☑️ SUCCESS

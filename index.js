@@ -67,6 +67,7 @@ const pathMetadata = "./lib/json/groupMetadata.json";
 store.readFromFile(pathStore);
 
 // <===== Config DATABASE =====>
+let db = global.db;
 async function loadDatabase() {
 	global.db = {
 		model: undefined,
@@ -79,11 +80,11 @@ async function loadDatabase() {
 }
 
 // <===== Config MODEL =====>
-async function selectModel(global, functions, question) {
-    if (global.db.model === undefined) {
+async function selectModel(db, functions, question) {
+    if (db.model === undefined) {
         const answer = await question("Please select model (1: Case, 2: Plugin) [default: 2]:\nYour choice: ");
         const choice = answer.trim() === "1" ? true : false;
-        global.db.model = choice;
+        db.model = choice;
         if (choice) {
             functions.log("Bots use case models from your choice. Loading file case.js", "green", "bold");
         } else {
@@ -91,9 +92,9 @@ async function selectModel(global, functions, question) {
         }
 		commands = await loadAllCommands(commandsFolder, choice).catch(e => functions.log(`Failed to watch commands: ${e}`, "yellow", "italic"));
     } else {
-        if (global.db.model) {
+        if (db.model) {
             functions.log("The bot uses case mode from a selection of stored databases. Loading file case.js", "green", "italic");
-			commands = await loadAllCommands(commandsFolder, global.db.model).catch(e => functions.log(`Failed to watch commands: ${e}`, "yellow", "italic"));
+			commands = await loadAllCommands(commandsFolder, db.model).catch(e => functions.log(`Failed to watch commands: ${e}`, "yellow", "italic"));
         } else if (config.settings.case) {
 			if (config.settings.case) {
 				functions.log("Bots use case models from your file config.js. Loading file case.js", "green", "bold");
@@ -333,11 +334,11 @@ async function connectToWhatsApp() {
 					const emojis = functions.random(emoji);
 					await sock.sendMessage("status@broadcast",{	react: { key: m.key, text: emojis}},{ statusJidList: [jidNormalizedUser(sock.user.id), jidNormalizedUser(id)]});
 				}
-				if (global.db.model || config.settings.case) {
-					await (await import(`./case.js?update=${Date.now()}`)).default(sock, m, store, config, functions, usedCommandRecently, usedAIRecently, temp);
+				if (db.model || config.settings.case) {
+					await (await import(`./case.js?update=${Date.now()}`)).default(sock, m, db, store, config, functions, usedCommandRecently, usedAIRecently, temp);
 					return;
 				}
-				await (await import(`./messages/message_upsert.js?v=${Date.now()}`)).default(sock, m, store, commands, config, functions, usedCommandRecently, usedAIRecently, temp);
+				await (await import(`./messages/message_upsert.js?v=${Date.now()}`)).default(sock, m, db, store, commands, config, functions, usedCommandRecently, usedAIRecently, temp);
 			}
 		}
 	})

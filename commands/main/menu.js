@@ -38,6 +38,7 @@ export default {
         functions,
         isGroup
     }) => {
+        const pp = await sock.profilePictureUrl(m.from, "image").catch(() => fs.readFileSync("./src/avatar_contact.png"));
         const tagList = Object.values(commands);
         const totalCmd = tagList.length;
         const list = {};
@@ -62,9 +63,9 @@ This is a List of Available Commands:\nTotal full commands: ${totalCmd}\n\n`
         if (args[0] in list) {
             Object.entries(list).forEach(([type, commandArray]) => {
               if (type !== args[0]) return; // Only process commands with the selected tag
-              teks += `┌──⭓ *${type.toUpperCase()} Menu*\n`;
-              teks += `│\n`;
-              teks += `${commandArray.map((command, index) => {
+                teks += `┌──⭓ *${type.toUpperCase()} Menu*\n`;
+                teks += `│\n`;
+                teks += `${commandArray.map((command, index) => {
                 if (!command.name || (Array.isArray(command.name) && command.name.every(name => name === ""))) return ""; // Check if command.name is empty
                 const commandNames = Array.isArray(command.name) ? command.name : [command.name];
                 const prefixedNames = commandNames.filter(name => name !== "").map(name => command.customPrefix ? `${command.customPrefix}${name}` : `${prefix}${name}`);
@@ -72,10 +73,10 @@ This is a List of Available Commands:\nTotal full commands: ${totalCmd}\n\n`
                 const limitText = command.limit ? `[ ${command.limit === true || command.limit === 1 ? "" : +command.limit}Ⓛ ]` : command.isPremium ? `[ Ⓟ ]` : "";
                 return `${index === 0 ? "│" : "│"}⛥ ${prefixedNames.map(name => `${name} ${limitText}`).join('\n│⛥ ')}`;
               }).filter(Boolean).join("\n")}\n`; // Remove empty lines from final result
-              teks += `│\n`;
-              teks += `└───────⭓\n\n`;
+                teks += `│\n`;
+                teks += `└───────⭓\n\n`;
             });
-            await sock.reply(m.from, teks, m);
+            await sock.reply(m.from, teks, m, {thumbnail: fs.readFileSync("./src/thumbnail.jpg")});
         } else {
             Object.entries(list).forEach(([type, commandArray]) => {
                 teks += `┌──⭓ *${type.toUpperCase()} Menu*\n`;
@@ -96,7 +97,7 @@ This is a List of Available Commands:\nTotal full commands: ${totalCmd}\n\n`
                 await sock.reply(m.from, teks, m, {font: true, thumbnail: fs.readFileSync("./src/thumbnail.jpg")});
             } else {
                 const cards = functions.card([{
-                    url: await sock.profilePictureUrl(m.sender, "image"),
+                    url: pp,
                     title: functions.greeting(m.pushName)
                 }], "", "", "",
             [{
@@ -112,7 +113,7 @@ This is a List of Available Commands:\nTotal full commands: ${totalCmd}\n\n`
             ]);
                 const body = teks.replaceAll("¿", "");
                 const footer = config.name.bot;
-                sock.sendCarousel(m.from, body, footer, cards);
+                await sock.sendCarousel(m.from, body, footer, cards);
             }
         }
     }

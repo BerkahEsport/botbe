@@ -16,7 +16,7 @@
 
 import fs from "fs";
 import { delay, jidNormalizedUser } from "baileys";
-export default async function switchcase(sock, m, store, config, functions, usedCommandRecently, usedAIRecently, temp) {
+export default async function switchcase(sock, m, db, store, config, functions, usedCommandRecently, usedAIRecently, temp) {
     const isFiltered = (from) => !!usedCommandRecently.has(from);
 	const addFilter = (from) => {
 		usedCommandRecently.add(from);
@@ -28,9 +28,10 @@ export default async function switchcase(sock, m, store, config, functions, used
 
     // Variabel setup
 	m.limit = false;
-	const user = global.db.users[m.sender];
-	const settings = global.db.settings[sock.user.jid || config.number.bot+"@s.whatsapp.net"];
-	const stats = global.db.stats;
+	const users = db.users
+	const user = users[m.sender];
+	const settings = db.settings[sock.user.jid || config.number.bot+"@s.whatsapp.net"];
+	const stats = db.stats;
 	const prefix = config.settings.prefix;
     const isCommand = m.body.startsWith(prefix);
     const command = m.cmd;
@@ -95,7 +96,7 @@ Example: ¿${prefix}register ${m.pushName || "userBE"}.18¿`, {font: true});
         }
 
     if (settings.self && !isWhitelist) return;
-    if (m.from && global.db.groups[m.from]?.isBanned && !isWhitelist) return;
+    if (m.from && db.groups[m.from]?.isBanned && !isWhitelist) return;
     if (isCommand && isFiltered(m.sender)) {
         m.reply('「 ❗ 」 Give a 5 second delay per command bro!');
         return;
@@ -187,7 +188,7 @@ text += `
                 // main
                 let who = m.mentions && m.mentions[0] ? m.mentions[0] : m.sender;
                 let pp = await sock.profilePictureUrl(who, "image").catch(() => fs.readFileSync("./src/qrbe.jpg"))
-                let sender = global.db.users[who]
+                let sender = db.users[who]
                 let text = `
 ┏━━〔 ${config.name.bot} 〕━▣
 ┃❒ *ɴᴀᴍᴀ:* ${"@"+m.sender.split`@`[0] || sender.name}
@@ -218,7 +219,7 @@ text += `
             case "yts": case "play": {
                 // downloader
                 if (!text) return m.reply(`Masukkan pencarian youtube!`)
-                if (global.db.users[m.sender].limit < 1) return m.reply("limit")
+                if (db.users[m.sender].limit < 1) return m.reply("limit")
                 if (functions.limit(m, 1)) {
                     const id = "yts-" + m.from;
                     let data = await functions.api("api/ytsearch", text);
@@ -235,7 +236,7 @@ text += `
             case "tiktok": case "tt": {
                 // downloader
                 if (!text) return m.reply(`Enter the Tiktok URL correctly!`)
-                if (global.db.users[m.sender].limit < 1) return m.reply("limit")
+                if (db.users[m.sender].limit < 1) return m.reply("limit")
                 if (functions.limit(m, 1)) {
                     const data = await functions.api("api/tiktok", args[0]);
                     await m.reply(data.result.link);
@@ -245,7 +246,7 @@ text += `
             case "facebook": {
                 // downloader
                 if (!text) return m.reply(`Enter the Facebook URL correctly!`)
-                if (global.db.users[m.sender].limit < 1) return m.reply("limit")
+                if (db.users[m.sender].limit < 1) return m.reply("limit")
                 if (functions.limit(m, 1)) {
                     const data = await functions.api("api/facebook", args[0]);
                     await m.reply(data.result.hd);
@@ -255,7 +256,7 @@ text += `
             case "gdrive": {
                 // downloader
                 if (!text) return m.reply(`Enter the GDrive URL correctly!`)
-                if (global.db.users[m.sender].limit < 1) return m.reply("limit")
+                if (db.users[m.sender].limit < 1) return m.reply("limit")
                 if (functions.limit(m, 1)) {
                     const data = await functions.api("api/gdrive", args[0]);
                     await m.reply(data.result.link);
@@ -265,7 +266,7 @@ text += `
             case "github": {
                 // downloader
                 if (!text) return m.reply(`Enter the Github URL correctly!`)
-                if (global.db.users[m.sender].limit < 1) return m.reply("limit")
+                if (db.users[m.sender].limit < 1) return m.reply("limit")
                 if (functions.limit(m, 1)) {
                     const data = await functions.api("api/github", args[0]);
                     await m.reply(data.result.link);
@@ -275,7 +276,7 @@ text += `
             case "instagram": {
                 // downloader
                 if (!text) return m.reply(`Enter the instagram URL correctly!`)
-                if (global.db.users[m.sender].limit < 1) return m.reply("limit")
+                if (db.users[m.sender].limit < 1) return m.reply("limit")
                 if (functions.limit(m, 1)) {
                     const data = await functions.api("api/instagram", args[0]);
                     m.reply(data.result[0].url, {caption: functions.mapList(data.result, "Instagram DL")});
@@ -285,7 +286,7 @@ text += `
             case "soundcloud": {
                 // downloader
                 if (!text) return m.reply(`Enter the Soundcloud URL correctly!`)
-                if (global.db.users[m.sender].limit < 1) return m.reply("limit")
+                if (db.users[m.sender].limit < 1) return m.reply("limit")
                 if (functions.limit(m, 1)) {
                     const data = await functions.api("api/soundcloud", args[0]);
                     await m.reply(data.result.link);
@@ -295,7 +296,7 @@ text += `
             case "thread": {
                 // downloader
                 if (!text) return m.reply(`Enter the thread URL correctly!`)
-                if (global.db.users[m.sender].limit < 1) return m.reply("limit")
+                if (db.users[m.sender].limit < 1) return m.reply("limit")
                 if (functions.limit(m, 1)) {
                     const data = await functions.api("api/thread", args[0]);
                     await m.reply(data.result?.image_urls[0]?.download_url || data.result?.video_urls[0]?.download_url);
@@ -305,7 +306,7 @@ text += `
             case "tx2twitter": {
                 // downloader
                 if (!text) return m.reply(`Enter the Tx2twitter URL correctly!`)
-                if (global.db.users[m.sender].limit < 1) return m.reply("limit")
+                if (db.users[m.sender].limit < 1) return m.reply("limit")
                 if (functions.limit(m, 1)) {
                     const data = await functions.api("api/tx2twitter", args[0]);
                     await m.reply(data.result?.[0]?.image || data.result?.[0]?.video, {caption: functions.list(data.result, "Twitter DL")});
@@ -315,7 +316,7 @@ text += `
             case "yta": {
                 // downloader
                 if (!text) return m.reply(`Enter the youtube URL correctly!`)
-                if (global.db.users[m.sender].limit < 1) return m.reply("limit")
+                if (db.users[m.sender].limit < 1) return m.reply("limit")
                 if (functions.limit(m, 1)) {
                     const data = await functions.api("api/ytmp3", args[0]);
                     await sock.sendFile(m.from, data.result.link, data.result.title, "", m);
@@ -325,7 +326,7 @@ text += `
             case "ytmp3": {
                 // downloader
                 if (!text) return m.reply(`Enter the youtube URL correctly!`)
-                if (global.db.users[m.sender].limit < 1) return m.reply("limit")
+                if (db.users[m.sender].limit < 1) return m.reply("limit")
                 if (functions.limit(m, 1)) {
                     const data = await functions.api("api/ytmp3", args[0]);
                     await sock.sendFile(m.from, data.result.link, data.result.title, "", m, {asDocument: true});
@@ -335,7 +336,7 @@ text += `
             case "ytv": {
                 // downloader
                 if (!text) return m.reply(`Enter the youtube URL correctly!`)
-                if (global.db.users[m.sender].limit < 1) return m.reply("limit")
+                if (db.users[m.sender].limit < 1) return m.reply("limit")
                 if (functions.limit(m, 1)) {
                     const data = await functions.api("api/ytmp4", args[0]);
                     await sock.sendFile(m.from, data.result.link, data.result.title, "", m);
@@ -345,7 +346,7 @@ text += `
             case "ytmp4": {
                 // downloader
                 if (!text) return m.reply(`Enter the youtube URL correctly!`)
-                if (global.db.users[m.sender].limit < 1) return m.reply("limit")
+                if (db.users[m.sender].limit < 1) return m.reply("limit")
                 if (functions.limit(m, 1)) {
                     const data = await functions.api("api/ytmp4", args[0]);
                     await sock.sendFile(m.from, data.result.link, data.result.title, "", m, {asDocument: true});

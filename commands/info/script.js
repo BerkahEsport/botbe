@@ -30,9 +30,9 @@ export default {
         sock,
         config
     }) => {
-        const caption = `*★彡[ꜱᴄʀɪᴘᴛ ʙᴏᴛʙᴇ]彡★*
+        const caption = `*★彡[ꜱᴄʀɪᴘᴛ ${config.name.bot}]彡★*
 
-*Link SC:* _https://github.com/BerkahEsport/botbe_
+*Link SC:* _${config.settings.script}_
 
 _Gunakan dengan bijak, jangan lupa kasih bintang. Terima kasih._
 

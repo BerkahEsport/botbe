@@ -6,7 +6,7 @@
         Do not delete the source code.
         It is prohibited to
         sell and buy scripts
-        without the knowledge
+        without the knowledge 
         of the script owner.
 
         Thank you to Allah S.W.T

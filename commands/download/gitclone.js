@@ -10,7 +10,7 @@
         of the script owner.
 
         Thank you to Allah S.W.T
-<============== CREDITS ==============>*/
+<============== CREDITS ==============> */
 
 export default {
     name: "gitclone",

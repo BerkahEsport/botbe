@@ -18,6 +18,7 @@ export default {
             address: "Boyolali", // input your address
             ig: "@berkahesport.id", // input your Instagram
             github: "https://github.com/BerkahEsport", // input your Github
+            script: "https://github.com/BerkahEsport/botbe" // this base script
         },
         name: {
             bot: "ʙᴇʀᴋᴀʜᴇꜱᴘᴏʀᴛ.ɪᴅ", // Just change it according to your wishes.

@@ -10,6 +10,7 @@
         of the script owner.
 
         Thank you to Allah S.W.T
+        
 <============== CREDITS ==============>*/
 
 export default {

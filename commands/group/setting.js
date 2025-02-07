@@ -8,7 +8,6 @@
         sell and buy scripts
         without the knowledge
         of the script owner.
-
         Thank you to Allah S.W.T
 <============== CREDITS ==============>*/
 

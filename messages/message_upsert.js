@@ -28,7 +28,8 @@ export default async function message_upsert(sock, m, store, commands, config, f
 
 	// Variabel setup
 	m.limit = false;
-	const user = global.db.users[m.sender];
+	const users = global.db.users;
+	const user = users[m.sender];
 	const settings = global.db.settings[sock.user.jid || config.number.bot+"@s.whatsapp.net"];
 	const stats = global.db.stats;
 	const quoted = m.isQuoted && /http/i.test(m.body) ? m : m.isQuoted ? m.quoted : m;
@@ -114,6 +115,7 @@ export default async function message_upsert(sock, m, store, commands, config, f
 				cmd,
 				name,
 				user,
+				users,
 				settings,
 				stats,
 				isPrefix,
@@ -150,7 +152,7 @@ export default async function message_upsert(sock, m, store, commands, config, f
 		if (isCommand) {
 			if (!user?.registered && !(name == "register.js") && !(m.body.startsWith(prefix+"register") || m.body.startsWith(prefix+"reg"))) {
 				m.react("🚫");
-				m.reply(`Please register first to be able to access the bot!!
+				await m.reply(`Please register first to be able to access the bot!!
 Command: ¿${prefix}register name.age¿
 Example: ¿${prefix}register ${m.pushName || "userBE"}.18¿`, {font: true});
 				break;

@@ -16,7 +16,7 @@
 
 import axios from "axios";
 import * as cheerio from "cheerio";
-export default async function message_upsert(sock, m, store, commands, config, functions, usedCommandRecently, usedAIRecently, temp) {
+export default async function message_upsert(sock, m, db, store, commands, config, functions, usedCommandRecently, usedAIRecently, temp) {
 	const isFiltered = (from) => !!usedCommandRecently.has(from);
 	const addFilter = (from, time = 5000) => {
 		usedCommandRecently.add(from);
